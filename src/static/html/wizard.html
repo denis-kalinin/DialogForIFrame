@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Wizard (should be in Dialog window)</title>
+    </head>
+    <body>
+        <h1>Wizard in the Dialog</h1>
+        <article>
+        <p>This page is in the iframe. In case you want to close a parent dialog window from the iframe,
+            that iframe MUST send inter-window message to the parent window: <code>window.parent.postMessage('close-dialog', '*')</code>. We don't close iframe via parent window, because
+            they can be in different domains, so <code>window.parent.frames[0].close()</code> won't work in a such case.
+        </p>
+        <p>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Nulla aliquet enim tortor at. Viverra tellus in hac habitasse platea dictumst vestibulum. Sollicitudin tempor id eu nisl. Fermentum odio eu feugiat pretium. Arcu felis bibendum ut tristique. Vitae congue mauris rhoncus aenean vel. Id diam vel quam elementum pulvinar etiam non quam lacus. Purus gravida quis blandit turpis. Ullamcorper eget nulla facilisi etiam dignissim diam quis enim. Tortor dignissim convallis aenean et tortor at. Sit amet facilisis magna etiam tempor orci eu lobortis.
+        </p>
+        <p>
+        Netus et malesuada fames ac turpis egestas integer eget. Sit amet purus gravida quis blandit turpis cursus in. Ut venenatis tellus in metus vulputate eu. Consequat id porta nibh venenatis cras sed felis eget. A cras semper auctor neque vitae tempus. Pharetra pharetra massa massa ultricies. Proin fermentum leo vel orci porta non. Ut enim blandit volutpat maecenas volutpat blandit aliquam etiam erat. Egestas sed sed risus pretium quam vulputate. Adipiscing tristique risus nec feugiat in. Gravida dictum fusce ut placerat orci nulla pellentesque dignissim. Integer malesuada nunc vel risus commodo viverra maecenas accumsan lacus. Vulputate ut pharetra sit amet aliquam id diam maecenas ultricies.
+        </p>
+        <p>
+        Ut tortor pretium viverra suspendisse potenti nullam. Leo urna molestie at elementum eu. Dictum fusce ut placerat orci. Pellentesque pulvinar pellentesque habitant morbi tristique senectus. Turpis egestas pretium aenean pharetra magna ac placerat vestibulum. Euismod lacinia at quis risus sed vulputate odio ut. Ut morbi tincidunt augue interdum velit euismod in pellentesque massa. Proin sagittis nisl rhoncus mattis rhoncus. Duis ultricies lacus sed turpis. Mus mauris vitae ultricies leo integer malesuada nunc vel risus.
+        </p>
+        <p>
+        Tincidunt dui ut ornare lectus sit amet. A arcu cursus vitae congue. Sit amet mauris commodo quis imperdiet massa tincidunt nunc pulvinar. Auctor neque vitae tempus quam pellentesque nec nam aliquam. Sit amet consectetur adipiscing elit pellentesque habitant. Urna neque viverra justo nec ultrices dui sapien eget mi. Mauris cursus mattis molestie a iaculis at erat. Egestas quis ipsum suspendisse ultrices gravida dictum fusce ut. Risus nullam eget felis eget. Nibh mauris cursus mattis molestie a iaculis at erat. Est lorem ipsum dolor sit. Ipsum suspendisse ultrices gravida dictum fusce ut placerat. Velit laoreet id donec ultrices tincidunt. Congue quisque egestas diam in arcu. Quam viverra orci sagittis eu volutpat odio facilisis mauris.
+        </p>
+        <p>
+        Auctor eu augue ut lectus. Id porta nibh venenatis cras sed felis eget velit aliquet. Ac tincidunt vitae semper quis lectus nulla at. Neque ornare aenean euismod elementum nisi quis eleifend quam adipiscing. Mi sit amet mauris commodo quis imperdiet massa. Eget aliquet nibh praesent tristique magna sit amet. Nulla facilisi nullam vehicula ipsum. Sollicitudin aliquam ultrices sagittis orci a scelerisque purus semper eget. Vulputate eu scelerisque felis imperdiet proin. Scelerisque eu ultrices vitae auctor eu augue ut lectus.
+        </p>
+        <table>
+                <tr>
+                    <td>1124</td>
+                    <td>gaoiewfabao</td>
+                </tr>
+                    <td>gaoiewfabao</td>
+                </tr>
+            </table>
+        <button onclick="window.parent.postMessage('close-dialog', '*');">SAVE &amp; CLOSE</button>
+    </body>
+</html>

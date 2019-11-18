@@ -1,0 +1,40 @@
+{
+  "name": "modal-dialog",
+  "version": "0.0.1",
+  "description": "Modal fullsized dialog to embrace iframe",
+  "dependencies": {},
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "clean-webpack-plugin": "^3.0.0",
+    "copy-webpack-plugin": "^5.0.4",
+    "css-loader": "^3.2.0",
+    "esm": "^3.2.25",
+    "html-loader": "^0.5.5",
+    "html-webpack-plugin": "^3.2.0",
+    "mocha": "^6.2.0",
+    "style-loader": "^1.0.0",
+    "webpack": "^4.39.3",
+    "webpack-cli": "^3.3.8",
+    "webpack-dev-server": "^3.8.0",
+    "webpack-node-externals": "^1.7.2"
+  },
+  "scripts": {
+    "test": "mocha --require esm",
+    "build": "webpack --mode production",
+    "watch": "webpack --watch --mode development",
+    "start": "webpack-dev-server --open --mode development"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/denis-kalinin/agiloft-bugfix-frontend.git"
+  },
+  "author": {
+    "name": "Denis Kalinin",
+    "email": "denis.kalinin@agiloft.com"
+  },
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/denis-kalinin/agiloft-bugfix-frontend/issues"
+  },
+  "homepage": "https://github.com/denis-kalinin/agiloft-bugfix-frontend#readme"
+}
