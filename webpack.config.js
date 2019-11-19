@@ -1,6 +1,7 @@
 const HtmlWebPackPlugin = require("html-webpack-plugin");
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const nodeExternals = require('webpack-node-externals');
+const path = require('path');
 //var lodash = require('lodash');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 module.exports = {
@@ -97,6 +98,7 @@ module.exports = {
     ]),
   ],
   output: {
+    path: path.resolve(__dirname, 'docs'),
     filename: '[name].[contenthash].js',
   },
   externals : {},
