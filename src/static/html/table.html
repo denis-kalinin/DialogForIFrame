@@ -52,7 +52,7 @@
         </style>
     </head>
     <body>
-        <button id="dialogButton">SHOW DIALOG</button>
+        <button id="dialogButton" onclick="new DialogForIFrame('wizard.html', 'dialogTemplate');">SHOW DIALOG</button>
         <table>
             <tr>
                 <td>1124</td>
@@ -116,77 +116,11 @@
         </table>
         <template id="dialogTemplate">
             <dialog id="favDialog" style="width:100%;height:100%;padding:0;border:0">
-                <div class="xbutton" id="dialogCloseButton"></div>
-                <iframe src="wizard.html" style="width:100%;border:0px"></iframe>
+                <div class="xbutton" role="xButton"></div>
             </dialog>
         </template>
     </body>
-    <script src="../js/dist/dialog-polyfill/dialog-polyfill.js"></script>
-    <script>
-        (function() {
-          var dialogButton = document.getElementById('dialogButton');
-          //var cancelButton = document.getElementById('cancel');
-          //var dialog = document.getElementById('favDialog');
-          //dialogPolyfill.registerDialog(dialog);
-          // Now dialog acts like a native <dialog>.
-          //dialog.returnValue = 'favAnimal';
-    
-          function openCheck(dialog) {
-            if(dialog.open) {
-              console.log('Dialog open');
-            } else {
-              console.log('Dialog closed');
-            }
-          }
-    
-          // Update button opens a modal dialog
-          dialogButton.addEventListener('click', function(evt) {
-            let template = document.getElementById("dialogTemplate");
-            let dialogTag = template.content.cloneNode(true);
-            /* remember body overflow to restore it after dialog closed */
-            const bodyOverflowY = document.body.style.overflowY;
-            const bodyOverflowX = document.body.style.overflowX;
-            const newDialog = document.body.appendChild(dialogTag);
-            let dialog = document.getElementById("favDialog");
-            const messageListener = evt => {
-                console.log("inter-window message recieved", evt.data);
-                dialog.close();
-            };
-            dialog.addEventListener('close', ()=>{
-                document.body.style.overflowY = bodyOverflowY;
-                document.body.style.overflowX = bodyOverflowX;
-                dialog.parentNode.removeChild(dialog);
-                window.removeEventListener("message", messageListener);
-            });
-            dialogPolyfill.registerDialog(dialog);
-            document.body.style.overflowY = 'hidden';
-            let dialogCloseButton = document.querySelector("dialog .xbutton");
-            let dialogIframe = document.querySelector("dialog iframe");
-            //console.dir("closebutton", dialogCloseButton);
 
-            dialog.showModal();
-            let dialogCloseButtonRect = dialogCloseButton.getBoundingClientRect();
-            //console.log("closebutton height ", dialogCloseButtonRect);
-
-            dialogIframe.style.marginTop = -dialogCloseButtonRect.height+'px';
-            //dialogIframe.style.paddingTop =  dialogCloseButtonRect.height+'px';
-            dialogIframe.style.height='100vh';
-
-            
-            window.addEventListener("message", messageListener, false);
-
-            dialogCloseButton.addEventListener('click', ()=>{
-                window.postMessage("close-dialog", "*");
-            });
-            openCheck(dialog);
-          });
-    
-          // Form cancel button closes the dialog box
-          //cancelButton.addEventListener('click', function() {
-          //  dialog.close('animalNotChosen');
-          //  openCheck(dialog);
-          //});
-    
-        })();
-      </script>
+    <script src="https://unpkg.com/dialog-polyfill@0.5.0/dist/dialog-polyfill.js"></script>
+    <script src="../js/DialogForIFrame.js"></script>
 </html>
