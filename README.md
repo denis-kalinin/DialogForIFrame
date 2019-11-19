@@ -16,3 +16,8 @@ new DialogForIframe('wizard.html', 'dialogTemplate');
     </dialog>
 </template>
 ```
+
+From iframe send message to the parent window to open new dialog:
+```javascript
+window.parent.postMessage('http://example.com', '*');
+```

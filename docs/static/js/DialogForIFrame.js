@@ -24,41 +24,33 @@ class DialogForIFrame {
         } else if (dialogTemplate instanceof HTMLTemplateElement) {
             _dialogTemplate = dialogTemplate
         } else {
-            throw "Unapproprieate type of dialogTemplate";
+            throw "Wrong type of dialogTemplate: string (id) or HTMLTemplateElement only";
         }
         let dialogTag = _dialogTemplate.content.cloneNode(true);
         document.body.appendChild(dialogTag);
         let dialogCollection = document.body.getElementsByTagName("dialog");
         /* rememeber body overflow to restor it after dialog is closed */
         const bodyOverflow = document.body.style.overflow;
-        console.debug("body overflow", bodyOverflow);
-
-        const messageListerner = evt => {
-            if(evt.data && evt.data === dialogCloseEventId) dialog.close();
-        }
-        window.addEventListener('message', messageListerner, false);
 
         const dialog = dialogCollection[dialogCollection.length-1];
         dialog.addEventListener('close', () => {
             document.body.style.overflow = bodyOverflow;
             dialog.parentElement.removeChild(dialog);
-            window.removeEventListener('message', messageListerner);
         });
         dialogPolyfill.registerDialog(dialog);
         document.body.style.overflow = 'hidden';
         const iframe = document.createElement('iframe');
         iframe.src = iframeUrl;
-        iframe.style.width = '100vw';
-        iframe.style.height = '100vh';
+        iframe.style.width = '95vw';
+        iframe.style.height = '95vh';
         iframe.style.border = 0;
         dialog.appendChild(iframe);
         dialog.showModal();
 
         const dialogXButton = dialog.querySelector(`[role="${xButtonRole}"]`);
-        console.log(dialogXButton);
         //TODO maybe null
         dialogXButton.addEventListener('click', () => {
-            window.postMessage(dialogCloseEventId, '*');
+            dialog.close();
         });
     }
 }

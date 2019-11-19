@@ -1,1 +1,13 @@
-<!doctype html> <html class=no-js> <head> <meta charset=utf-8> <title>DialogForIFrame demo</title> <meta name=viewport content="width=device-width,initial-scale=1"> <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"></head> <body> <div class=Top>Top Content</div> <div class=Container> <div class=Left>Left Content</div> <div class=Middle><iframe src=static/html/table.html style=width:100%;height:100%></iframe></div> </div> <script type="text/javascript" src="runtime.da8944871a26b23988c5.js"></script><script type="text/javascript" src="main.cf864aeca305470cbd94.js"></script></body> </html> 
+<!doctype html> <html class=no-js> <head> <meta charset=utf-8> <title>DialogForIFrame demo</title> <meta name=viewport content="width=device-width,initial-scale=1"> <link rel=stylesheet type=text/css href=https://unpkg.com/dialog-polyfill@0.5.0/dist/dialog-polyfill.css /> <style>dialog+.backdrop,dialog::backdrop{position:fixed;top:0;left:0;right:0;bottom:0;background-color:rgba(0,0,0,.5)}.xbutton{width:24px;height:24px;background-color:red;position:absolute;top:0;right:0;border-radius:6px;box-shadow:2px 2px 4px 0 #fff}.xbutton:after,.xbutton:before{content:'';position:absolute;width:20px;height:4px;background-color:#fff;border-radius:2px;top:10px;box-shadow:0 0 2px 0 #ccc}.xbutton:before{-webkit-transform:rotate(45deg);-moz-transform:rotate(45deg);transform:rotate(45deg);left:2px}.xbutton:after{-webkit-transform:rotate(-45deg);-moz-transform:rotate(-45deg);transform:rotate(-45deg);right:2px}</style> <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"></head> <body> <div class=Top>Top Content</div> <div class=Container> <div class=Left>Left Content</div> <div class=Middle><iframe src=static/html/table.html style=width:100%;height:100%></iframe></div> </div> <template id=dialogTemplate> <dialog id=favDialog style=padding:0;border:0> <div class=xbutton role=xButton></div> </dialog> </template> <script src=https://unpkg.com/dialog-polyfill@0.5.0/dist/dialog-polyfill.js></script> <script src=static/js/DialogForIFrame.js></script> <script> const messageListerner = evt => {
+                if(evt.data && evt.data.hasOwnProperty('dialog')){
+                    console.debug(evt);
+                    if(evt.data.dialog && evt.data.dialog.url){
+                        new DialogForIFrame(evt.data.dialog.url, 'dialogTemplate');
+                    } else {
+                        let dialogCollection = document.body.getElementsByTagName("dialog");
+                        const dialog = dialogCollection[dialogCollection.length-1];
+                        dialog.close();
+                    }
+                }
+            }
+            window.addEventListener('message', messageListerner, false); </script> <script type="text/javascript" src="runtime.da8944871a26b23988c5.js"></script><script type="text/javascript" src="main.cf864aeca305470cbd94.js"></script></body> </html> 
