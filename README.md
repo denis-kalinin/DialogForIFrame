@@ -2,19 +2,19 @@ Window-wide dialog (native or polyfill) to show iframe within it.
 
 Demo: https://denis-kalinin.github.io/DialogForIFrame/
 
-Usage:
-```javascript
-new DialogForIframe('wizard.html', 'dialogTemplate');
-
-```
-`wizard.html` - URL to open in the dialog
-`dialogTemplate` - ID of the template element where dialog is defined
 ```html
-<template id="dialogTemplate">
-    <dialog style="width:100%;height100%;padding:0;border:0">
-        <div class="xbutton" role="xButton"></div>
+<head>
+    .....
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/dialog-polyfill@0.5.0/dist/dialog-polyfill.css" />
+    <script src="https://unpkg.com/dialog-polyfill@0.5.0/dist/dialog-polyfill.js"></script>
+    ...
+</head>
+<body>
+    ...
+    <dialog style="width:95%;height100%;padding:0;border:0">
+        <div class="xbutton" onclick="postMessage({dialog:null}, '*')"></div>
     </dialog>
-</template>
+</body>
 ```
 
 From iframe send message to the parent window to open new dialog:

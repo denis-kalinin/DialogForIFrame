@@ -1,0 +1,51 @@
+dialog::backdrop, dialog + .backdrop{ /* native */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+dialog + .backdrop{ /* polyfill */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+/* dialog close button */
+.xbutton{
+    width:24px;
+    height:24px;
+    background-color:red;
+    position:absolute;
+    top:-24px;
+    right:5px;
+    border-radius:6px;
+    box-shadow:2px 2px 4px 0 white;
+}
+
+.xbutton:before,.xbutton:after{
+    content:'';
+    position:absolute;
+    width:20px;
+    height:4px;
+    background-color:white;
+    border-radius:2px;
+    top:10px;
+    box-shadow:0 0 2px 0 #ccc;
+}
+
+.xbutton:before{
+    -webkit-transform:rotate(45deg);
+    -moz-transform:rotate(45deg);
+    transform:rotate(45deg);
+    left:2px;
+}
+.xbutton:after{
+    -webkit-transform:rotate(-45deg);
+    -moz-transform:rotate(-45deg);
+    transform:rotate(-45deg);
+    right:2px;
+}
