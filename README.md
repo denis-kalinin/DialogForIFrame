@@ -5,8 +5,11 @@ Demo: https://denis-kalinin.github.io/DialogForIFrame/
 ```html
 <head>
     .....
+    <!-- Dialog -->
     <link rel="stylesheet" type="text/css" href="https://unpkg.com/dialog-polyfill@0.5.0/dist/dialog-polyfill.css" />
+    <link rel="stylesheet" type="text/css" href="https://denis-kalinin.github.io/DialogForIFrame/static/css/dialog.css" />
     <script src="https://unpkg.com/dialog-polyfill@0.5.0/dist/dialog-polyfill.js"></script>
+    <script src="https://denis-kalinin.github.io/DialogForIFrame/static/js/dialog.js"></script>
     ...
 </head>
 <body>
@@ -17,7 +20,7 @@ Demo: https://denis-kalinin.github.io/DialogForIFrame/
 </body>
 ```
 
-From iframe send message to the parent window to open new dialog:
+From iframe send message to the parent window to open a new dialog:
 ```javascript
 window.parent.postMessage('http://example.com', '*');
 ```
