@@ -54,7 +54,7 @@ module.exports = ( env, argv ) => {
   //////PRODUCTION////////
   let theWebcontext;
   if (config.mode === 'production') {
-    theWebcontext = '/DialogForIframe';
+    theWebcontext = '/DialogForIFrame';
     config.plugins.push(new CleanWebpackPlugin());
   }
   //////DEVELOPMENT////////
