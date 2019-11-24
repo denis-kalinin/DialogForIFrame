@@ -1,4 +1,9 @@
-Window-wide dialog (native or polyfill) to show iframe within it.
+Window-wide dialog (native or polyfill) to show iframes within it.
+Tested on:
+- Chrome
+- Firefox
+- Safari
+- Internet Explorer 11
 
 Demo: https://denis-kalinin.github.io/DialogForIFrame/
 
