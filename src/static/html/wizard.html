@@ -11,7 +11,10 @@
             </p>
             <code style="display:block;">window.parent.postMessage({dialog:null}, '*')</code>
             <hr />
-            <button onclick="window.parent.postMessage({dialog:null}, '*');">CLOSE THE DIALOG WINDOW</button>
+            <button onclick="window.parent.postMessage({dialog:null}, '*');">CLOSE WIZARD</button>
+            <hr />
+            <button onclick="window.parent.postMessage({dialog:{url: 'static/html/wizard.html'}}, '*');">OPEN WIZARD</button>
+            <button onclick="window.parent.postMessage({dialog:{url:'https://bing.com'}}, '*');">Bing</button>
             <hr />
             <p>We don't close iframe via parent window, because
                 they can be in different domains, so <code>window.parent.frames[0].close()</code> won't work in a such case.

@@ -8,7 +8,7 @@
     <body>
         <p>To open a dialog send message to parent window with JavaScript:
         </p>
-        <code style="display: block;">window.parent.postMessage({dialog:{url:'http://example.com', '*')</code>
+        <code style="display: block;">window.parent.postMessage({dialog:{url:'http://example.com}}', '*')</code>
         <hr />
         <button onclick="window.parent.postMessage({dialog:{url:'static/html/wizard.html'}}, '*');">SHOW DIALOG</button>
         <button onclick="window.parent.postMessage({dialog:{url:'https://bing.com'}}, '*');">Bing</button>
