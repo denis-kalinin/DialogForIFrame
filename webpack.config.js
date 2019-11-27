@@ -54,12 +54,12 @@ module.exports = ( env, argv ) => {
   //////PRODUCTION////////
   let theWebcontext;
   if (config.mode === 'production') {
-    theWebcontext = '/DialogForIFrame';
+    theWebcontext = '/DialogForIFrame/';
     config.plugins.push(new CleanWebpackPlugin());
   }
   //////DEVELOPMENT////////
   if (config.mode === 'development'){
-    theWebcontext = '';
+    theWebcontext = '/';
   }
   const htmlPlugin = new HtmlWebPackPlugin({
     template: "src/index.html",

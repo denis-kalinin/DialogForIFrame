@@ -11,7 +11,7 @@
         //document.removeEventListener( "DOMContentLoaded", arguments.callee, false );
         if(dialogInitialized===true) return;
         dialogInitialized = true;
-        var dialog = document.body.querySelector('dialog');
+        var dialog = document.body.querySelector('dialog[role=topdialog]');
         var tabWindow = dialog.querySelector('.tabwindow');
         var iframeCounter = 0;
         /* rememeber body overflow to restore it after dialog is closed */
