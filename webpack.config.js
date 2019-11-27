@@ -6,22 +6,35 @@ const path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 const config = {
-    /*
   module: {
     rules: [
       {
         test: /\.html$/,
-        use: [{ loader: "html-loader", options: { minimize: true } }]
+        use: [{ loader: "html-loader", options: { minimize: false } }]
       },
       {
        test: /\.css$/,
        use: ['style-loader', 'css-loader']
       }
+    ],
+    /*
+    loaders: [
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel',
+          options: {
+            presets: ['es2015']
+          }
+        }
+      }
     ]
+    */
   },
   optimization: {
     moduleIds: 'hashed',
-    minimize: true,
+    minimize: false,
     splitChunks: {
       cacheGroups: {
         vendor: {
@@ -33,7 +46,6 @@ const config = {
     },
     runtimeChunk: 'single',
   },
-  */
  plugins: [
   new CopyWebpackPlugin([
     { from: 'src/static', to: 'static' },

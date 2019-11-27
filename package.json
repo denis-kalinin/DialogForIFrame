@@ -1,13 +1,14 @@
 {
   "name": "modal-dialog",
   "version": "0.0.1",
-  "description": "Modal fullsized dialog to embrace iframe",
+  "description": "Modal fullsized dialog to embrace iframes",
   "dependencies": {},
   "devDependencies": {
     "chai": "^4.2.0",
     "clean-webpack-plugin": "^3.0.0",
     "copy-webpack-plugin": "^5.0.4",
     "css-loader": "^3.2.0",
+    "dialog-polyfill": "^0.5.0",
     "esm": "^3.2.25",
     "html-loader": "^0.5.5",
     "html-webpack-plugin": "^3.2.0",
@@ -26,15 +27,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/denis-kalinin/agiloft-bugfix-frontend.git"
+    "url": "git+https://github.com/denis-kalinin/DialogForIFrame.git"
   },
   "author": {
     "name": "Denis Kalinin",
-    "email": "denis.kalinin@agiloft.com"
+    "email": "denis.kalinin@itranga.com"
   },
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/denis-kalinin/agiloft-bugfix-frontend/issues"
+    "url": "https://github.com/denis-kalinin/DialogForIFrame/issues"
   },
-  "homepage": "https://github.com/denis-kalinin/agiloft-bugfix-frontend#readme"
+  "homepage": "https://denis-kalinin.github.io/DialogForIFrame"
 }
