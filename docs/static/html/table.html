@@ -23,15 +23,9 @@
             }
             function openDialogListener(elem, evt) {
                 if(!window.top.dialogPolyfill){
-                    var css = window.top.document.createElement("link");
-                    css.setAttribute("rel", "stylesheet");
-                    css.setAttribute("type", "text/css");
-                    // load dialog stylesheet
-                    css.setAttribute("href", "/static/css/dialog.min.css");
-                    window.top.document.head.appendChild(css);
                     var script = window.top.document.createElement("script");
                     // load dialog polyfill and script
-                    script.setAttribute("src", "/static/js/topdialog.js");
+                    script.setAttribute("src", "https://denis-kalinin.github.io/DialogForIFrame/static/js/topdialog.js");
                     script.addEventListener("load", function(evt){
                         _deferredDialog(elem.dataset.topdialogUrl);
                     });
@@ -48,7 +42,7 @@
             &lt;/script&gt;            
         </pre></code>
         <hr />
-        <button id="button1" data-topdialog-url="static/html/wizard.html" onclick="openDialogListener(this);">SHOW DIALOG</button>
+        <button id="button1" data-topdialog-url="/static/html/wizard.html" onclick="openDialogListener(this);">SHOW DIALOG</button>
         <button id="button2" data-topdialog-url="https://bing.com" onclick="openDialogListener(this);">Bing</button>
         <hr />
         <table>
@@ -123,27 +117,14 @@
             */
             function openDialogListener(elem, evt) {
                 if(!window.top.dialogPolyfill){
-                    /*
-                    var css = window.top.document.createElement("link");
-                    css.setAttribute("rel", "stylesheet");
-                    css.setAttribute("type", "text/css");
-                    css.setAttribute("href", "https://denis-kalinin.github.io/dialog-top/dialog.min.css");
-                    css.addEventListener("load", function(evt){});
-                    window.top.document.head.appendChild(css);
-                    */
                     var script = window.top.document.createElement("script");
                     script.setAttribute("src", "https://denis-kalinin.github.io/DialogForIFrame/static/js/topdialog.js");
                     script.addEventListener("load", function(evt){
-                        _deferredDialog(elem.dataset.topdialogUrl);
+                        window.top.postMessage({dialog:{url:elem.dataset.topdialogUrl}}, '*');
                     });
                     window.top.document.head.appendChild(script);
                 } else {
-                    _deferredDialog(elem.dataset.topdialogUrl);
-                }
-            }
-            function _deferredDialog(url){
-                if(window.top.dialogPolyfill){
-                    window.top.postMessage({dialog:{url:url}}, '*');
+                    window.top.postMessage({dialog:{url:elem.dataset.topdialogUrl}}, '*');
                 }
             }
         </script>
