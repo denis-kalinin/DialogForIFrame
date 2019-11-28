@@ -15,6 +15,12 @@ dialog + .backdrop{ /* polyfill */
     background-color: rgba(0, 0, 0, 0.5);
 }
 /* dialog close button */
+dialog[role=topdialog] {
+    width:95%;
+    height:90%;
+    border:0;
+    padding:0;
+}
 
 dialog nav {
     border: 1px solid #ccc;

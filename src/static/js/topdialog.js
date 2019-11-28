@@ -744,7 +744,7 @@
   
   }));
   
-(function(w) {
+  (function() {
     function domReady(callbackFunction){
         if(document.readyState != 'loading')
           callbackFunction(event)
@@ -753,8 +753,7 @@
       }
     var dialogInitialized = false;
     var tabs = [];
-    function _init() { 
-        //document.removeEventListener( "DOMContentLoaded", arguments.callee, false );
+    function _init() {
         if(dialogInitialized===true) return;
         dialogInitialized = true;
         var dialog = document.body.querySelector('dialog[role=topdialog]');
@@ -770,7 +769,7 @@
                 }
             });
 
-        w.dialogPolyfill.registerDialog(dialog);
+        window.dialogPolyfill.registerDialog(dialog);
         function _createDialog(iframeUrl){
             document.body.style.overflow = 'hidden';
             var iframe = document.createElement('iframe');
@@ -834,6 +833,8 @@
                     postMessage({dialog:{close: ifr.dataset.counter}}, '*');
                 });
                 tab.appendChild(xButton);
+                var textNode = document.createTextNode('');
+                tab.appendChild(textNode);
                 if(!ifr.dataset.title){
                     /* get title for the tab */
                     ifr.onload = function(){
@@ -844,11 +845,10 @@
                             } else {
                                 ifr.dataset.title=ifr.src;
                             }
-                            tab.appendChild(document.createTextNode(ifr.dataset.title));
                         } catch(error){
                             ifr.dataset.title = ifr.src;
-                            tab.appendChild(document.createTextNode(ifr.dataset.title));
                         }
+                        textNode.nodeValue = ifr.dataset.title;
                     }
                 } else {
                     tab.appendChild(document.createTextNode(ifr.dataset.title));
@@ -861,23 +861,18 @@
         function getDefaultTopDialog(){
             var dialog = document.createElement("dialog");
             dialog.setAttribute("role", "topdialog");
-            //dialog.style.width="95%";
-            dialog.style.height="90%";
-            //dialog.style.border="0";
-            //dialog.style.padding="0";
             var tabbedDiv = document.createElement("div");
             tabbedDiv.classList.add("tabbed");
             var nav = document.createElement("nav");
             var tabWindow = document.createElement("div");
-            tabWindow.classList.add("tabwindow");
-            
+            tabWindow.classList.add("tabwindow");            
             tabbedDiv.appendChild(nav);
             tabbedDiv.appendChild(tabWindow);
             dialog.appendChild(tabbedDiv);
             document.body.appendChild(dialog);
             return dialog;
         }
-        w.addEventListener('message', _messageListerner, false);
+        window.addEventListener('message', _messageListerner, false);
     };
     domReady(_init);
-})( window.self );
+})();
