@@ -12,8 +12,9 @@
             <code style="display:block;">window.parent.postMessage({dialog:null}, '*')</code>
             <hr />
             <button onclick="window.parent.postMessage({dialog:null}, '*');">CLOSE WIZARD</button>
+            <button onclick="window.close();">window.close();</button>
             <hr />
-            <button onclick="window.parent.postMessage({dialog:{url: 'static/html/wizard.html'}}, '*');">OPEN WIZARD</button>
+            <button onclick="window.parent.postMessage({dialog:{url: window.location.href}}, '*');">OPEN WIZARD</button>
             <button onclick="window.parent.postMessage({dialog:{url:'https://bing.com'}}, '*');">Bing</button>
             <hr />
             <p>We don't close iframe via parent window, because

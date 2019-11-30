@@ -841,6 +841,7 @@
                         try{
                             var doc = ifr.contentDocument? ifr.contentDocument: ifr.contentWindow.document;
                             ifr.contentWindow.opener = dialogOpenerWindow;
+                            ifr.contentWindow.close = function(){this.window.top.postMessage({dialog:null}, '*');}
                             if(doc && doc.title){
                                 ifr.dataset.title=doc.title;
                             } else {

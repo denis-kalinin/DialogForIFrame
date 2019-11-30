@@ -42,7 +42,7 @@
             &lt;/script&gt;            
         </pre></code>
         <hr />
-        <button id="button1" data-topdialog-url="/static/html/wizard.html" onclick="openDialogListener(this);">SHOW DIALOG</button>
+        <button id="button1" data-topdialog-url="static/html/wizard.html" onclick="openDialogListener(this);">SHOW DIALOG</button>
         <button id="button2" data-topdialog-url="https://bing.com" onclick="openDialogListener(this);">Bing</button>
         <hr />
         <table>
@@ -118,7 +118,7 @@
             function openDialogListener(elem, evt) {
                 if(!window.top.dialogPolyfill){
                     var script = window.top.document.createElement("script");
-                    script.setAttribute("src", "https://denis-kalinin.github.io/DialogForIFrame/static/js/topdialog.js");
+                    script.setAttribute("src", "/static/js/topdialog.js");
                     script.addEventListener("load", function(evt){
                         window.top.postMessage({dialog:{url:elem.dataset.topdialogUrl}}, '*');
                     });
