@@ -2,8 +2,28 @@
 <html>
     <head>
         <title>Wizard (should be in Dialog window)</title>
+        <script>
+            function getOpenerTitle(callback){
+                if(window.opener){
+                    callback( window.opener );
+                } else {
+                    var reciever = window.actualTop ? window.actualTop : window.top;
+                    reciever.postMessage({dialog:{openerRequest:{tabCounter:window.frameElement.dataset.counter, callback:"setOpener"}}}, '*');
+                }
+            }
+            function init(){
+                getOpenerTitle(setOpener);
+            }
+            function setOpener(theOpener){
+                document.getElementById('openerTitle').textContent = theOpener.location.href;
+            }
+            function printTopLocation(){
+                window.top = window.self;
+                document.getElementById('topLocation').textContent = window.top.location;
+            }
+        </script>
     </head>
-    <body>
+    <body onload="init()">
         <h1>Wizard in the Dialog</h1>
         <article>
             <p>This page is in the iframe. In case you want to close a parent dialog window from the iframe,
@@ -20,6 +40,8 @@
             <p>We don't close iframe via parent window, because
                 they can be in different domains, so <code>window.parent.frames[0].close()</code> won't work in a such case.
             </p>
+            <p><button onclick="init()">Get Opener Title</button>: <span id="openerTitle"></span></p>
+            <p><button onclick="printTopLocation()">window.top.location</button>: <span id="topLocation"></span></p>
             <p>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Nulla aliquet enim tortor at. Viverra tellus in hac habitasse platea dictumst vestibulum. Sollicitudin tempor id eu nisl. Fermentum odio eu feugiat pretium. Arcu felis bibendum ut tristique. Vitae congue mauris rhoncus aenean vel. Id diam vel quam elementum pulvinar etiam non quam lacus. Purus gravida quis blandit turpis. Ullamcorper eget nulla facilisi etiam dignissim diam quis enim. Tortor dignissim convallis aenean et tortor at. Sit amet facilisis magna etiam tempor orci eu lobortis.
             </p>
@@ -43,6 +65,6 @@
                 </tr>
                     <td>gaoiewfabao</td>
                 </tr>
-            </table>
+        </table>
     </body>
 </html>
