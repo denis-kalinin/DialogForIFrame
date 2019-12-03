@@ -774,7 +774,7 @@
             document.body.style.overflow = 'hidden';
             var iframe = document.createElement('iframe');
             iframe.src = iframeUrl;
-            iframe.dataset.counter = ++iframeCounter;
+            iframe.dataset.dialogId = ++iframeCounter;
             if(tabs.length>0) for( var k = 0; k < tabs.length; k++){
                 tabs[k].iframe.style.display='none';
             } else {
@@ -782,17 +782,17 @@
             }
             tabs[tabs.length] = {iframe:iframe,opener:dialogOpenerWindow};
             tabWindow.appendChild(iframe);
-            _redrawTabs(iframeCounter);
+            _redrawTabs(iframe.dataset.dialogId);
         }
-        function _closeTab(countnum){
+        function _closeTab(dialogId){
             for(var i=0; i<tabs.length; i++){
-                if(tabs[i].iframe.dataset.counter == countnum){
+                if(tabs[i].iframe.dataset.dialogId == dialogId){
                     tabWindow.removeChild(tabs[i].iframe);
                     tabs.splice(i, 1);
                     if(tabs.length>0){
                         var ifr = tabs[tabs.length-1].iframe;
                         ifr.style.display='block';
-                        _redrawTabs(ifr.dataset.counter);
+                        _redrawTabs(ifr.dataset.dialogId);
                     } else {
                         dialog.close();
                     }
@@ -806,27 +806,18 @@
                     _createDialog(evt.data.dialog.url, evt.source);
                 } else if( evt.data.dialog && evt.data.dialog.close) {
                     _closeTab(evt.data.dialog.close);
-                } else if (evt.data.dialog && evt.data.dialog.openerRequest){
-                    var setOpenerFun = evt.data.dialog.openerRequest.callback;
-                    var openerForTab = evt.data.dialog.openerRequest.tabCounter;
-                    for( var k = 0; k < tabs.length; k++){
-                      if(tabs[k].iframe.dataset.counter == openerForTab){
-                        debugger;
-                        tabs[k].iframe.contentWindow[setOpenerFun](tabs[k].opener);
-                      }
-                    }
                 }else {
                     var allIrames = tabWindow.querySelectorAll('iframe');
                     for(var u=0; u<allIrames.length; u++){
                         var ifr = allIrames[u];
                         if(ifr.style.display!='none'){
-                            _closeTab(ifr.dataset.counter);
+                            _closeTab(ifr.dataset.dialogId);
                         }
                     }
                 }
             }
         }
-        function _redrawTabs(counter){
+        function _redrawTabs(dialogId){
             var nav = dialog.querySelector('nav');
             var frag = document.createDocumentFragment();
             for( var i=0; i<tabs.length; i++ ){
@@ -836,26 +827,32 @@
                 var xButton = document.createElement('div');
                 xButton.classList.add('xbutton');
                 xButton.addEventListener('click', function(evt){
-                    postMessage({dialog:{close: ifr.dataset.counter}}, '*');
+                    postMessage({dialog:{close: ifr.dataset.dialogId}}, '*');
                 });
                 tab.appendChild(xButton);
                 var textNode = document.createTextNode(ifr.dataset.title?ifr.dataset.title:ifr.src);
                 tab.appendChild(textNode);
                 /* get title for the tab */
-                if(counter == ifr.dataset.counter){
+                if(dialogId == ifr.dataset.dialogId){
                   tab.classList.add('active');
                   if(ifr.onload==null){
                     var ifrOpener = tabs[i].opener;
                     ifr.onload = function(){
-                      //debugger;
                       try{
                           var doc = ifr.contentDocument? ifr.contentDocument: ifr.contentWindow.document;
                           ifr.contentWindow.opener = ifrOpener;
-                          ifr.contentWindow.close = function(){this.window.top.postMessage({dialog:null}, '*');}
-                          debugger;
-                          var actualTop = ifr.top;
-                          ifr.actualTop = actualTop;
-                          ifr.top = ifr.self;
+                          
+                          ifr.contentWindow['close'] = function(){
+                              this.window.top.postMessage({dialog:null}, '*');
+                          }
+                          ifr.contentWindow.onunload = function(){
+                                console.log('on unload');
+                            };
+                        ifr.contentWindow.onbeforeunload = function(){
+                                console.log('before unload');
+                            };
+                         //ifr.contentWindow.eval('function close(){ console.log("Im in the iframe " + window.location.href); }');
+                          ifr.contentWindow.postMessage({dialog:{opener:true}}, '*');
                           if(doc && doc.title){
                               ifr.dataset.title=doc.title;
                           } else {

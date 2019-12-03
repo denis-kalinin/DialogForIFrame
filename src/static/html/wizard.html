@@ -3,24 +3,61 @@
     <head>
         <title>Wizard (should be in Dialog window)</title>
         <script>
-            function getOpenerTitle(callback){
+            function init(){
                 if(window.opener){
-                    callback( window.opener );
+                    console.log("window opener is set synchronously")
+                    pageLoaded();
                 } else {
-                    var reciever = window.actualTop ? window.actualTop : window.top;
-                    reciever.postMessage({dialog:{openerRequest:{tabCounter:window.frameElement.dataset.counter, callback:"setOpener"}}}, '*');
+                    window.addEventListener('message', function(evt){
+                        if(evt.data && evt.data.hasOwnProperty('dialog')){
+                            if(evt.data.dialog && evt.data.dialog.opener){
+                                console.log("window.opener is set asyncronously");
+                                pageLoaded();
+                            }
+                        }
+                    }, {once:true});
                 }
             }
-            function init(){
-                getOpenerTitle(setOpener);
+            function pageLoaded(){
+                _printInfo();
             }
-            function setOpener(theOpener){
-                document.getElementById('openerTitle').textContent = theOpener.location.href;
-            }
-            function printTopLocation(){
-                window.top = window.self;
+            function _printInfo(){
+                document.getElementById('openerTitle').textContent = window.opener.location.href;
                 document.getElementById('topLocation').textContent = window.top.location;
             }
+            function destroy(){
+                window.opener.document.body.textContent = 'I was destroyed';
+                window.close();
+            }
+            console.log('window constructor ' + window.constructor.name);
+            //window['close'] = function () {
+            //    console.log('[close]');
+            //}
+            Window.prototype.closes = function() {
+                //console.log('proto close');
+                window.top.postMessage({dialog:null}, '*')
+                window.close();
+                console.log("I passed")
+            }
+            /*
+            window.close = function (window_close) {
+                return function () {
+                    // set name if missing here
+                    console.log("CLOSE!!!");
+                    //return window_close.call(window);
+                    window_close.top.postMessage({dialog:null}, '*');
+                };
+            }(window);//(window.open);
+            */
+           /*
+            window.onbeforeunload = function () {
+                // window.opener.alert("test");
+                //_close(); 
+                debugger;       
+                console.log("unloading");
+                //return callBack();
+            };
+            */
         </script>
     </head>
     <body onload="init()">
@@ -33,6 +70,8 @@
             <hr />
             <button onclick="window.parent.postMessage({dialog:null}, '*');">CLOSE WIZARD</button>
             <button onclick="window.close();">window.close();</button>
+            <button onclick="document.close();">document.close();</button>
+            <button onclick="destroy();">destroy();</button>
             <hr />
             <button onclick="window.parent.postMessage({dialog:{url: window.location.href}}, '*');">OPEN WIZARD</button>
             <button onclick="window.parent.postMessage({dialog:{url:'https://bing.com'}}, '*');">Bing</button>
@@ -40,8 +79,8 @@
             <p>We don't close iframe via parent window, because
                 they can be in different domains, so <code>window.parent.frames[0].close()</code> won't work in a such case.
             </p>
-            <p><button onclick="init()">Get Opener Title</button>: <span id="openerTitle"></span></p>
-            <p><button onclick="printTopLocation()">window.top.location</button>: <span id="topLocation"></span></p>
+            <p><button onclick="init();">Get Opener Title</button>: <span id="openerTitle"></span></p>
+            <p><button onclick="_printInfo();">window.top.location</button>: <span id="topLocation"></span></p>
             <p>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Nulla aliquet enim tortor at. Viverra tellus in hac habitasse platea dictumst vestibulum. Sollicitudin tempor id eu nisl. Fermentum odio eu feugiat pretium. Arcu felis bibendum ut tristique. Vitae congue mauris rhoncus aenean vel. Id diam vel quam elementum pulvinar etiam non quam lacus. Purus gravida quis blandit turpis. Ullamcorper eget nulla facilisi etiam dignissim diam quis enim. Tortor dignissim convallis aenean et tortor at. Sit amet facilisis magna etiam tempor orci eu lobortis.
             </p>
