@@ -25,20 +25,21 @@
                 document.getElementById('openerTitle').textContent = window.opener.location.href;
                 document.getElementById('topLocation').textContent = window.top.location;
             }
-            function destroy(){
-                window.opener.document.body.textContent = 'I was destroyed';
-                window.close();
+            function destroy() {
+                console.log("Opener = ", window.opener);
+                if(window.opener) window.opener.document.body.textContent = "I am destroyied!";
             }
-            console.log('window constructor ' + window.constructor.name);
             //window['close'] = function () {
             //    console.log('[close]');
             //}
+            /*
             Window.prototype.closes = function() {
                 //console.log('proto close');
                 window.top.postMessage({dialog:null}, '*')
                 window.close();
                 console.log("I passed")
             }
+            */
             /*
             window.close = function (window_close) {
                 return function () {
@@ -68,13 +69,14 @@
             </p>
             <code style="display:block;">window.parent.postMessage({dialog:null}, '*')</code>
             <hr />
-            <button onclick="window.parent.postMessage({dialog:null}, '*');">CLOSE WIZARD</button>
+            <button onclick="window.top.postMessage({dialog:null}, '*');">CLOSE WIZARD (postMessage)</button>
+            <button onclick="typeof(window._closeup)===typeof(Function)?window._closeup():window.close();">window._closeup() || window.close();</button>
             <button onclick="window.close();">window.close();</button>
-            <button onclick="document.close();">document.close();</button>
-            <button onclick="destroy();">destroy();</button>
+            <button onclick="_closeup();">_closeup();</button>
+            <button onclick="window.destroy()">destroy() opener</button>
             <hr />
-            <button onclick="window.parent.postMessage({dialog:{url: window.location.href}}, '*');">OPEN WIZARD</button>
-            <button onclick="window.parent.postMessage({dialog:{url:'https://bing.com'}}, '*');">Bing</button>
+            <button onclick="window.top.postMessage({dialog:{url: window.location.href}}, '*');">OPEN WIZARD</button>
+            <button onclick="window.top.postMessage({dialog:{url:'https://bing.com'}}, '*');">Bing</button>
             <hr />
             <p>We don't close iframe via parent window, because
                 they can be in different domains, so <code>window.parent.frames[0].close()</code> won't work in a such case.

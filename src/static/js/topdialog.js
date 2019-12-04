@@ -775,7 +775,7 @@
             var iframe = document.createElement('iframe');
             iframe.src = iframeUrl;
             iframe.dataset.dialogId = ++iframeCounter;
-            if(tabs.length>0) for( var k = 0; k < tabs.length; k++){
+            if(tabs.length>0) for( var k = 0; k < tabs.length; k++ ){
                 tabs[k].iframe.style.display='none';
             } else {
                 dialog.showModal();
@@ -784,18 +784,29 @@
             tabWindow.appendChild(iframe);
             _redrawTabs(iframe.dataset.dialogId);
         }
-        function _closeTab(dialogId){
-            for(var i=0; i<tabs.length; i++){
+        function _findEventSourceIframe( sourceWindow ){
+            for(var i=0; i<tabs.length; i++) {
+                var f = tabs[i].iframe;
+                if (f.contentWindow==sourceWindow){
+                    return {iframe:f, tabIndex:i};
+                }
+            }
+        }
+        function _removeIframe(iframeAndTabIndex) {
+            tabWindow.removeChild(iframeAndTabIndex.iframe);
+            tabs.splice(iframeAndTabIndex.tabIndex, 1);
+            if(tabs.length>0){
+                var ifr = tabs[tabs.length-1].iframe;
+                ifr.style.display='block';
+                _redrawTabs(ifr.dataset.dialogId);
+            } else {
+                dialog.close();
+            }
+        }
+        function _closeTabByDialogId(dialogId){
+            for (var i=0; i<tabs.length; i++){
                 if(tabs[i].iframe.dataset.dialogId == dialogId){
-                    tabWindow.removeChild(tabs[i].iframe);
-                    tabs.splice(i, 1);
-                    if(tabs.length>0){
-                        var ifr = tabs[tabs.length-1].iframe;
-                        ifr.style.display='block';
-                        _redrawTabs(ifr.dataset.dialogId);
-                    } else {
-                        dialog.close();
-                    }
+                    _removeIframe({iframe:tabs[i].iframe, tabIndex:i});
                     return;
                 }
             }
@@ -804,15 +815,12 @@
             if(evt.data && evt.data.hasOwnProperty('dialog')){
                 if(evt.data.dialog && evt.data.dialog.url){
                     _createDialog(evt.data.dialog.url, evt.source);
-                } else if( evt.data.dialog && evt.data.dialog.close) {
-                    _closeTab(evt.data.dialog.close);
+                } else if (evt.data.dialog && evt.data.dialog.close) {
+                    _closeTabByDialogId(evt.data.dialog.close);
                 }else {
-                    var allIrames = tabWindow.querySelectorAll('iframe');
-                    for(var u=0; u<allIrames.length; u++){
-                        var ifr = allIrames[u];
-                        if(ifr.style.display!='none'){
-                            _closeTab(ifr.dataset.dialogId);
-                        }
+                    var iframeAndTabIndex = _findEventSourceIframe(evt.source);
+                    if(iframeAndTabIndex) {
+                        _removeIframe(iframeAndTabIndex);
                     }
                 }
             }
@@ -824,35 +832,38 @@
                 var tab = document.createElement('div');
                 tab.classList.add('tab');
                 var ifr = tabs[i].iframe;
-                var xButton = document.createElement('div');
-                xButton.classList.add('xbutton');
-                xButton.addEventListener('click', function(evt){
-                    postMessage({dialog:{close: ifr.dataset.dialogId}}, '*');
-                });
+                //if(i===tabs.length-1){
+                    var xButton = document.createElement('div');
+                    xButton.classList.add('xbutton');
+                    xButton.addEventListener('click', function(evt){
+                        window.top.postMessage({dialog:{close: ifr.dataset.dialogId}}, '*');
+                    });
+                //}
                 tab.appendChild(xButton);
                 var textNode = document.createTextNode(ifr.dataset.title?ifr.dataset.title:ifr.src);
-                tab.appendChild(textNode);
+                tab.appendChild( textNode );
                 /* get title for the tab */
                 if(dialogId == ifr.dataset.dialogId){
                   tab.classList.add('active');
                   if(ifr.onload==null){
                     var ifrOpener = tabs[i].opener;
+                    var iWin = ifr.contentWindow;
                     ifr.onload = function(){
-                      try{
-                          var doc = ifr.contentDocument? ifr.contentDocument: ifr.contentWindow.document;
-                          ifr.contentWindow.opener = ifrOpener;
-                          
-                          ifr.contentWindow['close'] = function(){
-                              this.window.top.postMessage({dialog:null}, '*');
-                          }
-                          ifr.contentWindow.onunload = function(){
-                                console.log('on unload');
-                            };
-                        ifr.contentWindow.onbeforeunload = function(){
-                                console.log('before unload');
-                            };
-                         //ifr.contentWindow.eval('function close(){ console.log("Im in the iframe " + window.location.href); }');
-                          ifr.contentWindow.postMessage({dialog:{opener:true}}, '*');
+                      try{                         
+                          iWin._closeup = function(){
+                              this.top.postMessage({dialog:{close:ifr.dataset.dialogId}}, '*');
+                          };
+                          /* override window.close() - the trick doesn't work in IE, so if iframe wants to close itself then
+                           * correct withing iframes where you call window.close(); and substitute with:
+                           *  ;typeof(window._closeup)===typeof(Function)?window.closeup():window.close();
+                           */
+                          iWin.close = function(){
+                            this._closeup();
+                          };
+                          iWin.opener = ifrOpener;
+                          //send message to iframe to react on opener set
+                          iWin.postMessage({dialog:{opener:true}}, '*');
+                          var doc = ifr.contentDocument? ifr.contentDocument : iWin.document;
                           if(doc && doc.title){
                               ifr.dataset.title=doc.title;
                           } else {
