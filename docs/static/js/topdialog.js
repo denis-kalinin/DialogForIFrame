@@ -770,32 +770,45 @@
             });
 
         window.dialogPolyfill.registerDialog(dialog);
-        function _createDialog(iframeUrl, dialogOpenerWindow){
+
+        function _createDialog(iframeUrl, dialogOpenerWindow, title){
             document.body.style.overflow = 'hidden';
             var iframe = document.createElement('iframe');
             iframe.src = iframeUrl;
-            iframe.dataset.counter = ++iframeCounter;
-            if(tabs.length>0) for( var k = 0; k < tabs.length; k++){
-                tabs[k].style.display='none';
+            iframe.dataset.dialogId = ++iframeCounter;
+            if(title) iframe.dataset.title = title;
+            if(tabs.length>0) for( var k = 0; k < tabs.length; k++ ){
+                tabs[k].iframe.style.display='none';
             } else {
                 dialog.showModal();
             }
-            tabs[tabs.length] = iframe;
+            tabs[tabs.length] = {iframe:iframe,opener:dialogOpenerWindow};
             tabWindow.appendChild(iframe);
-            _redrawTabs(iframeCounter, dialogOpenerWindow);
+            _redrawTabs(iframe.dataset.dialogId);
         }
-        function _closeTab(countnum){
-            for(var i=0; i<tabs.length; i++){
-                if(tabs[i].dataset.counter == countnum){
-                    tabWindow.removeChild(tabs[i]);
-                    tabs.splice(i, 1);
-                    if(tabs.length>0){
-                        var ifr = tabs[tabs.length-1];
-                        ifr.style.display='block';
-                        _redrawTabs(ifr.dataset.counter);
-                    } else {
-                        dialog.close();
-                    }
+        function _findEventSourceIframe( sourceWindow ){
+            for(var i=0; i<tabs.length; i++) {
+                var f = tabs[i].iframe;
+                if (f.contentWindow==sourceWindow){
+                    return {iframe:f, tabIndex:i};
+                }
+            }
+        }
+        function _removeIframe(iframeAndTabIndex) {
+            tabWindow.removeChild(iframeAndTabIndex.iframe);
+            tabs.splice(iframeAndTabIndex.tabIndex, 1);
+            if(tabs.length>0){
+                var ifr = tabs[tabs.length-1].iframe;
+                ifr.style.display='block';
+                _redrawTabs(ifr.dataset.dialogId);
+            } else {
+                dialog.close();
+            }
+        }
+        function _closeTabByDialogId(dialogId){
+            for (var i=0; i<tabs.length; i++){
+                if(tabs[i].iframe.dataset.dialogId == dialogId){
+                    _removeIframe({iframe:tabs[i].iframe, tabIndex:i});
                     return;
                 }
             }
@@ -803,57 +816,68 @@
         function _messageListerner(evt){
             if(evt.data && evt.data.hasOwnProperty('dialog')){
                 if(evt.data.dialog && evt.data.dialog.url){
-                    _createDialog(evt.data.dialog.url, evt.source);
-                } else if( evt.data.dialog && evt.data.dialog.close) {
-                    _closeTab(evt.data.dialog.close);
-                } else {
-                    var allIrames = tabWindow.querySelectorAll('iframe');
-                    for(var u=0; u<allIrames.length; u++){
-                        var ifr = allIrames[u];
-                        if(ifr.style.display!='none'){
-                            _closeTab(ifr.dataset.counter);
-                        }
+                    _createDialog(evt.data.dialog.url, evt.source, evt.data.dialog.title);
+                } else if (evt.data.dialog && evt.data.dialog.close) {
+                    _closeTabByDialogId(evt.data.dialog.close);
+                }else {
+                    var iframeAndTabIndex = _findEventSourceIframe(evt.source);
+                    if(iframeAndTabIndex) {
+                        _removeIframe(iframeAndTabIndex);
                     }
                 }
             }
         }
-        function _redrawTabs(counter, dialogOpenerWindow){
+        function _redrawTabs(activeDialogId){
             var nav = dialog.querySelector('nav');
             var frag = document.createDocumentFragment();
             for( var i=0; i<tabs.length; i++ ){
                 var tab = document.createElement('div');
                 tab.classList.add('tab');
-                var ifr = tabs[i];
-                if(counter == ifr.dataset.counter){
-                    tab.classList.add('active');
-                }
-                var xButton = document.createElement('div');
-                xButton.classList.add('xbutton');
-                xButton.addEventListener('click', function(evt){
-                    postMessage({dialog:{close: ifr.dataset.counter}}, '*');
-                });
+                var ifr = tabs[i].iframe;
+                //if(i===tabs.length-1){
+                    var xButton = document.createElement('div');
+                    xButton.classList.add('xbutton');
+                    xButton.addEventListener('click', function(evt){
+                        window.top.postMessage({dialog:{close: ifr.dataset.dialogId}}, '*');
+                    });
+                //}
                 tab.appendChild(xButton);
-                var textNode = document.createTextNode('');
-                tab.appendChild(textNode);
-                if(!ifr.dataset.title){
-                    /* get title for the tab */
+                var textNode = document.createTextNode(ifr.dataset.title?ifr.dataset.title:ifr.src);
+                tab.appendChild( textNode );
+                /* get title for the tab */
+                if(activeDialogId == ifr.dataset.dialogId){
+                  tab.classList.add('active');
+                  if(ifr.onload==null){
+                    var ifrOpener = tabs[i].opener;
+                    var iWin = ifr.contentWindow;
                     ifr.onload = function(){
-                        try{
-                            var doc = ifr.contentDocument? ifr.contentDocument: ifr.contentWindow.document;
-                            ifr.contentWindow.opener = dialogOpenerWindow;
-                            ifr.contentWindow.close = function(){this.window.top.postMessage({dialog:null}, '*');}
+                      try{                                                   
+                          //iWin._closeup = function(){ this.top.postMessage({dialog:{close:ifr.dataset.dialogId}}, '*'); };
+                          /* override window.close() - the trick doesn't work in IE, so if iframe wants to close itself then
+                           * correct withing iframes where you call window.close(); and substitute with:
+                           *  ;typeof(window._closeup)===typeof(Function)?window.closeup():window.close();
+                           */
+                          //iWin.close = function(){ this._closeup(); };
+                          //send message to iframe to react on opener set
+                          var doc = ifr.contentDocument? ifr.contentDocument : iWin.document;
+                          var script = doc.createElement('script');
+                          script.textContent = "function close(){window.top.postMessage({dialog:null},'*')}";
+                          doc.head.appendChild(script);
+                          iWin.opener = ifrOpener;
+                          iWin.postMessage({dialog:{opener:true}}, '*');
+                          if(!ifr.dataset.title){
                             if(doc && doc.title){
                                 ifr.dataset.title=doc.title;
                             } else {
                                 ifr.dataset.title=ifr.src;
                             }
-                        } catch(error){
-                            ifr.dataset.title = ifr.src;
-                        }
-                        textNode.nodeValue = ifr.dataset.title;
+                          }
+                      } catch(error){
+                          if(!ifr.dataset.title) ifr.dataset.title = ifr.src;
+                      }
+                      textNode.nodeValue = ifr.dataset.title;
                     }
-                } else {
-                    tab.appendChild(document.createTextNode(ifr.dataset.title));
+                  }
                 }
                 frag.appendChild(tab);
             }
