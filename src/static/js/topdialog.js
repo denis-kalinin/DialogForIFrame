@@ -1,6 +1,6 @@
 (function () {
     var polyfillCss = "dialog{position:absolute;left:0;right:0;width:-moz-fit-content;width:-webkit-fit-content;width:fit-content;height:-moz-fit-content;height:-webkit-fit-content;height:fit-content;margin:auto;border:solid;padding:1em;background:white;color:black;display:block}dialog:not([open]){display:none}dialog+.backdrop{position:fixed;top:0;right:0;bottom:0;left:0;background:rgba(0,0,0,0.1)}._dialog_overlay{position:fixed;top:0;right:0;bottom:0;left:0}dialog.fixed{position:fixed;top:50%;transform:translate(0, -50%)}";
-    var dialogCss = "dialog::backdrop,dialog+.backdrop{position:fixed;top:0;left:0;right:0;bottom:0;background-color:rgba(0,0,0,0.5)}dialog+.backdrop{position:fixed;top:0;left:0;right:0;bottom:0;background-color:rgba(0,0,0,0.5)}dialog[role=topdialog]{width:95%;height:90%;border:0;padding:0}dialog nav{border:1px solid #ccc;background-color:#ccc;border-bottom-width:2px;height:2em;min-height:30px;display:flex}dialog nav .tab{border-left:1px solid #ccc;color:lightgrey;background-color:dimgray;flex-basis:100%;padding-left:0.5em;display:flex;align-items:center;text-overflow:ellipsis;white-space:nowrap;overflow:hidden}dialog nav .tab.active{background-color:inherit;color:inherit;min-width:28px;margin-right:30px}dialog nav .tab:first-child{border:none}dialog nav .tab .xbutton{display:none;width:24px;height:24px;position:absolute;top:3px;right:3px;border-radius:6px}dialog nav .tab.active .xbutton{display:block}dialog nav .tab .xbutton:hover{background-color:red}dialog nav .tab .xbutton:before,dialog nav .tab .xbutton:after{content:'';position:absolute;width:20px;height:4px;background-color:white;border-radius:2px;top:10px}dialog nav .tab .xbutton:before{-webkit-transform:rotate(45deg);-moz-transform:rotate(45deg);transform:rotate(45deg);left:2px}dialog nav .tab .xbutton:after{-webkit-transform:rotate(-45deg);-moz-transform:rotate(-45deg);transform:rotate(-45deg);right:2px}dialog>.tabbed>.tabwindow{flex:1 1 auto;display:flex;flex-flow:column}dialog>.tabbed>.tabwindow>iframe{flex-flow:column;flex:1 1 auto;border:0;width:100%}dialog>.tabbed{height:100%;padding:0;border:0;display:flex;flex-flow:column}";
+    var dialogCss = "dialog::backdrop,dialog+.backdrop{position:fixed;top:0;left:0;right:0;bottom:0;background-color:rgba(0,0,0,0.5)}dialog+.backdrop{position:fixed;top:0;left:0;right:0;bottom:0;background-color:rgba(0,0,0,0.5)}dialog[role=topdialog]{width:95%;height:90%;border:0;padding:0}dialog nav{border:1px solid #ccc;background-color:#ccc;border-bottom-width:2px;height:2em;min-height:30px;display:flex}dialog nav .tab{border-left:1px solid #ccc;color:lightgrey;background-color:dimgray;flex-basis:100%;padding-left:0.5em;display:flex;align-items:center;text-overflow:ellipsis;white-space:nowrap;overflow:hidden}dialog nav .tab.active{background-color:inherit;color:inherit;min-width:28px;margin-right:30px}dialog nav .tab:first-child{border:none}dialog nav .tab .xbutton{display:none;width:24px;height:24px;position:absolute;top:3px;right:3px;border-radius:6px}dialog nav .tab.active .xbutton{display:block}dialog nav .tab .xbutton:hover{background-color:red}dialog nav .tab .xbutton:before,dialog nav .tab .xbutton:after{content:'';position:absolute;width:20px;height:4px;background-color:white;border-radius:2px;top:10px}dialog nav .tab .xbutton:before{-webkit-transform:rotate(45deg);-moz-transform:rotate(45deg);transform:rotate(45deg);left:2px}dialog nav .tab .xbutton:after{-webkit-transform:rotate(-45deg);-moz-transform:rotate(-45deg);transform:rotate(-45deg);right:2px}dialog>.tabbed>.tabwindow{flex:1 1 auto;display:flex;flex-flow:column}dialog>.tabbed>.tabwindow>iframe{flex-flow:column;flex:1 1 auto;border:0;width:100%}dialog>.tabbed{height:100%;padding:0;border:0;display:flex;flex-flow:column}.lds-ellipsis{display:inline-block;position:relative;width:80px;height:80px}.lds-ellipsis div{position:absolute;top:33px;width:13px;height:13px;border-radius:50%;background:#fff;animation-timing-function:cubic-bezier(0, 1, 1, 0)}.lds-ellipsis div:nth-child(1){left:8px;animation:lds-ellipsis1 0.6s infinite}.lds-ellipsis div:nth-child(2){left:8px;animation:lds-ellipsis2 0.6s infinite}.lds-ellipsis div:nth-child(3){left:32px;animation:lds-ellipsis2 0.6s infinite}.lds-ellipsis div:nth-child(4){left:56px;animation:lds-ellipsis3 0.6s infinite}@keyframes lds-ellipsis1{0%{transform:scale(0)}100%{transform:scale(1)}}@keyframes lds-ellipsis3{0%{transform:scale(1)}100%{transform:scale(0)}}@keyframes lds-ellipsis2{0%{transform:translate(0, 0)}100%{transform:translate(24px, 0)}}";
     var head = document.head || document.getElementsByTagName('head')[0];
     var style = document.createElement('style');
     head.appendChild(style);
@@ -842,23 +842,31 @@
                     });
                 //}
                 tab.appendChild(xButton);
-                var textNode = document.createTextNode(ifr.dataset.title?ifr.dataset.title:ifr.src);
-                tab.appendChild( textNode );
-                /* get title for the tab */
-                if(activeDialogId == ifr.dataset.dialogId){
+                if(activeDialogId != ifr.dataset.dialogId){
+                    var textNode = document.createTextNode(ifr.dataset.title?ifr.dataset.title:ifr.src);
+                    tab.appendChild( textNode );
+                } else {
                   tab.classList.add('active');
+                  if(!ifr.dataset.loaded){
+                    var spinner = document.createElement('div');
+                    spinner.classList.add('lds-ellipsis');
+                    for(var u=0; u<4; u++){
+                        spinner.appendChild(document.createElement('div'));
+                    }
+                    tab.appendChild(spinner);
+                  }
+                  var textNode = document.createTextNode(ifr.dataset.title?ifr.dataset.title:ifr.src);
+                  tab.appendChild( textNode );
                   if(ifr.onload==null){
                     var ifrOpener = tabs[i].opener;
                     var iWin = ifr.contentWindow;
                     ifr.onload = function(){
-                      try{                                                   
-                          //iWin._closeup = function(){ this.top.postMessage({dialog:{close:ifr.dataset.dialogId}}, '*'); };
-                          /* override window.close() - the trick doesn't work in IE, so if iframe wants to close itself then
-                           * correct withing iframes where you call window.close(); and substitute with:
-                           *  ;typeof(window._closeup)===typeof(Function)?window.closeup():window.close();
-                           */
-                          //iWin.close = function(){ this._closeup(); };
-                          //send message to iframe to react on opener set
+                      try{
+                          ifr.dataset.loaded = true;
+                          var spinner = tab.querySelector('.lds-ellipsis');
+                          if(spinner){
+                              spinner.parentElement.removeChild(spinner);
+                          }
                           var doc = ifr.contentDocument? ifr.contentDocument : iWin.document;
                           var script = doc.createElement('script');
                           script.textContent = "function close(){window.top.postMessage({dialog:null},'*')}";

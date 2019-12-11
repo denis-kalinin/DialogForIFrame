@@ -34,11 +34,11 @@ const config = {
     runtimeChunk: 'single',
   },
   */
- plugins: [
-  new CopyWebpackPlugin([
-    { from: 'src/static', to: 'static' },
-  ]),
-],
+  plugins: [
+    new CopyWebpackPlugin([
+      { from: 'src/static', to: 'static' },
+    ]),
+  ],
   output: {
     path: path.resolve(__dirname, 'docs'),
     //filename: '[name].[contenthash].js',
@@ -46,6 +46,9 @@ const config = {
   externals : {
     //lodash : '_'
     //jquery: '$',
+  },
+  devServer: {
+    port: 8088
   },
 }
 
