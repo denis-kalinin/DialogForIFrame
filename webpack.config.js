@@ -1,11 +1,12 @@
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const nodeExternals = require('webpack-node-externals');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const path = require('path');
-//var lodash = require('lodash');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const concat = require('./concat.js');
 
 const config = {
+  target: 'web',
     /*
   module: {
     rules: [
@@ -34,10 +35,36 @@ const config = {
     runtimeChunk: 'single',
   },
   */
+  optimization: {
+    splitChunks: {
+      cacheGroups: {
+        styles: {
+          name: 'styles',
+          test: /\.css$/,
+          chunks: 'all',
+          enforce: true,
+        },
+      },
+    },
+  },
   plugins: [
     new CopyWebpackPlugin([
       { from: 'src/static', to: 'static' },
     ]),
+    new CopyWebpackPlugin([
+      { 
+        from: 'src/assets/js/css.twig',
+        to: 'topdialog.js',
+        transform(content, path){
+          const filesToAppend = [
+            'src/assets/js/dialog-polyfill.js',
+            'src/assets/js/dialog-top.js'
+          ];
+          return concat(content, path, './src/assets/styles/dialog.scss', filesToAppend);
+        }
+      },
+    ]),
+    new MiniCssExtractPlugin(),
   ],
   output: {
     path: path.resolve(__dirname, 'docs'),
@@ -47,33 +74,83 @@ const config = {
     //lodash : '_'
     //jquery: '$',
   },
+  module: {
+    rules: [
+      {
+        test: /\.(s*)css$/,
+        use: [ 
+          MiniCssExtractPlugin.loader,
+          //'handlebars-loader',
+          //'extract-loader', 
+          'css-loader', 
+          {
+            loader: 'sass-loader',
+            options: {
+              sassOptions: {
+                outputStyle: 'expanded',
+              },
+            },
+          },
+        ]
+      }
+    ]
+  },
   devServer: {
-    port: 8088
+    port: 8088,
+    publicPath: '/DialogForIFrame/',
+    openPage: 'DialogForIFrame/'
+
+  },
+  entry: {
+    dialog: path.resolve(__dirname, 'src/static/js/dialog.js'),
+    main: path.resolve(__dirname, 'src/index.js'),
   },
 }
 
 module.exports = ( env, argv ) => {
   config.mode = argv.mode;
   //////PRODUCTION////////
-  let theWebcontext;
+  const theWebcontext = '/DialogForIFrame/';
   if (config.mode === 'production') {
-    theWebcontext = '/DialogForIFrame/';
     config.plugins.push(new CleanWebpackPlugin());
   }
   //////DEVELOPMENT////////
-  if (config.mode === 'development'){
-    theWebcontext = '/';
-  }
-  const htmlPlugin = new HtmlWebPackPlugin({
-    template: "src/index.html",
-    filename: "index.html",
-    templateParameters: {
-      webcontext: theWebcontext
-    },
-    title: "Webpacked",
-    meta: {viewport: 'width=device-width, initial-scale=1, shrink-to-fit=no'}
-  });
-  config.plugins.push(htmlPlugin);
+  if (config.mode === 'development'){}
+  const indexPage =  
+    new HtmlWebPackPlugin({
+      template: "src/index.html",
+      filename: "index.html",
+      templateParameters: {
+        webcontext: theWebcontext
+      },
+      title: "Webpacked",
+      meta: {viewport: 'width=device-width, initial-scale=1, shrink-to-fit=no'}
+    });
+  const tablePage =  
+    new HtmlWebPackPlugin({
+      template: "src/static/html/table.html",
+      filename: "static/html/table.html",
+      inject: "head",
+      //chunks: ['topdialog'],
+      templateParameters: {
+        webcontext: theWebcontext
+      },
+      title: "Webpacked",
+      meta: {viewport: 'width=device-width, initial-scale=1, shrink-to-fit=no'}
+    });
+  const localtestPage = 
+    new HtmlWebPackPlugin({
+      template: "src/static/html/localtest.html",
+      filename: "thelocaltest.html",
+      inject: "head",
+      //chunks: ['topdialog'],
+      templateParameters: {
+        webcontext: theWebcontext
+      },
+      title: "Webpacked",
+      meta: {viewport: 'width=device-width, initial-scale=1, shrink-to-fit=no'}
+    });
+  config.plugins.push( indexPage, localtestPage);
 
   return config;
 };

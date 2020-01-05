@@ -4,6 +4,7 @@
         <meta charset="utf-8">
         <title>AL main pane</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <base href="<%= webcontext %>" />
     </head>
     <body>
         <p>To open a dialog, make sure that <code>dialogPolyfill</code> is installed in <code>window.top</code>
@@ -118,7 +119,7 @@
             function openDialogListener(elem, evt) {
                 if(!window.top.dialogPolyfill){
                     var script = window.top.document.createElement("script");
-                    script.setAttribute("src", "/static/js/topdialog.js");
+                    script.setAttribute("src", "topdialog.js");
                     script.addEventListener("load", function(evt){
                         window.top.postMessage({dialog:{url:elem.dataset.topdialogUrl}}, '*');
                     });
