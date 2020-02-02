@@ -1,4 +1,6 @@
-@import './dialog-polyfill';
+// @import './dialog-polyfill';
+@import './theme-al.scss';
+@import 'spinner';
 dialog[role=topdialog] {
     width:95%;
     height:90%;
@@ -21,14 +23,17 @@ dialog {
         height: 2em;
         min-height: 30px;
         display: flex;
-        .tab {
-            border-left: 1px solid #ccc;
+        align-items: center;
+        .crumb {
+            // border-left: 1px solid #ccc;
             color: lightgrey;
             background-color: dimgray;
             // flex-grow: 1;
             flex-basis: 100%;
-            padding-left: 0.5em;
-            display:flex;
+            padding-left: 0.2em;
+            //display:flex;
+            //we want show only one tab - active
+            //display: none;
             align-items: center;
             text-overflow: ellipsis;
             // Required for text-overflow to do anything
@@ -65,17 +70,34 @@ dialog {
                 right: 2px;
             }
         }
-        .tab.active {
+        .crumb.active {
             background-color: inherit;
             color: inherit;
             min-width: 28px;
             margin-right: 30px;
+            //because .tab display is none we put it here
+            display: flex;
             .xbutton {
                 display: block;
             }
         }
-        .tab:first-child {
+        .crumb:first-child {
             border: none;
+        }
+        .crumb:not(:first-child):before {
+                content: '\003e\00a0';
+        }
+        .crumb:not(:last-child):hover{
+            text-decoration: underline;
+            cursor: pointer;
+        }
+    }
+    nav.SIModalTitleBG {
+        background-color: $dialogTitleBackgroundColor-Default;
+        color: $dialogTitleTextColor-Default;
+        .crumb.SIModalTitlePrev {
+            // color: linear-gradient(to right, transparent 0%, transparent 100% );
+            background: inherit;
         }
     }
     > .tabbed {
@@ -97,65 +119,6 @@ dialog {
         }
     }
 }
-
-
-.lds-ellipsis {
-    display: inline-block;
-    position: relative;
-    min-width: 80px;
-    height: 80px;
-    div {
-        position: absolute;
-        top: 33px;
-        width: 13px;
-        height: 13px;
-        border-radius: 50%;
-        background: #fff;
-        animation-timing-function: cubic-bezier(0, 1, 1, 0);
-    }
-    div:nth-child(1) {
-        left: 8px;
-        animation: lds-ellipsis1 0.6s infinite;
-    }
-    div:nth-child(2) {
-        left: 8px;
-        animation: lds-ellipsis2 0.6s infinite;
-    }
-    div:nth-child(3) {
-        left: 32px;
-        animation: lds-ellipsis2 0.6s infinite;
-    }
-    div:nth-child(4) {
-        left: 56px;
-        animation: lds-ellipsis3 0.6s infinite;
-    }
-  }
-
-@keyframes lds-ellipsis1 {
-    0% {
-      transform: scale(0);
-    }
-    100% {
-      transform: scale(1);
-    }
-}
-@keyframes lds-ellipsis3 {
-    0% {
-      transform: scale(1);
-    }
-    100% {
-      transform: scale(0);
-    }
-}
-@keyframes lds-ellipsis2 {
-    0% {
-      transform: translate(0, 0);
-    }
-    100% {
-      transform: translate(24px, 0);
-    }
-}
-
 
 %backdrop {
     position: fixed;

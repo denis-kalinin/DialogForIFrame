@@ -1,5 +1,5 @@
 (function () {
-    var dialogCss = "dialog{position:absolute;left:0;right:0;width:-moz-fit-content;width:-webkit-fit-content;width:fit-content;height:-moz-fit-content;height:-webkit-fit-content;height:fit-content;margin:auto;order:solid;padding:1em;background:white;color:black;display:block}dialog:not([open]){display:none}dialog+.backdrop{position:fixed;top:0;right:0;bottom:0;left:0;background:rgba(0,0,0,0.1)}._dialog_overlay{position:fixed;top:0;right:0;bottom:0;left:0}dialog.fixed{position:fixed;top:50%;transform:translate(0, -50%)}dialog[role=topdialog]{width:95%;height:90%;border:0;padding:0}dialog nav{border:1px solid #ccc;background-color:#ccc;border-bottom-width:2px;height:2em;min-height:30px;display:flex}dialog nav .tab{border-left:1px solid #ccc;color:lightgrey;background-color:dimgray;flex-basis:100%;padding-left:0.5em;display:flex;align-items:center;text-overflow:ellipsis;white-space:nowrap;overflow:hidden}dialog nav .tab .xbutton{display:none;width:24px;height:24px;position:absolute;top:3px;right:3px;border-radius:6px}dialog nav .tab .xbutton:hover{background-color:red}dialog nav .tab .xbutton:before{-webkit-transform:rotate(45deg);-moz-transform:rotate(45deg);transform:rotate(45deg);left:2px}dialog nav .tab .xbutton:after{-webkit-transform:rotate(-45deg);-moz-transform:rotate(-45deg);transform:rotate(-45deg);right:2px}dialog nav .tab.active{background-color:inherit;color:inherit;min-width:28px;margin-right:30px}dialog nav .tab.active .xbutton{display:block}dialog nav .tab:first-child{border:none}dialog>.tabbed{height:100%;padding:0;border:0;display:flex;flex-flow:column}dialog>.tabbed>.tabwindow{flex:1 1 auto;display:flex;flex-flow:column}dialog>.tabbed>.tabwindow>iframe{flex-flow:column;flex:1 1 auto;border:0;width:100%}.lds-ellipsis{display:inline-block;position:relative;width:80px;height:80px}.lds-ellipsis div{position:absolute;top:33px;width:13px;height:13px;border-radius:50%;background:#fff;animation-timing-function:cubic-bezier(0, 1, 1, 0)}.lds-ellipsis div:nth-child(1){left:8px;animation:lds-ellipsis1 0.6s infinite}.lds-ellipsis div:nth-child(2){left:8px;animation:lds-ellipsis2 0.6s infinite}.lds-ellipsis div:nth-child(3){left:32px;animation:lds-ellipsis2 0.6s infinite}.lds-ellipsis div:nth-child(4){left:56px;animation:lds-ellipsis3 0.6s infinite}@keyframes lds-ellipsis1{0%{transform:scale(0)}100%{transform:scale(1)}}@keyframes lds-ellipsis3{0%{transform:scale(1)}100%{transform:scale(0)}}@keyframes lds-ellipsis2{0%{transform:translate(0, 0)}100%{transform:translate(24px, 0)}}dialog::backdrop,dialog+.backdrop{position:fixed;top:0;left:0;right:0;bottom:0;background-color:rgba(0,0,0,0.5)}dialog nav .tab .xbutton:before,dialog nav .tab .xbutton:after{content:'';position:absolute;width:20px;height:4px;background-color:white;border-radius:2px;top:10px}\n";
+    var dialogCss = ".lds-ellipsis{display:inline-block;position:relative;min-width:80px;height:20px}.lds-ellipsis div{position:absolute;top:3px;width:13px;height:13px;border-radius:50%;background:#fff;animation-timing-function:cubic-bezier(0, 1, 1, 0)}.lds-ellipsis div:nth-child(1){left:8px;animation:lds-ellipsis1 0.6s infinite}.lds-ellipsis div:nth-child(2){left:8px;animation:lds-ellipsis2 0.6s infinite}.lds-ellipsis div:nth-child(3){left:32px;animation:lds-ellipsis2 0.6s infinite}.lds-ellipsis div:nth-child(4){left:56px;animation:lds-ellipsis3 0.6s infinite}@keyframes lds-ellipsis1{0%{transform:scale(0)}100%{transform:scale(1)}}@keyframes lds-ellipsis3{0%{transform:scale(1)}100%{transform:scale(0)}}@keyframes lds-ellipsis2{0%{transform:translate(0, 0)}100%{transform:translate(24px, 0)}}dialog[role=topdialog]{width:95%;height:90%;border:0;padding:0}dialog nav{border:1px solid #ccc;background-color:#ccc;border-bottom-width:2px;height:2em;min-height:30px;display:flex;align-items:center}dialog nav .crumb{color:lightgrey;background-color:dimgray;flex-basis:100%;padding-left:0.2em;align-items:center;text-overflow:ellipsis;white-space:nowrap;overflow:hidden}dialog nav .crumb .xbutton{display:none;width:24px;height:24px;position:absolute;top:3px;right:3px;border-radius:6px}dialog nav .crumb .xbutton:hover{background-color:red}dialog nav .crumb .xbutton:before{-webkit-transform:rotate(45deg);-moz-transform:rotate(45deg);transform:rotate(45deg);left:2px}dialog nav .crumb .xbutton:after{-webkit-transform:rotate(-45deg);-moz-transform:rotate(-45deg);transform:rotate(-45deg);right:2px}dialog nav .crumb.active{background-color:inherit;color:inherit;min-width:28px;margin-right:30px;display:flex}dialog nav .crumb.active .xbutton{display:block}dialog nav .crumb:first-child{border:none}dialog nav .crumb:not(:first-child):before{content:'\\003e\\00a0'}dialog nav .crumb:not(:last-child):hover{text-decoration:underline;cursor:pointer}dialog nav.SIModalTitleBG{background-color:#5e24e6;color:#fff}dialog nav.SIModalTitleBG .crumb.SIModalTitlePrev{background:inherit}dialog>.tabbed{height:100%;padding:0;border:0;display:flex;flex-flow:column}dialog>.tabbed>.tabwindow{flex:1 1 auto;display:flex;flex-flow:column}dialog>.tabbed>.tabwindow>iframe{flex-flow:column;flex:1 1 auto;border:0;width:100%}dialog::backdrop,dialog+.backdrop{position:fixed;top:0;left:0;right:0;bottom:0;background-color:rgba(0,0,0,0.5)}dialog nav .crumb .xbutton:before,dialog nav .crumb .xbutton:after{content:'';position:absolute;width:20px;height:4px;background-color:white;border-radius:2px;top:10px}\n";
     var head = document.head || document.getElementsByTagName("head")[0];
     var style = document.createElement("style");
     head.appendChild(style);
@@ -769,20 +769,34 @@
 
         window.dialogPolyfill.registerDialog(dialog);
 
-        function _createDialog(iframeUrl, dialogOpenerWindow, title){
+        function _createDialog(dialogObj, dialogOpenerWindow){
             document.body.style.overflow = 'hidden';
             var iframe = document.createElement('iframe');
-            iframe.src = iframeUrl;
+            iframe.src = dialogObj.url;
             iframe.dataset.dialogId = ++iframeCounter;
-            if(title) iframe.dataset.title = title;
-            if(tabs.length>0) for( var k = 0; k < tabs.length; k++ ){
-                tabs[k].iframe.style.display='none';
+            if(dialogObj.title) iframe.dataset.title = dialogObj.title;
+            if(dialogObj.size){
+                _setDialogSize(dialogObj.size.width, dialogObj.size.height, iframe);
+                iframe.dataset.dwidth=dialogObj.size.width?dialogObj.size.width:null;
+                iframe.dataset.dheight=dialogObj.size.height?dialogObj.size.height:null;
             } else {
+                _setDialogSize(null, null);
+            }
+            if(tabs.length>0){ 
+                for( var k = 0; k < tabs.length; k++ ){
+                    tabs[k].iframe.style.display='none';
+                }
+                dialogPolyfill.reposition(dialog);
+            }else {
                 dialog.showModal();
             }
             tabs[tabs.length] = {iframe:iframe,opener:dialogOpenerWindow};
             tabWindow.appendChild(iframe);
-            _redrawTabs(iframe.dataset.dialogId);
+            _redrawBreadcrumbs(iframe.dataset.dialogId);
+        }
+        function _setDialogSize(width, height){
+            dialog.style.width=width?width:null;
+            dialog.style.height=height?height:null;
         }
         function _findEventSourceIframe( sourceWindow ){
             for(var i=0; i<tabs.length; i++) {
@@ -793,12 +807,23 @@
             }
         }
         function _removeIframe(iframeAndTabIndex) {
-            tabWindow.removeChild(iframeAndTabIndex.iframe);
-            tabs.splice(iframeAndTabIndex.tabIndex, 1);
+            while(tabWindow.lastChild){
+                if(tabWindow.lastChild === iframeAndTabIndex.iframe){
+                    tabWindow.removeChild(tabWindow.lastChild);
+                    break;
+                } else {
+                    tabWindow.removeChild(tabWindow.lastChild);
+                }
+            }
+            // tabWindow.removeChild(iframeAndTabIndex.iframe);
+            tabs.splice(iframeAndTabIndex.tabIndex);
             if(tabs.length>0){
                 var ifr = tabs[tabs.length-1].iframe;
                 ifr.style.display='block';
-                _redrawTabs(ifr.dataset.dialogId);
+                dialog.style.width=ifr.dataset.dwidth;
+                dialog.style.height=ifr.dataset.dheight;
+                dialogPolyfill.reposition(dialog);
+                _redrawBreadcrumbs(ifr.dataset.dialogId);
             } else {
                 dialog.close();
             }
@@ -814,7 +839,7 @@
         function _messageListerner(evt){
             if(evt.data && evt.data.hasOwnProperty('dialog')){
                 if(evt.data.dialog && evt.data.dialog.url){
-                    _createDialog(evt.data.dialog.url, evt.source, evt.data.dialog.title);
+                    _createDialog(evt.data.dialog, evt.source);
                 } else if (evt.data.dialog && evt.data.dialog.close) {
                     _closeTabByDialogId(evt.data.dialog.close);
                 }else {
@@ -824,6 +849,79 @@
                     }
                 }
             }
+        }
+        function _redrawBreadcrumbs(activeDialogId){
+            var nav = dialog.querySelector('nav');
+            var frag = document.createDocumentFragment();
+            for( var i=0; i<tabs.length; i++ ){
+                var crumb = document.createElement('div');
+                crumb.classList.add('crumb');
+                var ifr = tabs[i].iframe;
+                    // TODO do not apend arrow
+                    // TODO: append arrow
+                if(activeDialogId != ifr.dataset.dialogId){
+                    var textNode = document.createTextNode(ifr.dataset.title?ifr.dataset.title:i);
+                    crumb.classList.add('SIModalTitlePrev');
+                    crumb.appendChild( textNode );
+                    if(i<tabs.length-1 ){
+                        var delIndex = i+1;
+                        crumb.addEventListener('click', (function(deleteIframe, deleteTabIndex){
+                            return function(evt){ _removeIframe({ iframe: deleteIframe, tabIndex: deleteTabIndex }); };
+                        })(tabs[delIndex].iframe, delIndex));
+                    }   
+                } else {
+                    var xButton = document.createElement('div');
+                    xButton.classList.add('xbutton');
+                    xButton.addEventListener('click', (function(dialogId){
+                        return function(){ postMessage({ dialog:{ close: ifr.dataset.dialogId } }, '*') };
+                    })(ifr.dataset.dialogId));
+                    crumb.appendChild(xButton);
+                    crumb.classList.add('active');
+                    if(!ifr.dataset.loaded){ /** add spinner to show loading process */                    
+                        var spinner = document.createElement('div');
+                        spinner.classList.add('lds-ellipsis');
+                        for(var u=0; u<4; u++){
+                            spinner.appendChild(document.createElement('div'));
+                        }
+                        crumb.appendChild(spinner);
+                    }
+                    var textNode = document.createTextNode(ifr.dataset.title?ifr.dataset.title:i);
+                    crumb.appendChild( textNode );
+                    if(ifr.onload==null){
+                        var ifrOpener = tabs[i].opener;
+                        var iWin = ifr.contentWindow;
+                        ifr.onload = function(){
+                            try{
+                                ifr.dataset.loaded = true;
+                                var spinner = crumb.querySelector('.lds-ellipsis');
+                                if(spinner){
+                                    spinner.parentElement.removeChild(spinner);
+                                }
+                                var doc = ifr.contentDocument? ifr.contentDocument : iWin.document;
+                                /** window.close() can be overriden in IE by function declaration only */
+                                var script = doc.createElement('script');
+                                script.textContent = "function close(){window.top.postMessage({dialog:null},'*')}";
+                                doc.head.appendChild(script);
+                                iWin.opener = ifrOpener;
+                                iWin.postMessage({dialog:{opener:true}}, '*');
+                                if(!ifr.dataset.title){
+                                    if(doc && doc.title){
+                                        ifr.dataset.title=doc.title;
+                                    } else {
+                                        ifr.dataset.title=i;
+                                    }
+                                }
+                            } catch(error){
+                                if(!ifr.dataset.title) ifr.dataset.title = i;
+                            }
+                            textNode.nodeValue = ifr.dataset.title;
+                        }
+                    }
+                }                    
+                frag.appendChild(crumb);
+            }
+            while (nav.lastChild) { nav.removeChild(nav.lastChild); }
+            nav.appendChild(frag);
         }
         function _redrawTabs(activeDialogId){
             var nav = dialog.querySelector('nav');
@@ -897,6 +995,7 @@
             var tabbedDiv = document.createElement("div");
             tabbedDiv.classList.add("tabbed");
             var nav = document.createElement("nav");
+            nav.classList.add('SIModalTitleBG');
             var tabWindow = document.createElement("div");
             tabWindow.classList.add("tabwindow");            
             tabbedDiv.appendChild(nav);

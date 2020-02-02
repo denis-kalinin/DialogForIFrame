@@ -36,7 +36,7 @@
             }
             tabs[tabs.length] = iframe;
             tabWindow.appendChild(iframe);
-            _redrawTabs(iframeCounter);
+            _redrawBreadcrumbs(iframeCounter);
         }
         function _closeTab(countnum){
             for(var i=0; i<tabs.length; i++){
@@ -46,7 +46,7 @@
                     if(tabs.length>0){
                         var ifr = tabs[tabs.length-1];
                         ifr.style.display='block';
-                        _redrawTabs(ifr.dataset.counter);
+                        _redrawBreadcrumbs(ifr.dataset.counter);
                     } else {
                         dialog.close();
                     }
@@ -70,6 +70,35 @@
                     }
                 }
             }
+        }
+        function _redrawBreadcrumbs(){
+            var nav = dialog.querySelector('nav');
+            var frag = document.createDocumentFragment();
+            var breadCrumbs = document.createElement('div');
+            for( var i=0; i<tabs.length; i++ ){
+                var crumb = document.createElement('span');
+                var ifr = tabs[i];
+                if(counter == ifr.dataset.counter){
+                    // TODO do not apend arrow
+                } else {
+                    // TODO: append arrow
+                }
+                var xButton = document.createElement('div');
+                xButton.classList.add('xbutton');
+                xButton.addEventListener('click', function(evt){
+                    postMessage({ dialog:{ close: ifr.dataset.counter } }, '*');
+                });
+                breadCrumbs.appendChild(xButton);
+                if(!ifr.dataset.title){
+                    crumb.appendChild(document.createTextNode('... loading ...'));
+                } else {
+                    crumb.appendChild(ifr.dataset.title);
+                }
+                breadCrumbs.appendChild(crumb);
+            }
+            while (nav.lastChild) { nav.removeChild(nav.lastChild); }
+            frag.appendChild(breadCrumbs);
+            nav.appendChild(frag);
         }
         function _redrawTabs(counter){
             var nav = dialog.querySelector('nav');
