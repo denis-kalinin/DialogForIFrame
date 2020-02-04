@@ -4,8 +4,8 @@
 dialog[role=topdialog] {
     width:95%;
     height:90%;
-    border:0;
-    padding:0;
+    border:1em;
+    padding: 0;
 }
 @mixin backdropper {
     background: rgba(0, 0, 0, 0.5);
@@ -15,7 +15,9 @@ dialog::backdrop{
     @include backdropper;
 }
 dialog {
-    // polyfill    
+    // polyfill
+    max-width: 95%;
+    max-height: 95%;   
     &+.backdrop {
         @include backdropper;
         position: fixed;

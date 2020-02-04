@@ -106,12 +106,17 @@ dialog.fixed {
 dialog[role=topdialog] {
   width: 95%;
   height: 90%;
-  border: 0;
+  border: 1em;
   padding: 0;
 }
 
 dialog::backdrop {
   background: rgba(0, 0, 0, 0.5);
+}
+
+dialog {
+  max-width: 95%;
+  max-height: 95%;
 }
 
 dialog + .backdrop {
