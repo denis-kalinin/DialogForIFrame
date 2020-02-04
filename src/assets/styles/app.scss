@@ -1,5 +1,5 @@
-@import 'theme';
-@import 'dialog.css';
+@import './theme-al.scss';
+@import './theme.scss';
 $theme-font:    verdana, sans-serif;
 
 body {
@@ -9,3 +9,15 @@ body {
       color: $themeColor-Dark
   }
 }
+/*
+.SIModalTitleBG {
+  background-color: $dialogTitleBackgroundColor-Default;
+  color: $dialogTitleTextColor-Default;
+  .SIModalTitlePrev {
+    background: inherit;
+  }
+  .SIModalTitleActive {
+    background-color: #0ff;
+  }
+}
+*/

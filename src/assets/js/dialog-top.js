@@ -113,10 +113,9 @@
                 var crumb = document.createElement('div');
                 crumb.classList.add('crumb');
                 var ifr = tabs[i].iframe;
-                    // TODO do not apend arrow
-                    // TODO: append arrow
                 if(activeDialogId != ifr.dataset.dialogId){
-                    var textNode = document.createTextNode(ifr.dataset.title?ifr.dataset.title:i);
+                    var title = ifr.dataset.title?ifr.dataset.title:i;
+                    var textNode = document.createTextNode(title);
                     crumb.classList.add('SIModalTitlePrev');
                     crumb.appendChild( textNode );
                     if(i<tabs.length-1 ){
@@ -124,6 +123,7 @@
                         crumb.addEventListener('click', (function(deleteIframe, deleteTabIndex){
                             return function(evt){ _removeIframe({ iframe: deleteIframe, tabIndex: deleteTabIndex }); };
                         })(tabs[delIndex].iframe, delIndex));
+                        crumb.setAttribute('title', title);
                     }   
                 } else {
                     var xButton = document.createElement('div');
@@ -133,6 +133,7 @@
                     })(ifr.dataset.dialogId));
                     crumb.appendChild(xButton);
                     crumb.classList.add('active');
+                    crumb.classList.add('SIModalTitleActive');
                     if(!ifr.dataset.loaded){ /** add spinner to show loading process */                    
                         var spinner = document.createElement('div');
                         spinner.classList.add('lds-ellipsis');
