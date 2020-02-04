@@ -20,15 +20,11 @@ dialog:not([open]) {
   display: none;
 }
 
-dialog + .backdrop {
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  background: rgba(0, 0, 0, 0.1);
+/*
+dialog+.backdrop{
+    position:fixed;top:0;right:0;bottom:0;left:0;background:rgba(0,0,0,0.5)
 }
-
+*/
 ._dialog_overlay {
   position: fixed;
   top: 0;
@@ -114,6 +110,19 @@ dialog[role=topdialog] {
   padding: 0;
 }
 
+dialog::backdrop {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+dialog + .backdrop {
+  background: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
 dialog nav {
   border: 1px solid #ccc;
   background-color: #5e24e6;
@@ -197,15 +206,6 @@ dialog > .tabbed > .tabwindow > iframe {
   flex: 1 1 auto;
   border: 0;
   width: 100%;
-}
-
-dialog::backdrop, dialog + .backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.75);
 }
 
 dialog nav .crumb.active .xbutton:before, dialog nav .crumb.active .xbutton:after {
