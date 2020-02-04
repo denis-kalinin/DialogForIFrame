@@ -1,3 +1,48 @@
+dialog {
+  position: absolute;
+  left: 0;
+  right: 0;
+  width: -moz-fit-content;
+  width: -webkit-fit-content;
+  width: fit-content;
+  height: -moz-fit-content;
+  height: -webkit-fit-content;
+  height: fit-content;
+  margin: auto;
+  order: solid;
+  padding: 1em;
+  background: white;
+  color: black;
+  display: block;
+}
+
+dialog:not([open]) {
+  display: none;
+}
+
+dialog + .backdrop {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+._dialog_overlay {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+dialog.fixed {
+  position: fixed;
+  top: 50%;
+  transform: translate(0, -50%);
+}
+
 .lds-ellipsis {
   display: inline-block;
   position: relative;
@@ -71,8 +116,8 @@ dialog[role=topdialog] {
 
 dialog nav {
   border: 1px solid #ccc;
-  background-color: #564c6e;
-  color: white;
+  background-color: #5e24e6;
+  color: #fff;
   border-bottom-width: 2px;
   height: 2em;
   min-height: 30px;
@@ -82,7 +127,7 @@ dialog nav {
 }
 
 dialog nav .crumb {
-  flex: 0 1 auto;
+  flex: 0 3 auto;
   padding-left: 0.2em;
   align-items: center;
   text-overflow: ellipsis;
@@ -93,6 +138,7 @@ dialog nav .crumb {
 dialog nav .crumb.active {
   min-width: 28px;
   margin-right: 30px;
+  flex: 0 1 50%;
 }
 
 dialog nav .crumb.active .xbutton {
@@ -106,7 +152,7 @@ dialog nav .crumb.active .xbutton {
 }
 
 dialog nav .crumb.active .xbutton:hover {
-  background-color: red;
+  background-color: #f00;
 }
 
 dialog nav .crumb.active .xbutton:before {
@@ -159,7 +205,7 @@ dialog::backdrop, dialog + .backdrop {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.75);
 }
 
 dialog nav .crumb.active .xbutton:before, dialog nav .crumb.active .xbutton:after {
