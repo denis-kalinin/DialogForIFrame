@@ -128,6 +128,7 @@
                 } else {
                     var xButton = document.createElement('div');
                     xButton.classList.add('xbutton');
+                    xButton.classList.add('SIModalXButton');
                     xButton.addEventListener('click', (function(dialogId){
                         return function(){ postMessage({ dialog:{ close: ifr.dataset.dialogId } }, '*') };
                     })(ifr.dataset.dialogId));

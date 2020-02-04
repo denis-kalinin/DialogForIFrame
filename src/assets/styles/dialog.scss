@@ -7,14 +7,23 @@ dialog[role=topdialog] {
     border:0;
     padding:0;
 }
+@mixin backdropper {
+    background: rgba(0, 0, 0, 0.5);
+}
 // native
 dialog::backdrop{
-    @extend %backdrop;
+    @include backdropper;
 }
 dialog {
-    // polyfill
-    + .backdrop {
-        @extend %backdrop;
+    // polyfill    
+    &+.backdrop {
+        @include backdropper;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        //background:rgba(0,0,0,0.5);
     }
     nav {
         border: 1px solid #ccc;
@@ -89,17 +98,17 @@ dialog {
             cursor: pointer;
         }
     }
-    > .tabbed {
+    & > .tabbed {
         height: 100%;
         padding: 0;
         border: 0;
         display: flex;
         flex-flow: column;
-        > .tabwindow {
+        & > .tabwindow {
             flex: 1 1 auto;
             display: flex;
             flex-flow: column;
-            > iframe {
+            & > iframe {
                 flex-flow: column;
                 flex: 1 1 auto;
                 border: 0;
@@ -109,14 +118,6 @@ dialog {
     }
 }
 
-%backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.75);
-}
 %xbutton {
     content: '';
     position: absolute;
