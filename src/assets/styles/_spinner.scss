@@ -2,12 +2,13 @@
     display: inline-block;
     position: relative;
     min-width: 80px;
-    height: 20px;//80
+    height: 12px;//80
+    top: 2px;
     div {
         position: absolute;
-        top: 3px;//33
-        width: 13px;
-        height: 13px;
+        top: 0px;//33
+        width: 12px;
+        height: 12px;
         border-radius: 50%;
         background: #fff;
         animation-timing-function: cubic-bezier(0, 1, 1, 0);

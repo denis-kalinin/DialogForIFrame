@@ -1,5 +1,5 @@
 (function () {
-    var dialogCss = "dialog{position:absolute;left:0;right:0;width:-moz-fit-content;width:-webkit-fit-content;width:fit-content;height:-moz-fit-content;height:-webkit-fit-content;height:fit-content;margin:auto;order:solid;padding:1em;background:white;color:black;display:block}dialog:not([open]){display:none}._dialog_overlay{position:fixed;top:0;right:0;bottom:0;left:0}dialog.fixed{position:fixed;top:50%;transform:translate(0, -50%)}.lds-ellipsis{display:inline-block;position:relative;min-width:80px;height:20px}.lds-ellipsis div{position:absolute;top:3px;width:13px;height:13px;border-radius:50%;background:#fff;animation-timing-function:cubic-bezier(0, 1, 1, 0)}.lds-ellipsis div:nth-child(1){left:8px;animation:lds-ellipsis1 0.6s infinite}.lds-ellipsis div:nth-child(2){left:8px;animation:lds-ellipsis2 0.6s infinite}.lds-ellipsis div:nth-child(3){left:32px;animation:lds-ellipsis2 0.6s infinite}.lds-ellipsis div:nth-child(4){left:56px;animation:lds-ellipsis3 0.6s infinite}@keyframes lds-ellipsis1{0%{transform:scale(0)}100%{transform:scale(1)}}@keyframes lds-ellipsis3{0%{transform:scale(1)}100%{transform:scale(0)}}@keyframes lds-ellipsis2{0%{transform:translate(0, 0)}100%{transform:translate(24px, 0)}}dialog[role=topdialog]{width:95%;height:90%;border:1em;padding:0}dialog::backdrop{background:rgba(0,0,0,0.5)}dialog{max-width:95%;max-height:95%}dialog+.backdrop{background:rgba(0,0,0,0.5);position:fixed;top:0;left:0;right:0;bottom:0}dialog nav{border:1px solid #ccc;background-color:#5e24e6;color:#fff;border-bottom-width:2px;height:2em;min-height:30px;display:flex;align-items:center;justify-content:flex-start}dialog nav .crumb{flex:0 3 auto;padding-left:0.2em;align-items:center;text-overflow:ellipsis;white-space:nowrap;overflow:hidden}dialog nav .crumb.active{min-width:28px;margin-right:30px;flex:0 1 50%}dialog nav .crumb.active .xbutton{display:block;width:24px;height:24px;position:absolute;top:3px;right:3px;border-radius:6px}dialog nav .crumb.active .xbutton:hover{background-color:red}dialog nav .crumb.active .xbutton:before{-webkit-transform:rotate(45deg);-moz-transform:rotate(45deg);transform:rotate(45deg);left:2px}dialog nav .crumb.active .xbutton:after{-webkit-transform:rotate(-45deg);-moz-transform:rotate(-45deg);transform:rotate(-45deg);right:2px}dialog nav .crumb:not(:first-child):before{content:'\\003e\\00a0'}dialog nav .crumb:not(:last-child):hover{text-decoration:underline;cursor:pointer}dialog>.tabbed{height:100%;padding:0;border:0;display:flex;flex-flow:column}dialog>.tabbed>.tabwindow{flex:1 1 auto;display:flex;flex-flow:column}dialog>.tabbed>.tabwindow>iframe{flex-flow:column;flex:1 1 auto;border:0;width:100%}dialog nav .crumb.active .xbutton:before,dialog nav .crumb.active .xbutton:after{content:'';position:absolute;width:20px;height:4px;background-color:white;border-radius:2px;top:10px}\n";
+    var dialogCss = "dialog{position:absolute;left:0;right:0;width:-moz-fit-content;width:-webkit-fit-content;width:fit-content;height:-moz-fit-content;height:-webkit-fit-content;height:fit-content;margin:auto;order:solid;padding:1em;background:white;color:black;display:block}dialog:not([open]){display:none}._dialog_overlay{position:fixed;top:0;right:0;bottom:0;left:0}dialog.fixed{position:fixed;top:50%;transform:translate(0, -50%)}.lds-ellipsis{display:inline-block;position:relative;min-width:80px;height:12px;top:2px}.lds-ellipsis div{position:absolute;top:0px;width:12px;height:12px;border-radius:50%;background:#fff;animation-timing-function:cubic-bezier(0, 1, 1, 0)}.lds-ellipsis div:nth-child(1){left:8px;animation:lds-ellipsis1 0.6s infinite}.lds-ellipsis div:nth-child(2){left:8px;animation:lds-ellipsis2 0.6s infinite}.lds-ellipsis div:nth-child(3){left:32px;animation:lds-ellipsis2 0.6s infinite}.lds-ellipsis div:nth-child(4){left:56px;animation:lds-ellipsis3 0.6s infinite}@keyframes lds-ellipsis1{0%{transform:scale(0)}100%{transform:scale(1)}}@keyframes lds-ellipsis3{0%{transform:scale(1)}100%{transform:scale(0)}}@keyframes lds-ellipsis2{0%{transform:translate(0, 0)}100%{transform:translate(24px, 0)}}dialog[role=topdialog]{width:95%;height:90%;border:1em;padding:0}dialog::backdrop{background:rgba(0,0,0,0.5)}dialog{max-width:95%;max-height:95%}dialog+.backdrop{background:rgba(0,0,0,0.5);position:fixed;top:0;left:0;right:0;bottom:0}dialog nav{border:1px solid #ccc;background-color:#5e24e6;color:#fff;border-bottom-width:2px;height:2em;min-height:30px;display:flex;align-items:center;justify-content:flex-start}dialog nav .crumb{flex:0 3 auto;padding-left:0.2em;align-items:center;text-overflow:ellipsis;white-space:nowrap;overflow:hidden}dialog nav .crumb.active{min-width:28px;margin-right:30px;flex:0 1 50%}dialog nav .crumb.active .xbutton{display:block;width:24px;height:24px;position:absolute;top:3px;right:3px;border-radius:6px}dialog nav .crumb.active .xbutton:hover{background-color:red}dialog nav .crumb.active .xbutton:before{-webkit-transform:rotate(45deg);-moz-transform:rotate(45deg);transform:rotate(45deg);left:2px}dialog nav .crumb.active .xbutton:after{-webkit-transform:rotate(-45deg);-moz-transform:rotate(-45deg);transform:rotate(-45deg);right:2px}dialog nav .crumb:not(:first-child):before{content:'\\00a0\\003e\\00a0'}dialog nav .crumb:not(:last-child):hover{text-decoration:underline;cursor:pointer}dialog>.tabbed{height:100%;padding:0;border:0;display:flex;flex-flow:column}dialog>.tabbed>.tabwindow{flex:1 1 auto;display:flex;flex-flow:column}dialog>.tabbed>.tabwindow>iframe{flex-flow:column;flex:1 1 auto;border:0;width:100%}dialog nav .crumb.active .xbutton:before,dialog nav .crumb.active .xbutton:after{content:'';position:absolute;width:20px;height:4px;background-color:white;border-radius:2px;top:10px}\n";
     var head = document.head || document.getElementsByTagName("head")[0];
     var style = document.createElement("style");
     head.appendChild(style);
@@ -858,7 +858,7 @@
                 crumb.classList.add('crumb');
                 var ifr = tabs[i].iframe;
                 if(activeDialogId != ifr.dataset.dialogId){
-                    var title = ifr.dataset.title?ifr.dataset.title:i;
+                    var title = ifr.dataset.title?ifr.dataset.title:'No title '+i;
                     var textNode = document.createTextNode(title);
                     crumb.classList.add('SIModalTitlePrev');
                     crumb.appendChild( textNode );
@@ -887,7 +887,7 @@
                         }
                         crumb.appendChild(spinner);
                     }
-                    var textNode = document.createTextNode(ifr.dataset.title?ifr.dataset.title:i);
+                    var textNode = document.createTextNode(ifr.dataset.title?ifr.dataset.title:'');
                     crumb.appendChild( textNode );
                     if(ifr.onload==null){
                         var ifrOpener = tabs[i].opener;
@@ -910,83 +910,17 @@
                                     if(doc && doc.title){
                                         ifr.dataset.title=doc.title;
                                     } else {
-                                        ifr.dataset.title=i;
+                                        ifr.dataset.title = 'No title ' + i;
                                     }
                                 }
                             } catch(error){
-                                if(!ifr.dataset.title) ifr.dataset.title = i;
+                                if(!ifr.dataset.title) ifr.dataset.title = 'No title '+ i;
                             }
                             textNode.nodeValue = ifr.dataset.title;
                         }
                     }
                 }                    
                 frag.appendChild(crumb);
-            }
-            while (nav.lastChild) { nav.removeChild(nav.lastChild); }
-            nav.appendChild(frag);
-        }
-        function _redrawTabs(activeDialogId){
-            var nav = dialog.querySelector('nav');
-            var frag = document.createDocumentFragment();
-            for( var i=0; i<tabs.length; i++ ){
-                var tab = document.createElement('div');
-                tab.classList.add('tab');
-                var ifr = tabs[i].iframe;
-                //if(i===tabs.length-1){
-                    var xButton = document.createElement('div');
-                    xButton.classList.add('xbutton');
-                    xButton.addEventListener('click', function(evt){
-                        window.top.postMessage({dialog:{close: ifr.dataset.dialogId}}, '*');
-                    });
-                //}
-                tab.appendChild(xButton);
-                if(activeDialogId != ifr.dataset.dialogId){
-                    var textNode = document.createTextNode(ifr.dataset.title?ifr.dataset.title:ifr.src);
-                    tab.appendChild( textNode );
-                } else {
-                  tab.classList.add('active');
-                  if(!ifr.dataset.loaded){ /** add spinner to show loading process */                    
-                    var spinner = document.createElement('div');
-                    spinner.classList.add('lds-ellipsis');
-                    for(var u=0; u<4; u++){
-                        spinner.appendChild(document.createElement('div'));
-                    }
-                    tab.appendChild(spinner);
-                  }
-                  var textNode = document.createTextNode(ifr.dataset.title?ifr.dataset.title:ifr.src);
-                  tab.appendChild( textNode );
-                  if(ifr.onload==null){
-                    var ifrOpener = tabs[i].opener;
-                    var iWin = ifr.contentWindow;
-                    ifr.onload = function(){
-                      try{
-                          ifr.dataset.loaded = true;
-                          var spinner = tab.querySelector('.lds-ellipsis');
-                          if(spinner){
-                              spinner.parentElement.removeChild(spinner);
-                          }
-                          var doc = ifr.contentDocument? ifr.contentDocument : iWin.document;
-                          /** window.close() can be overriden in IE by function declaration only */
-                          var script = doc.createElement('script');
-                          script.textContent = "function close(){window.top.postMessage({dialog:null},'*')}";
-                          doc.head.appendChild(script);
-                          iWin.opener = ifrOpener;
-                          iWin.postMessage({dialog:{opener:true}}, '*');
-                          if(!ifr.dataset.title){
-                            if(doc && doc.title){
-                                ifr.dataset.title=doc.title;
-                            } else {
-                                ifr.dataset.title=ifr.src;
-                            }
-                          }
-                      } catch(error){
-                          if(!ifr.dataset.title) ifr.dataset.title = ifr.src;
-                      }
-                      textNode.nodeValue = ifr.dataset.title;
-                    }
-                  }
-                }
-                frag.appendChild(tab);
             }
             while (nav.lastChild) { nav.removeChild(nav.lastChild); }
             nav.appendChild(frag);

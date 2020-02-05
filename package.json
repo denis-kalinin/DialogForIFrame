@@ -32,15 +32,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/denis-kalinin/agiloft-bugfix-frontend.git"
+    "url": "git+https://github.com/denis-kalinin/DialogForIFrame.git"
   },
   "author": {
     "name": "Denis Kalinin",
-    "email": "denis.kalinin@agiloft.com"
+    "email": "denis@itranga.com"
   },
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/denis-kalinin/agiloft-bugfix-frontend/issues"
+    "url": "https://github.com/denis-kalinin/DialogForIFrame/issues"
   },
-  "homepage": "https://github.com/denis-kalinin/agiloft-bugfix-frontend#readme"
+  "homepage": "https://github.com/denis-kalinin/DialogForIFrame#readme"
 }

@@ -43,14 +43,15 @@ dialog.fixed {
   display: inline-block;
   position: relative;
   min-width: 80px;
-  height: 20px;
+  height: 12px;
+  top: 2px;
 }
 
 .lds-ellipsis div {
   position: absolute;
-  top: 3px;
-  width: 13px;
-  height: 13px;
+  top: 0px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
   background: #fff;
   animation-timing-function: cubic-bezier(0, 1, 1, 0);
@@ -184,7 +185,7 @@ dialog nav .crumb.active .xbutton:after {
 }
 
 dialog nav .crumb:not(:first-child):before {
-  content: '\003e\00a0';
+  content: '\00a0\003e\00a0';
 }
 
 dialog nav .crumb:not(:last-child):hover {

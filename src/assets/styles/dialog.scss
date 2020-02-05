@@ -93,7 +93,7 @@ dialog {
             }
         }
         .crumb:not(:first-child):before {
-            content: '\003e\00a0';
+            content: '\00a0\003e\00a0';
         }
         .crumb:not(:last-child):hover{
             text-decoration: underline;
