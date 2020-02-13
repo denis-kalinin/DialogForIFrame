@@ -30,6 +30,8 @@
             var iframe = document.createElement('iframe');
             iframe.src = dialogObj.url;
             iframe.dataset.dialogId = ++iframeCounter;
+            iframe.dataset.shortcutStopPropagation = '';
+            if(dialogObj.name) iframe.dataset.watirName = dialogObj.name;
             if(dialogObj.title) iframe.dataset.title = dialogObj.title;
             if(dialogObj.size){
                 _setDialogSize(dialogObj.size.width, dialogObj.size.height, iframe);
