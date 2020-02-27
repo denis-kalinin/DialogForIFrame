@@ -51,20 +51,6 @@ const config = {
     new CopyWebpackPlugin([
       { from: 'src/static', to: 'static' },
     ]),
-    new CopyWebpackPlugin([
-      { 
-        from: 'src/assets/js/css.twig',
-        to: 'topdialog.js',
-        transform(content, path){
-          const filesToAppend = [
-            'src/assets/js/dialog-polyfill.js',
-            'src/assets/js/dialog-top.js'
-          ];
-          return concat(content, path, './src/assets/styles/dialog.scss', filesToAppend);
-        }
-      },
-    ]),
-    new MiniCssExtractPlugin(),
   ],
   output: {
     path: path.resolve(__dirname, 'docs'),
@@ -75,25 +61,7 @@ const config = {
     //jquery: '$',
   },
   module: {
-    rules: [
-      {
-        test: /\.(s*)css$/,
-        use: [ 
-          MiniCssExtractPlugin.loader,
-          //'handlebars-loader',
-          //'extract-loader', 
-          'css-loader', 
-          {
-            loader: 'sass-loader',
-            options: {
-              sassOptions: {
-                outputStyle: 'expanded',
-              },
-            },
-          },
-        ]
-      }
-    ]
+    rules: []
   },
   devServer: {
     port: 8088,
@@ -112,10 +80,45 @@ module.exports = ( env, argv ) => {
   //////PRODUCTION////////
   const theWebcontext = '/DialogForIFrame/';
   if (config.mode === 'production') {
-    config.plugins.push(new CleanWebpackPlugin());
+    const clean = new CleanWebpackPlugin();
+    const twig = new CopyWebpackPlugin([
+      { 
+        from: 'src/assets/js/css.twig',
+        to: 'topdialog.js',
+        transform(content, path){
+          const filesToAppend = [
+            'src/assets/js/dialog-polyfill.js',
+            'src/assets/js/dialog-top.js'
+          ];
+          return concat(content, path, './src/assets/styles/dialog.scss', filesToAppend);
+        }
+      },
+    ]);
+    const mini = new MiniCssExtractPlugin();
+    config.plugins.push(twig, mini, clean);
   }
   //////DEVELOPMENT////////
-  if (config.mode === 'development'){}
+  if (config.mode === 'development'){
+    const staticFolder = new CopyWebpackPlugin([
+      { from: 'src/static', to: 'static' },
+    ]);
+    const twig = new CopyWebpackPlugin([
+      { 
+        from: 'src/assets/js/css-inline.twig',
+        to: 'topdialog.js',
+        transform(content, path){
+          const filesToAppend = [
+            'src/assets/js/dialog-polyfill.js',
+            'src/assets/js/dialog-top.js'
+          ];
+          return concat(content, path, './src/assets/styles/dialog.scss', filesToAppend);
+        }
+      },
+    ]);
+    const mini = new MiniCssExtractPlugin();
+    config.plugins.push(staticFolder, twig, mini);
+  }
+  /// Common plugins ///////
   const indexPage =  
     new HtmlWebPackPlugin({
       template: "src/index.html",
@@ -151,6 +154,25 @@ module.exports = ( env, argv ) => {
       meta: {viewport: 'width=device-width, initial-scale=1, shrink-to-fit=no'}
     });
   config.plugins.push( indexPage, localtestPage);
+
+
+  config.module.rules.push({
+    test: /\.(s*)css$/,
+    use: [ 
+      MiniCssExtractPlugin.loader,
+      //'handlebars-loader',
+      //'extract-loader', 
+      'css-loader', 
+      {
+        loader: 'sass-loader',
+        options: {
+          sassOptions: {
+            outputStyle: 'expanded',
+          },
+        },
+      },
+    ]
+  });
 
   return config;
 };

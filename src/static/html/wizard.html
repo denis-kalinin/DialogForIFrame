@@ -40,6 +40,10 @@
                 var el = _findAncestor(window.frameElement, 'dialog');
                 return el;
             }
+            function submitMyForm() {
+                document.getElementById("myForm").submit();
+            }
+
             //window['close'] = function () {
             //    console.log('[close]');
             //}
@@ -89,6 +93,10 @@
             <button onclick="window.top.postMessage({dialog:{url: window.location.href, size:{width:'50%', height:'80%'}, name: 'wizard'}}, '*');">OPEN WIZARD</button>
             <button onclick="window.top.postMessage({dialog:{url:'https://bing.com', title:'Bing! Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Nulla aliquet enim tortor at. Viverra tellus in hac habitasse platea dictumst vestibulum. Sollicitudin tempor id eu nisl. Fermentum odio eu feugiat pretium. Arcu felis bibendum ut tristique. Vitae congue mauris rhoncus aenean vel. Id diam vel quam elementum pulvinar etiam non quam lacus. Purus gravida quis blandit turpis. Ullamcorper eget nulla facilisi etiam dignissim diam quis enim. Tortor dignissim convallis aenean et tortor at. Sit amet facilisis magna etiam tempor orci eu lobortis.'}}, '*');">Bing</button>
             <button onclick="window.top.postMessage({dialog:{url:'https://bing.com'}});">Bing (no title)</button>
+            <form id="myForm" method="GET" action="form-submitted.html">
+                <input type="submit" value="Submit form" />
+            </form>
+            <button onclick="submitMyForm()">Submit with javascript</button>
             <hr />
             <p>We don't close iframe via parent window, because
                 they can be in different domains, so <code>window.parent.frames[0].close()</code> won't work in a such case.

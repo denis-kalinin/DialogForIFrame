@@ -1,0 +1,28 @@
+<html>
+  <head>
+    <title>Form submited</title>
+    <script>
+      (function(loadHandler){
+        if(!loadHandler) return;
+        var result = /^function\s+([\w\$]+)\s*\(/.exec( loadHandler.toString() );
+        if(result && !window.opener){
+          window[result[1]] = function(){
+            window.addEventListener('message', function(evt){
+              loadHandler();
+            }, false);
+            window.top.postMessage({dialog:{update:true}}, '*');
+          }
+        }
+      })(onPageLoaded);
+      function onPageLoaded(){
+        var hasOpener = !!window.self.opener ? "TRUE" : "FALSE";
+        console.log('onPageLoaded', hasOpener);
+        document.getElementById("openerStatus").textContent = hasOpener;
+      }
+    </script>
+  </head>
+  <body onload="onPageLoaded()">
+    <h1>FORM SUBMITTED</h1>
+    <div>Has opener: <span id="openerStatus"></span></div>
+  </body>
+</html>

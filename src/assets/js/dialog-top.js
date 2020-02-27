@@ -27,8 +27,7 @@
 
         function _createDialog(dialogObj, dialogOpenerWindow){
             document.body.style.overflow = 'hidden';
-            var iframe = document.createElement('iframe');
-            iframe.src = dialogObj.url;
+            var iframe = document.createElement('iframe');           
             iframe.dataset.dialogId = ++iframeCounter;
             iframe.dataset.shortcutStopPropagation = '';
             if(dialogObj.name) iframe.dataset.watirName = dialogObj.name;
@@ -49,7 +48,9 @@
             tabs[tabs.length] = {iframe:iframe,opener:dialogOpenerWindow};
             tabWindow.appendChild(iframe);
             iframe.contentWindow.opener = dialogOpenerWindow;
+            // iframe.opener = dialogOpenerWindow;
             _redrawBreadcrumbs(iframe.dataset.dialogId);
+            iframe.src = dialogObj.url;
         }
         function _setDialogSize(width, height, iframe){
             var w = width ? ( isNaN(width) ? width : width+"px" ) : null;
@@ -136,7 +137,17 @@
                     _createDialog(evt.data.dialog, evt.source);
                 } else if (evt.data.dialog && evt.data.dialog.close) {
                     _closeTabByDialogId(evt.data.dialog.close);
-                }else {
+                } else if (evt.data.dialog && evt.data.dialog.update) {
+                    var iframeAndTabIndex = _findEventSourceIframe(evt.source);
+                    var activeTabId = iframeAndTabIndex.tabIndex;
+                    for( var i=0; i<tabs.length; i++ ){
+                        if(activeTabId == i){
+                            tabs[i].iframe.contentWindow.opener = tabs[i].opener;
+                            evt.source.postMessage('message', '*');
+                            return;
+                        }
+                    }
+                } else {
                     var iframeAndTabIndex = _findEventSourceIframe(evt.source);
                     if(iframeAndTabIndex) {
                         _removeIframe(iframeAndTabIndex);
@@ -184,9 +195,12 @@
                     var textNode = document.createTextNode(ifr.dataset.title?ifr.dataset.title:'');
                     crumb.appendChild( textNode );
                     if(ifr.onload==null){
+                        var ifrOpener = tabs[i].opener;
+                        var iWin = ifr.contentWindow;
                         ifr.onload = function(){
                             try{
                                 ifr.dataset.loaded = true;
+                                iWin.opener = ifrOpener;
                                 var spinner = crumb.querySelector('.lds-ellipsis');
                                 if(spinner){
                                     spinner.parentElement.removeChild(spinner);
