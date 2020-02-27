@@ -2,6 +2,9 @@
   <head>
     <title>Form submited</title>
     <script>
+      // - substitute onPageLoaded with you function from <body onload="onPageLoaded()">
+      ////// CUT AND PASTE //////////////
+      function close() { window.top.postMessage({dialog:null}, '*'); }
       (function(loadHandler){
         if(!loadHandler) return;
         var result = /^function\s+([\w\$]+)\s*\(/.exec( loadHandler.toString() );
@@ -14,10 +17,12 @@
           }
         }
       })(onPageLoaded);
+      //////// END OF CUT //////////
       function onPageLoaded(){
         var hasOpener = !!window.self.opener ? "TRUE" : "FALSE";
         console.log('onPageLoaded', hasOpener);
         document.getElementById("openerStatus").textContent = hasOpener;
+        window.close();
       }
     </script>
   </head>
