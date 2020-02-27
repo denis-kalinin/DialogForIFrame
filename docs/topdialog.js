@@ -774,13 +774,13 @@
             var iframe = document.createElement('iframe');
             iframe.src = dialogObj.url;
             iframe.dataset.dialogId = ++iframeCounter;
+            iframe.dataset.shortcutStopPropagation = '';
+            if(dialogObj.name) iframe.dataset.watirName = dialogObj.name;
             if(dialogObj.title) iframe.dataset.title = dialogObj.title;
             if(dialogObj.size){
                 _setDialogSize(dialogObj.size.width, dialogObj.size.height, iframe);
-                iframe.dataset.dwidth=dialogObj.size.width?dialogObj.size.width:null;
-                iframe.dataset.dheight=dialogObj.size.height?dialogObj.size.height:null;
             } else {
-                _setDialogSize(null, null);
+                _setDialogSize(null, null, iframe);
             }
             if(tabs.length>0){ 
                 for( var k = 0; k < tabs.length; k++ ){
@@ -792,11 +792,49 @@
             }
             tabs[tabs.length] = {iframe:iframe,opener:dialogOpenerWindow};
             tabWindow.appendChild(iframe);
+            iframe.contentWindow.opener = dialogOpenerWindow;
             _redrawBreadcrumbs(iframe.dataset.dialogId);
         }
-        function _setDialogSize(width, height){
-            dialog.style.width=width?width:null;
-            dialog.style.height=height?height:null;
+        function _setDialogSize(width, height, iframe){
+            var w = width ? ( isNaN(width) ? width : width+"px" ) : null;
+            iframe.dataset.dwidth=w;
+            dialog.style.width=w;
+            //if height 0 - set height = header + iframe heights
+            if(!height){
+                dialog.style.height = null;
+                iframe.dataset.dheight=null;
+                return;            
+            }
+            if(isNaN(height)){//e.g. 20px or 15%
+                var zeroH = height.replace( /\D+/g, '');
+                if(isNaN(zeroH)){// wrong height - without digits at all
+                    dialog.style.height = null;
+                    iframe.dataset.dheight=null;
+                    return;
+                }
+                if(parseInt(zeroH, 10) > 0 ){
+                    dialog.style.height = height;
+                    iframe.dataset.dheight = height;
+                    return;
+                }
+                var h = _getZeroHeight();
+                dialog.style.height = h;
+                iframe.dataset.dheight = h;
+                return;
+            }
+            if(parseInt(height, 10) > 0){
+                var h = height+"px";
+                dialog.style.height = h;
+                iframe.dataset.dheight = h;
+                return;
+            }
+            var h = _getZeroHeight();
+            dialog.style.height = h;
+            iframe.dataset.dheight = h;
+        }
+        function _getZeroHeight(){
+            // default value of an iframe without height
+            return "180px";
         }
         function _findEventSourceIframe( sourceWindow ){
             for(var i=0; i<tabs.length; i++) {
@@ -890,8 +928,6 @@
                     var textNode = document.createTextNode(ifr.dataset.title?ifr.dataset.title:'');
                     crumb.appendChild( textNode );
                     if(ifr.onload==null){
-                        var ifrOpener = tabs[i].opener;
-                        var iWin = ifr.contentWindow;
                         ifr.onload = function(){
                             try{
                                 ifr.dataset.loaded = true;
@@ -904,8 +940,6 @@
                                 var script = doc.createElement('script');
                                 script.textContent = "function close(){window.top.postMessage({dialog:null},'*')}";
                                 doc.head.appendChild(script);
-                                iWin.opener = ifrOpener;
-                                iWin.postMessage({dialog:{opener:true}}, '*');
                                 if(!ifr.dataset.title){
                                     if(doc && doc.title){
                                         ifr.dataset.title=doc.title;
