@@ -48,6 +48,10 @@
             tabs[tabs.length] = {iframe:iframe,opener:dialogOpenerWindow};
             tabWindow.appendChild(iframe);
             iframe.contentWindow.opener = dialogOpenerWindow;
+            if(dialogObj.windowName){
+                iframe.contentWindow.name = dialogObj.windowName;
+                iframe.name = dialogObj.windowName;
+            }
             // iframe.opener = dialogOpenerWindow;
             _redrawBreadcrumbs(iframe.dataset.dialogId);
             iframe.src = dialogObj.url;
@@ -170,7 +174,7 @@
                     if(i<tabs.length-1 ){
                         var delIndex = i+1;
                         crumb.addEventListener('click', (function(deleteIframe, deleteTabIndex){
-                            return function(evt){ _removeIframe({ iframe: deleteIframe, tabIndex: deleteTabIndex }); };
+                            return function(){ _removeIframe({ iframe: deleteIframe, tabIndex: deleteTabIndex }); };
                         })(tabs[delIndex].iframe, delIndex));
                         crumb.setAttribute('title', title);
                     }   
