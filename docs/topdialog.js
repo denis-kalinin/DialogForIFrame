@@ -880,6 +880,7 @@
                     _closeTabByDialogId(evt.data.dialog.close);
                 } else if (evt.data.dialog && evt.data.dialog.update) {
                     var iframeAndTabIndex = _findEventSourceIframe(evt.source);
+                    if(!iframeAndTabIndex) return;
                     var activeTabId = iframeAndTabIndex.tabIndex;
                     for( var i=0; i<tabs.length; i++ ){
                         if(activeTabId == i){
