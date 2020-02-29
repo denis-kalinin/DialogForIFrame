@@ -939,13 +939,13 @@
                     if(ifr.onload==null){
                         var ifrOpener = tabs[i].opener;
                         var iWin = ifr.contentWindow;
+                        var spinner = crumb.querySelector('.lds-ellipsis');
                         ifr.onload = function(){
-                            var spinner = crumb.querySelector('.lds-ellipsis');
                             try{
                                 ifr.dataset.loaded = true;
                                 iWin.opener = ifrOpener;
-                                if(spinner){
-                                    spinner.parentElement.removeChild(spinner);
+                                if(spinner && spinner.parentNode){
+                                    spinner.parentNode.removeChild(spinner);
                                 }
                                 var doc = ifr.contentDocument? ifr.contentDocument : iWin.document;
                                 /** window.close() can be overriden in IE by function declaration only */
@@ -961,8 +961,8 @@
                                 }
                             } catch(error){
                                 if(!ifr.dataset.title) ifr.dataset.title = 'No title '+ i;
-                                if(spinner){
-                                    spinner.parentElement.removeChild(spinner);
+                                if(spinner && spinner.parentNode){
+                                    spinner.parentNode.removeChild(spinner);
                                 }
                             }
                             textNode.nodeValue = ifr.dataset.title;
