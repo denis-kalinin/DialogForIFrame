@@ -940,10 +940,10 @@
                         var ifrOpener = tabs[i].opener;
                         var iWin = ifr.contentWindow;
                         ifr.onload = function(){
+                            var spinner = crumb.querySelector('.lds-ellipsis');
                             try{
                                 ifr.dataset.loaded = true;
                                 iWin.opener = ifrOpener;
-                                var spinner = crumb.querySelector('.lds-ellipsis');
                                 if(spinner){
                                     spinner.parentElement.removeChild(spinner);
                                 }
@@ -961,6 +961,9 @@
                                 }
                             } catch(error){
                                 if(!ifr.dataset.title) ifr.dataset.title = 'No title '+ i;
+                                if(spinner){
+                                    spinner.parentElement.removeChild(spinner);
+                                }
                             }
                             textNode.nodeValue = ifr.dataset.title;
                         }
