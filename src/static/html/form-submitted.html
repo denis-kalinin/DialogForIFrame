@@ -1,8 +1,13 @@
 <html>
   <head>
     <title>Form submited</title>
+  </head>
+  <body onload="onPageLoad()">
+    <h1>FORM SUBMITTED</h1>
+    <div>Has opener: <span id="openerStatus"></span></div>
     <script>
       function onPageLoad(){
+        testOnload();
         var hasOpener = !!window.self.opener ? "TRUE" : "FALSE";
         console.log('onPageLoad opener: %s, window.name:', hasOpener, window.name);
         document.getElementById("openerStatus").textContent = hasOpener;
@@ -11,7 +16,7 @@
       }
       // - substitute onPageLoaded with you function from <body onload="onPageLoaded()">
       ////// CUT AND PASTE //////////////
-(function(w, loadHandler){
+  (function(w, loadHandler){
   if(!loadHandler) throw new Error("\"loadHandler\" is null or undefined. If \"loadHandler\" is a function expression put it somewhere above.");
   if (!loadHandler instanceof Function) throw new Error('loadHandler is not a function.');
   var funcName = loadHandler.name;
@@ -35,13 +40,13 @@
   } else {
       loadHandler.apply(w);
   }
-})(window.self, window.onPageLoad);
-
+  })(window.self, window.onPageLoad);
+  
       //////// END OF CUT //////////
+  
+    function testOnload(){
+      console.log('Opener', window.opener);
+    }
     </script>
-  </head>
-  <body onload="onPageLoad()">
-    <h1>FORM SUBMITTED</h1>
-    <div>Has opener: <span id="openerStatus"></span></div>
   </body>
 </html>
