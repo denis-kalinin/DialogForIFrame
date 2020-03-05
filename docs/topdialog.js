@@ -778,10 +778,10 @@
                 for( var k = 0; k < tabs.length; k++ ){
                     tabs[k].iframe.style.display='none';
                 }
-                dialogPolyfill.reposition(dialog);
-            }else {
+            }else {                
                 dialog.showModal();
             }
+            dialogPolyfill.reposition(dialog);
             tabs[tabs.length] = {iframe:iframe,opener:dialogOpenerWindow};
             tabWindow.appendChild(iframe);
             iframe.contentWindow.opener = dialogOpenerWindow;
