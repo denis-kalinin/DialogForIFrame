@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html class="no-js">
+    <head>
+        <meta charset="utf-8">
+        <title>DialogForIFrame</title>
+        <base href="<%= webcontext %>" />
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="static/css/main.css" />
+        <!-- Dialog -->
+        <!-- link rel="stylesheet" type="text/css" href="https://denis-kalinin.github.io/dialog-top/dialog.min.css" /-->
+        <!-- script src="https://unpkg.com/dialog-polyfill@0.5.0/dist/dialog-polyfill.js"></script -->
+        <!-- script src="<%= webcontext %>/static/js/dialog.js"></script -->
+    </head>
+    <body>
+        <div class="Top">Top Content</div>
+        <div class="Container">
+            <div class="Left"><iframe src="static/html/wizard.html" style="width:100%; height:100%"></iframe></div>
+            <div class="Middle">
+                <iframe src="static/html/table.html" style="width:100%; height:100%"></iframe>
+            </div>        
+        </div>
+        <!--
+        <dialog role="topdialog" style="width:95%; height:90%; border:0; padding:0;">
+            <div class="tabbed">
+                <nav></nav>
+                <div class="tabwindow"></div>
+            </div>
+        </dialog>
+        -->
+    </body>
+</html>

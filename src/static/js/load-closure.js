@@ -34,13 +34,22 @@
   }
   if(isInDialog){
     var script = w.document.createElement('script');
-    script.textContent = "function close(){window.top.postMessage({dialog:null},'*');}";
+    script.textContent = "function getTopWindow(checkWindow){if(!checkWindow) checkWindow = window.self;try {if(checkWindow.parent && !checkWindow.parent.noDialog){return getTopWindow(checkWindow.parent);}}catch(e){}return checkWindow;}function close(){getTopWindow().postMessage({dialog:null},'*')}";
     w.document.head.appendChild(script);
     (function(w){
       w.addEventListener('message', function(){
         openerUpdated = true;
       }, false);
     })(w);
-    w.top.postMessage({dialog:{update:true}}, '*');
+    function getTopWindow(checkWindow){
+      if(!checkWindow) checkWindow = window.self;
+      try {
+          if(checkWindow.parent && !checkWindow.parent.noDialog){
+              return getTopWindow(checkWindow.parent);
+          }
+      } catch (e) {}
+      return checkWindow;
+    }
+    getTopWindow(w).postMessage({dialog:{update:true}}, '*');
   }
 })(window.self, [testOnload, onPageLoad, testOnload2]);

@@ -41,7 +41,7 @@
                 for( var k = 0; k < tabs.length; k++ ){
                     tabs[k].iframe.style.display='none';
                 }
-            }else {                
+            } else {                
                 dialog.showModal();
             }
             dialogPolyfill.reposition(dialog);
@@ -53,8 +53,12 @@
                 iframe.name = dialogObj.windowName;
             }
             // iframe.opener = dialogOpenerWindow;
-            _redrawBreadcrumbs(iframe.dataset.dialogId);
-            iframe.src = dialogObj.url;
+            var ignoreOnLoad = true;
+            if(dialogObj.url){
+                iframe.src = dialogObj.url;
+                ignoreOnLoad = false;
+            }
+            _redrawBreadcrumbs(iframe.dataset.dialogId, ignoreOnLoad);
         }
         function _setDialogSize(width, height, iframe){
             var w = width ? ( isNaN(width) ? width : width+"px" ) : null;
@@ -122,7 +126,7 @@
                 dialog.style.width=ifr.dataset.dwidth;
                 dialog.style.height=ifr.dataset.dheight;
                 dialogPolyfill.reposition(dialog);
-                _redrawBreadcrumbs(ifr.dataset.dialogId);
+                _redrawBreadcrumbs(ifr.dataset.dialogId, true);
             } else {
                 dialog.close();
             }
@@ -147,11 +151,21 @@
                     var activeTabId = iframeAndTabIndex.tabIndex;
                     for( var i=0; i<tabs.length; i++ ){
                         if(activeTabId == i){
-                            tabs[i].iframe.contentWindow.opener = tabs[i].opener;
+                            tabs[i].iframe.contentWindow.opener = tabs[i].opener;                            
                             evt.source.postMessage('message', '*');
                             return;
                         }
                     }
+                } else if (evt.data.dialog && evt.data.dialog.title){
+                    //update title
+                    var iframeAndTabIndex = _findEventSourceIframe(evt.source);
+                    var ifr = iframeAndTabIndex.iframe;
+                    ifr.dataset.title = evt.data.dialog.title;
+                    ifr.dataset.loaded = true;
+                    _redrawBreadcrumbs(ifr.dataset.dialogId, true);
+                } else if (evt.data.dialog && evt.data.dialog.windowName) { 
+                    _createDialog(evt.data.dialog, evt.source);
+                    evt.source.postMessage('message', '*');
                 } else {
                     var iframeAndTabIndex = _findEventSourceIframe(evt.source);
                     if(iframeAndTabIndex) {
@@ -160,7 +174,7 @@
                 }
             }
         }
-        function _redrawBreadcrumbs(activeDialogId){
+        function _redrawBreadcrumbs(activeDialogId, ignoreOnLoad){
             var nav = dialog.querySelector('nav');
             var frag = document.createDocumentFragment();
             for( var i=0; i<tabs.length; i++ ){
@@ -199,7 +213,7 @@
                     }
                     var textNode = document.createTextNode(ifr.dataset.title?ifr.dataset.title:'');
                     crumb.appendChild( textNode );
-                    if(ifr.onload==null){
+                    if(ifr.onload==null && !ignoreOnLoad){
                         var ifrOpener = tabs[i].opener;
                         var iWin = ifr.contentWindow;
                         var spinner = crumb.querySelector('.lds-ellipsis');
@@ -213,17 +227,17 @@
                                 var doc = ifr.contentDocument? ifr.contentDocument : iWin.document;
                                 /** window.close() can be overriden in IE by function declaration only */
                                 var script = doc.createElement('script');
-                                script.textContent = "function close(){window.top.postMessage({dialog:null},'*')}";
+                                script.textContent = "function getTopWindow(checkWindow){if(!checkWindow) checkWindow = window.self;try {if(checkWindow.parent && !checkWindow.parent.noDialog){return getTopWindow(checkWindow.parent);}}catch(e){}return checkWindow;}function close(){getTopWindow().postMessage({dialog:null},'*')}";
                                 doc.head.appendChild(script);
-                                if(!ifr.dataset.title){
-                                    if(doc && doc.title){
+                                if(!ifr.dataset.title) {
+                                    if(doc && doc.title) {
                                         ifr.dataset.title=doc.title;
                                     } else {
                                         ifr.dataset.title = 'No title ' + i;
                                     }
                                 }
                             } catch(error){
-                                if(!ifr.dataset.title) ifr.dataset.title = 'No title '+ i;
+                                if(!ifr.dataset.title) ifr.dataset.title = 'No title #'+ i;
                                 if(spinner && spinner.parentNode){
                                     spinner.parentNode.removeChild(spinner);
                                 }

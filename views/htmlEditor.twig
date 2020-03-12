@@ -1,3 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>HTML EDITOR</title>
+    <script>
+    function onPageLoad(){
+      function getTopWindow(checkWindow){
+        if(!checkWindow) checkWindow = window.self;
+        try {
+            if(checkWindow.parent && !checkWindow.parent.noDialog){
+                return getTopWindow(checkWindow.parent);
+            }
+        } catch (e) {}
+        return checkWindow;
+      }
+      getTopWindow().postMessage({dialog:{title:document.title}}, '*');
+    }
+    </script>
+    <script>
 (function(w, loadHandlers){
   function _isDialog(){
     var dialogTag = 'DIALOG', el = w.frameElement || {};
@@ -52,4 +71,11 @@
     }
     getTopWindow(w).postMessage({dialog:{update:true}}, '*');
   }
-})(window.self, [testOnload, onPageLoad, testOnload2]);
+})(window.self, [onPageLoad]);
+    </script>
+  </head>
+  <body onload="onPageLoad()">
+    <h1>HTML EDITOR</h1>
+    {{ dta }}
+  </body>
+</html>

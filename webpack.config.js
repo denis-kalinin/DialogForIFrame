@@ -77,8 +77,8 @@ const config = {
 
 module.exports = ( env, argv ) => {
   config.mode = argv.mode;
-  //////PRODUCTION////////
   const theWebcontext = '/DialogForIFrame/';
+  //////PRODUCTION////////
   if (config.mode === 'production') {
     const clean = new CleanWebpackPlugin();
     const twig = new CopyWebpackPlugin([
@@ -117,24 +117,31 @@ module.exports = ( env, argv ) => {
     ]);
     const mini = new MiniCssExtractPlugin();
     config.plugins.push(staticFolder, twig, mini);
+    const express = require('express');
+    config.devServer = {
+      headers: {
+        'Server': 'webpack-dev-server',
+      },
+      inline: true,
+      openPage: theWebcontext.substr(1),
+      port: 8888,
+      publicPath: theWebcontext,
+      setup(app) {
+        app.use(express.urlencoded()),
+        app.post('/post', (req, res) => {
+            //res.redirect(req.originalUrl);
+            //res.send('Hello!');
+            //res.sendFile('src/static/html/htmlEditor.html',  { root: __dirname });
+            res.render('htmlEditor.twig', { dta: req.body.dta });
+        });
+      },
+    }
   }
   /// Common plugins ///////
   const indexPage =  
     new HtmlWebPackPlugin({
       template: "src/index.html",
       filename: "index.html",
-      templateParameters: {
-        webcontext: theWebcontext
-      },
-      title: "Webpacked",
-      meta: {viewport: 'width=device-width, initial-scale=1, shrink-to-fit=no'}
-    });
-  const tablePage =  
-    new HtmlWebPackPlugin({
-      template: "src/static/html/table.html",
-      filename: "static/html/table.html",
-      inject: "head",
-      //chunks: ['topdialog'],
       templateParameters: {
         webcontext: theWebcontext
       },
@@ -153,7 +160,19 @@ module.exports = ( env, argv ) => {
       title: "Webpacked",
       meta: {viewport: 'width=device-width, initial-scale=1, shrink-to-fit=no'}
     });
-  config.plugins.push( indexPage, localtestPage);
+  const topPage = 
+    new HtmlWebPackPlugin({
+      template: "src/top.html",
+      filename: "top.html",
+      inject: "head",
+      //chunks: ['topdialog'],
+      templateParameters: {
+        webcontext: theWebcontext
+      },
+      title: "Webpacked",
+      meta: {viewport: 'width=device-width, initial-scale=1, shrink-to-fit=no'}
+    });
+  config.plugins.push( indexPage, topPage, localtestPage);
 
 
   config.module.rules.push({
