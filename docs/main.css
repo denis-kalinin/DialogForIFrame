@@ -166,10 +166,6 @@ dialog nav .crumb.active .xbutton {
   border-radius: 6px;
 }
 
-dialog nav .crumb.active .xbutton:hover {
-  background-color: #f00;
-}
-
 dialog nav .crumb.active .xbutton:before {
   -webkit-transform: rotate(45deg);
   -moz-transform: rotate(45deg);

@@ -72,9 +72,7 @@ dialog nav .tab .xbutton{
 dialog nav .tab.active .xbutton {
     display: block;
 }
-dialog nav .tab .xbutton:hover {
-    background-color:red;
-}
+/* dialog nav .tab .xbutton:hover { background-color:red; } */
 
 dialog nav .tab .xbutton:before, dialog nav .tab .xbutton:after{
     content: '';

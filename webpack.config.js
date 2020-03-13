@@ -83,7 +83,7 @@ module.exports = ( env, argv ) => {
     const clean = new CleanWebpackPlugin();
     const twig = new CopyWebpackPlugin([
       { 
-        from: 'src/assets/js/css.twig',
+        from: 'src/assets/js/css-inline.twig',
         to: 'topdialog.js',
         transform(content, path){
           const filesToAppend = [
@@ -102,6 +102,9 @@ module.exports = ( env, argv ) => {
     const staticFolder = new CopyWebpackPlugin([
       { from: 'src/static', to: 'static' },
     ]);
+    const indexHtml = new CopyWebpackPlugin([
+      { from: 'src/index.html', to: 'index.html' },
+    ]);
     const twig = new CopyWebpackPlugin([
       { 
         from: 'src/assets/js/css-inline.twig',
@@ -116,7 +119,7 @@ module.exports = ( env, argv ) => {
       },
     ]);
     const mini = new MiniCssExtractPlugin();
-    config.plugins.push(staticFolder, twig, mini);
+    config.plugins.push(staticFolder, indexHtml, twig, mini);
     const express = require('express');
     config.devServer = {
       headers: {
@@ -138,16 +141,6 @@ module.exports = ( env, argv ) => {
     }
   }
   /// Common plugins ///////
-  const indexPage =  
-    new HtmlWebPackPlugin({
-      template: "src/index.html",
-      filename: "index.html",
-      templateParameters: {
-        webcontext: theWebcontext
-      },
-      title: "Webpacked",
-      meta: {viewport: 'width=device-width, initial-scale=1, shrink-to-fit=no'}
-    });
   const localtestPage = 
     new HtmlWebPackPlugin({
       template: "src/static/html/localtest.html",
@@ -172,7 +165,7 @@ module.exports = ( env, argv ) => {
       title: "Webpacked",
       meta: {viewport: 'width=device-width, initial-scale=1, shrink-to-fit=no'}
     });
-  config.plugins.push( indexPage, topPage, localtestPage);
+  config.plugins.push( topPage, localtestPage);
 
 
   config.module.rules.push({

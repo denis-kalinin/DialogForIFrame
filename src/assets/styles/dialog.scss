@@ -74,9 +74,7 @@ dialog {
                 border-radius: 6px;
                 //box-shadow:2px 2px 4px 0 white;
             }
-            .xbutton:hover {
-                background-color: $xButtonHoverBackground-Default;
-            }
+            // .xbutton:hover { background-color: $xButtonHoverBackground-Default; }
             .xbutton:before {
                 @extend %xbutton;
                 -webkit-transform:rotate(45deg);

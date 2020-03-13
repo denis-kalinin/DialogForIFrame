@@ -1,13 +1,23 @@
-
+<!DOCTYPE html>
 <html>
   <head>
     <title>Index page of another website</title>
     <script>
-      // window.self.noDialog = true;
+      window.self.noDialog = true;
     </script>
+    <style>
+      body, html {width: 100%; height: 100%; margin: 0; padding: 0}
+      .row-container {display: flex; width: 100%; height: 100%; flex-direction: column; background-color: blue; overflow: hidden;}
+      .first-row {background-color: lime; }
+      .second-row { flex-grow: 1; border: none; margin: 0; padding: 0; }      
+    </style>
   </head>
   <body>
-    <h1>INDEX PAGE</h1>
-    <iframe src="<%= webcontext %>top.html" style="width:100%; height:100%"></iframe>
+    <div class="row-container">
+      <div class="first-row">
+        <h1>INDEX PAGE</h1>
+      </div>
+      <iframe src="/DialogForIFrame/top.html" class="second-row"></iframe>
+    </div>
   </body>
 </html>
