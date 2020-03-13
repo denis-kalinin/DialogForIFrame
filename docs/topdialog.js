@@ -1001,7 +1001,7 @@
             var tabbedDiv = document.createElement("div");
             tabbedDiv.classList.add("tabbed");
             var nav = document.createElement("nav");
-            nav.classList.add('SIModalTitleBG');
+            nav.classList.add('SIModalTitle');
             var tabWindow = document.createElement("div");
             tabWindow.classList.add("tabwindow");            
             tabbedDiv.appendChild(nav);

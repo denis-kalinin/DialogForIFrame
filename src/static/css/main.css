@@ -68,11 +68,14 @@ WebKit inertia scrolling is being added here for any present/future devices that
     width: 12.5rem;
     background-color: violet;
 }
-.SIModalTitleBG {
+.SIModalTitle {
     background-color: yellowgreen;
 }
 .SIModalTitlePrev {
     color: red;
+}
+.SIModalTitlePrev:hover {
+    color: green;
 }
 .SIModalTitleActive {
     color: gold;
