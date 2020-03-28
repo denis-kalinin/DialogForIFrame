@@ -43,6 +43,42 @@
                 }
                 getTopWindow().postMessage(dialogConfig, '*');
             }
+            function showDocument(url, config){
+                function getTopWindow(checkWindow){
+                    if(!checkWindow) checkWindow = window.self;
+                    try {if(checkWindow.parent && !checkWindow.parent.noDialog){
+                        return getTopWindow(checkWindow.parent);}
+                    }catch(e){}
+                    return checkWindow;
+                }
+                var targetWindow = getTopWindow();
+                var title = (config && congig.title) ? config.title : 'Document';
+                var mime = (config && config.mime) ? config.mime : null;
+                if(!targetWindow.dialogPolyfill){
+                    var script = targetWindow.document.createElement("script");
+                    script.setAttribute("src", "topdialog.js");
+                    script.addEventListener("load", function(evt){
+                        targetWindow.postMessage({
+                            downloader:{
+                                url: url,
+                                title: title,
+                                mime: mime,
+                                name:'docView',
+                                windowName: 'docView_'+ new Date().getTime()
+                            }}, '*');
+                    });
+                    targetWindow.document.head.appendChild(script);
+                } else {
+                    targetWindow.postMessage({
+                        downloader:{
+                            url:url,
+                            title: title,
+                            mime: mime,
+                            name:'docView',
+                            windowName: 'docView_'+ new Date().getTime()
+                        }}, '*');
+                }
+            }
 
         </script>
     <script>
@@ -125,6 +161,9 @@
             <button onclick="window.close();">window.close();</button>
             <button onclick="_closeup();">_closeup();</button>
             <button onclick="window.destroy()">destroy() opener</button>
+            <hr />
+            <button id="button9" onclick="showDocument('/data?inline=pdf', null);">View PDF</button>
+            <button id="button10" onclick="showDocument('/data?inline=docx');">View DOCX</button>
             <hr />
             <button onclick="openDialog({dialog:{url: window.location.href, size:{width:'50%', height:'80%'}, name: 'wizard'}});">OPEN WIZARD</button>
             <button onclick="openDialog({dialog:{url:'https://bing.com', title:'Bing! Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Nulla aliquet enim tortor at. Viverra tellus in hac habitasse platea dictumst vestibulum. Sollicitudin tempor id eu nisl. Fermentum odio eu feugiat pretium. Arcu felis bibendum ut tristique. Vitae congue mauris rhoncus aenean vel. Id diam vel quam elementum pulvinar etiam non quam lacus. Purus gravida quis blandit turpis. Ullamcorper eget nulla facilisi etiam dignissim diam quis enim. Tortor dignissim convallis aenean et tortor at. Sit amet facilisis magna etiam tempor orci eu lobortis.'}});">Bing</button>

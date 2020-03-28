@@ -180,6 +180,7 @@ module.exports = ( env, argv ) => {
     publicPath: theWebcontext,
     setup(app) {
       app.use(express.urlencoded()),
+      //intentional timeout app.use((req,res,next) => {setTimeout(next,1000);});
       app.post('/post', (req, res) => {
           //res.redirect(req.originalUrl);
           //res.send('Hello!');
@@ -197,6 +198,7 @@ module.exports = ( env, argv ) => {
                 'Content-Type': 'application/pdf; charset=UTF-8',
                 'Content-Disposition': 'inline; filename="print.pdf"'
               });
+              //setTimeout(() => { res.sendFile('src/static/data/print.pdf', { root: __dirname }); }, 2000);
               res.sendFile('src/static/data/print.pdf', { root: __dirname });
               return;
             } else if(req.query.inline === 'docx'){
@@ -205,6 +207,7 @@ module.exports = ( env, argv ) => {
                 'Cache-Control': 'no-store, must-revalidate',
                 'Content-Disposition': 'inline; filename="print.docx"'
               });
+              //setTimeout(() => { res.sendFile('src/static/data/print.docx', { root: __dirname }); }, 3000);
               res.sendFile('src/static/data/print.docx', { root: __dirname });
               return;
             }

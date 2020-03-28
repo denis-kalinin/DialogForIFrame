@@ -147,11 +147,10 @@
                     }
                 }
             }
-            function showDocument(url, args){
+            function showDocument(url, config){
                 var targetWindow = getTopWindow();
-                args = args || [];
-                var title = args[0] || 'Document';
-                var mime = args[1];
+                var title = (config && congig.title) ? config.title : 'Document';
+                var mime = (config && config.mime) ? config.mime : null;
                 if(!targetWindow.dialogPolyfill){
                     var script = targetWindow.document.createElement("script");
                     script.setAttribute("src", "topdialog.js");
@@ -160,8 +159,9 @@
                             downloader:{
                                 url: url,
                                 title: title,
+                                mime: mime,
                                 name:'docView',
-                                windowName: 'docView_'+new Date().getTime()
+                                windowName: 'docView_'+ new Date().getTime()
                             }}, '*');
                     });
                     targetWindow.document.head.appendChild(script);
@@ -170,8 +170,9 @@
                         downloader:{
                             url:url,
                             title: title,
+                            mime: mime,
                             name:'docView',
-                            windowName: 'docView_'+new Date().getTime()
+                            windowName: 'docView_'+ new Date().getTime()
                         }}, '*');
                 }
             }
@@ -186,7 +187,7 @@
         <code>&lt;button id="button1" data-topdialog-url="static/html/wizard.html"&gt;SHOW DIALOG&lt;/button&gt;</code>
         <p>And iframe has the script to handle <code>onclick</code>:</p>
         <hr />
-        <button id="button1" data-topdialog-url="static/html/wizard.html" data-topdialog-width="100%" data-topdialog-height="200px" onclick="openDialogListener(this);">SHOW DIALOG</button>
+        <button id="button1" data-topdialog-url="static/html/wizard.html" data-topdialog-width="100%" data-topdialog-height="350px" onclick="openDialogListener(this);">SHOW DIALOG</button>
         <button id="button2" data-topdialog-url="https://bing.com" onclick="openDialogListener(this);">Bing</button>
         <button id="button3" data-topdialog-url="static/html/wizard.html" data-topdialog-width="0" data-topdialog-height="0" onclick="openDialogListener(this);">0 size</button>
         <button id="button3" data-topdialog-url="static/html/wizard.html" data-topdialog-width="300" data-topdialog-height="0" onclick="openDialogListener(this);">wrong size</button>
@@ -198,9 +199,9 @@
         <button id="button7" onclick="proceedMime('/data', 'pdf', 'application/pdf')">PDF</button>
         <button id="button8" onclick="proceedMime('/data', 'docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');">DOCX</button>
         <hr />
-        <button id="button9" onclick="showDocument('/data?inline=pdf', []);">View PDF</button>
-        <button id="button10" onclick="showDocument('/data?inline=docx', []);">View DOCX</button>
-        <button id="button11" onclick="showDocument('/data?format=docx', []);">Download DOCX</button>
+        <button id="button9" onclick="showDocument('/data?inline=pdf', null);">View PDF</button>
+        <button id="button10" onclick="showDocument('/data?inline=docx');">View DOCX</button>
+        <button id="button11" onclick="showDocument('/data?format=docx');">Download DOCX</button>
         <hr />
         <table>
             <tr>
