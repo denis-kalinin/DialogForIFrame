@@ -768,10 +768,21 @@
             });
 
         window.dialogPolyfill.registerDialog(dialog);
-
-        function _createDialog(dialogObj, dialogOpenerWindow){
+        /**
+         * 
+         * @param {{
+         *  url: string,
+         *  name: string,
+         *  windowName: string,
+         *  ignoreOnLoad: boolean,
+         *  title: string,
+         *  size: { width: string, height:s tring }
+         * }} dialogObj 
+         * @param { window } dialogOpenerWindow 
+         */
+        function _createDialog(dialogObj, dialogOpenerWindow, targetIframe){
             document.body.style.overflow = 'hidden';
-            var iframe = document.createElement('iframe');           
+            var iframe = targetIframe || document.createElement('iframe');           
             iframe.dataset.dialogId = ++iframeCounter;
             iframe.dataset.shortcutStopPropagation = '';
             if(dialogObj.name) iframe.dataset.watirName = dialogObj.name;
@@ -790,19 +801,27 @@
             }
             dialogPolyfill.reposition(dialog);
             tabs[tabs.length] = {iframe:iframe,opener:dialogOpenerWindow};
-            tabWindow.appendChild(iframe);
-            iframe.contentWindow.opener = dialogOpenerWindow;
+            if(!targetIframe) { 
+                tabWindow.appendChild(iframe);
+            } else {
+                iframe.style.display='block';
+            }
+            try {
+                iframe.contentWindow.opener = dialogOpenerWindow;
+            } catch(e) {}
             if(dialogObj.windowName){
-                iframe.contentWindow.name = dialogObj.windowName;
+                try{
+                    iframe.contentWindow.name = dialogObj.windowName;
+                }catch(e){}
                 iframe.name = dialogObj.windowName;
             }
             // iframe.opener = dialogOpenerWindow;
-            var ignoreOnLoad = true;
+            // var ignoreOnLoad = dialogObj.ignoreOnLoad || true;
             if(dialogObj.url){
                 iframe.src = dialogObj.url;
-                ignoreOnLoad = false;
+                //ignoreOnLoad = false;
             }
-            _redrawBreadcrumbs(iframe.dataset.dialogId, ignoreOnLoad);
+            _redrawBreadcrumbs(iframe.dataset.dialogId, !!dialogObj.ignoreOnLoad);
         }
         function _setDialogSize(width, height, iframe){
             var w = width ? ( isNaN(width) ? width : width+"px" ) : null;
@@ -891,13 +910,18 @@
                     _closeTabByDialogId(evt.data.dialog.close);
                 } else if (evt.data.dialog && evt.data.dialog.update) {
                     var iframeAndTabIndex = _findEventSourceIframe(evt.source);
-                    if(!iframeAndTabIndex) return;
+                    if(!iframeAndTabIndex) throw new Error('IframeAndTabIndex not found for', evt.source);
                     var activeTabId = iframeAndTabIndex.tabIndex;
                     for( var i=0; i<tabs.length; i++ ){
                         if(activeTabId == i){
-                            tabs[i].iframe.contentWindow.opener = tabs[i].opener;                            
-                            evt.source.postMessage('message', '*');
-                            return;
+                            var iIfr = tabs[i].iframe;
+                            var iIfrWin = iIfr.contentWindow || iIfr;
+                            iIfrWin.opener = tabs[i].opener;
+                            var title = iIfr.contentWindow ? iIfr.contentDocument.title : iIfr.document.title;
+                            iIfr.dataset.title = title;
+                            iIfr.dataset.loaded = true;
+                            _redrawBreadcrumbs(iIfr.dataset.dialogId, true);
+                            iIfrWin.postMessage({}, '*');
                         }
                     }
                 } else if (evt.data.dialog && evt.data.dialog.title){
@@ -907,18 +931,62 @@
                     ifr.dataset.title = evt.data.dialog.title;
                     ifr.dataset.loaded = true;
                     _redrawBreadcrumbs(ifr.dataset.dialogId, true);
-                } else if (evt.data.dialog && evt.data.dialog.windowName) { 
+                } else if (evt.data.dialog && evt.data.dialog.windowName) {
+                    // post message 
                     _createDialog(evt.data.dialog, evt.source);
-                    evt.source.postMessage('message', '*');
+                    evt.source.postMessage({}, '*');
                 } else {
                     var iframeAndTabIndex = _findEventSourceIframe(evt.source);
                     if(iframeAndTabIndex) {
                         _removeIframe(iframeAndTabIndex);
                     }
                 }
+            } else if(evt.data && evt.data.hasOwnProperty('downloader')){
+                var mime = evt.data.downloader.mime;
+                function isMimeSupported (type) {
+                    if(!type) return false;
+                    return Array.prototype.reduce.call(navigator.plugins, function (supported, plugin) {
+                        return supported || Array.prototype.reduce.call(plugin, function (supported, mime) {
+                            console.debug('browser plugin mime:', mime.type);
+                            return supported || mime.type == type;
+                        }, supported);
+                    }, false);
+                }
+                var dialogObj = evt.data.downloader;
+                dialogObj.ignoreOnLoad = true;
+                if(isMimeSupported(mime)){
+                    console.info('MIME', mime, 'supported!');
+                    _createDialog(dialogObj, evt.source);
+                } else {
+                    var url = dialogObj.url;
+                    delete dialogObj.url;
+                    var difr = document.createElement('iframe');
+                    difr.style.display='none';
+                    difr.src=url;
+                    tabWindow.appendChild(difr);
+                    //chrome reaches onload if url displayed
+                    //firefox reaches onload and need 
+                    difr.addEventListener('load', function(){
+                        difr.dataset.loaded = true;
+                        //console.debug('ContentWindow', difr.contentWindow.location.href);
+                        console.debug('contentDocument', difr.contentDocument);
+                        console.debug('difr.src', difr.src);
+                        console.debug('contentWindow', difr.contentWindow);
+                        try{
+                            var difrProtocol = difr.contentWindow.location.protocol;
+                            if(difr.src.substr(0, difrProtocol.length) === difrProtocol){
+                                _createDialog(dialogObj, evt.source, difr);
+                            }
+                        } catch (e){
+                            // i.e. FF and rendered
+                            _createDialog(dialogObj, evt.source, difr);
+                        }
+                    });
+                }
             }
         }
         function _redrawBreadcrumbs(activeDialogId, ignoreOnLoad){
+            console.debug('redrawing breadcrumbs, ignoreOnLoad', ignoreOnLoad);
             var nav = dialog.querySelector('nav');
             var frag = document.createDocumentFragment();
             for( var i=0; i<tabs.length; i++ ){
@@ -942,12 +1010,12 @@
                     xButton.classList.add('xbutton');
                     xButton.classList.add('SIModalXButton');
                     xButton.addEventListener('click', (function(dialogId){
-                        return function(){ postMessage({ dialog:{ close: ifr.dataset.dialogId } }, '*') };
+                        return function(){ postMessage({ dialog:{ close: ifr.dataset.dialogId } }, '*'); };
                     })(ifr.dataset.dialogId));
                     crumb.appendChild(xButton);
                     crumb.classList.add('active');
                     crumb.classList.add('SIModalTitleActive');
-                    if(!ifr.dataset.loaded){ /** add spinner to show loading process */                    
+                    if(!ifr.dataset.loaded && !ifr.dataset.title && ignoreOnLoad){ /** add spinner to show loading process */                    
                         var spinner = document.createElement('div');
                         spinner.classList.add('lds-ellipsis');
                         for(var u=0; u<4; u++){
@@ -958,21 +1026,17 @@
                     var textNode = document.createTextNode(ifr.dataset.title?ifr.dataset.title:'');
                     crumb.appendChild( textNode );
                     if(ifr.onload==null && !ignoreOnLoad){
-                        var ifrOpener = tabs[i].opener;
-                        var iWin = ifr.contentWindow;
+                        console.debug('applying ifr.onload')
                         var spinner = crumb.querySelector('.lds-ellipsis');
+                        var ifrOpener = tabs[i].opener;
                         ifr.onload = function(){
                             try{
                                 ifr.dataset.loaded = true;
-                                iWin.opener = ifrOpener;
+                                var iWin = ifr.contentWindow || ifr;
+                                var doc = ifr.contentWindow ? ifr.contentDocument : ifr.document;
                                 if(spinner && spinner.parentNode){
                                     spinner.parentNode.removeChild(spinner);
                                 }
-                                var doc = ifr.contentDocument? ifr.contentDocument : iWin.document;
-                                /** window.close() can be overriden in IE by function declaration only */
-                                var script = doc.createElement('script');
-                                script.textContent = "function getTopWindow(checkWindow){if(!checkWindow) checkWindow = window.self;try {if(checkWindow.parent && !checkWindow.parent.noDialog){return getTopWindow(checkWindow.parent);}}catch(e){}return checkWindow;}function close(){getTopWindow().postMessage({dialog:null},'*')}";
-                                doc.head.appendChild(script);
                                 if(!ifr.dataset.title) {
                                     if(doc && doc.title) {
                                         ifr.dataset.title=doc.title;
@@ -980,6 +1044,18 @@
                                         ifr.dataset.title = 'No title ' + i;
                                     }
                                 }
+                                if(!!iWin.isDialogCloseable){
+                                    console.debug('ifr.onload is not applied because of isDialogCloseable==true');
+                                    textNode.nodeValue = ifr.dataset.title;
+                                    return;
+                                }
+                                console.debug('ifr.onload is applied!');
+                                iWin.opener = ifrOpener;
+                                /** window.close() can be overriden in IE by function declaration only */
+                                var script = doc.createElement('script');
+                                script.textContent = "function close(){console.debug('close() is defined by topdialog');function getTopWindow(checkWindow){if(!checkWindow) checkWindow = window.self;try {if(checkWindow.parent && !checkWindow.parent.noDialog){return getTopWindow(checkWindow.parent);}}catch(e){}return checkWindow;};getTopWindow().postMessage({dialog:null},'*')}";
+                                doc.head.appendChild(script);
+                                iWin.isDialogCloseable = true;
                             } catch(error){
                                 if(!ifr.dataset.title) ifr.dataset.title = 'No title #'+ i;
                                 if(spinner && spinner.parentNode){

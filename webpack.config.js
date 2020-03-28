@@ -64,10 +64,10 @@ const config = {
     rules: []
   },
   devServer: {
-    port: 8088,
+    port: 8888,
     publicPath: '/DialogForIFrame/',
-    openPage: 'DialogForIFrame/'
-
+    openPage: 'DialogForIFrame/',
+    //disableHostCheck: true,
   },
   entry: {
     dialog: path.resolve(__dirname, 'src/static/js/dialog.js'),
@@ -95,7 +95,7 @@ module.exports = ( env, argv ) => {
       },
     ]);
     const mini = new MiniCssExtractPlugin();
-    config.plugins.push(twig, mini, clean);
+    config.plugins.push(twig, mini);//,clean
   }
   //////DEVELOPMENT////////
   if (config.mode === 'development'){
@@ -120,25 +120,6 @@ module.exports = ( env, argv ) => {
     ]);
     const mini = new MiniCssExtractPlugin();
     config.plugins.push(staticFolder, indexHtml, twig, mini);
-    const express = require('express');
-    config.devServer = {
-      headers: {
-        'Server': 'webpack-dev-server',
-      },
-      inline: true,
-      openPage: theWebcontext.substr(1),
-      port: 8888,
-      publicPath: theWebcontext,
-      setup(app) {
-        app.use(express.urlencoded()),
-        app.post('/post', (req, res) => {
-            //res.redirect(req.originalUrl);
-            //res.send('Hello!');
-            //res.sendFile('src/static/html/htmlEditor.html',  { root: __dirname });
-            res.render('htmlEditor.twig', { dta: req.body.dta });
-        });
-      },
-    }
   }
   /// Common plugins ///////
   const localtestPage = 
@@ -185,6 +166,73 @@ module.exports = ( env, argv ) => {
       },
     ]
   });
+
+  const express = require('express');
+  config.devServer = {
+    headers: {
+      'Server': 'webpack-dev-server',
+    },
+    hot: false,
+    inline: false,
+    openPage: theWebcontext.substr(1),
+    port: 8888,
+    disableHostCheck: true,
+    publicPath: theWebcontext,
+    setup(app) {
+      app.use(express.urlencoded()),
+      app.post('/post', (req, res) => {
+          //res.redirect(req.originalUrl);
+          //res.send('Hello!');
+          //res.sendFile('src/static/html/htmlEditor.html',  { root: __dirname });
+          res.render('htmlEditor.twig', { dta: req.body.dta });
+      });
+      app.get('/data', (req, res) => {
+        console.debug(req.query);
+        if (Object.keys(req.query).length !== 0){
+          console.debug('Show data:', req.originalUrl);
+          if(req.query.inline){
+            if(req.query.inline === 'pdf'){
+              res.set({
+                'Cache-Control': 'no-store, must-revalidate',
+                'Content-Type': 'application/pdf; charset=UTF-8',
+                'Content-Disposition': 'inline; filename="print.pdf"'
+              });
+              res.sendFile('src/static/data/print.pdf', { root: __dirname });
+              return;
+            } else if(req.query.inline === 'docx'){
+              res.set({
+                'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document+xml',
+                'Cache-Control': 'no-store, must-revalidate',
+                'Content-Disposition': 'inline; filename="print.docx"'
+              });
+              res.sendFile('src/static/data/print.docx', { root: __dirname });
+              return;
+            }
+          } else if (req.query.format) {
+            if(req.query.format === 'pdf'){
+              res.set({
+                'Content-Type': 'application/pdf',
+                'Cache-Control': 'no-store, must-revalidate',
+                'Content-Disposition': 'attachment; filename="print.pdf"'
+              });
+              res.sendFile('src/static/data/print.pdf', { root: __dirname });
+              return;
+            } else if(req.query.format === 'docx'){
+              res.set({
+                'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'Cache-Control': 'no-store, must-revalidate',
+                'Content-Disposition': 'attachment; filename="print.docx"'
+              });
+              res.sendFile('src/static/data/print.docx', { root: __dirname });
+              return;
+            }
+          }
+        } 
+        res.statusMessage = "inline or format parameter is required";
+        res.status(400).end();
+      });
+    },
+  }
 
   return config;
 };

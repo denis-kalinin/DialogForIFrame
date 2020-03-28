@@ -5,6 +5,177 @@
         <title>AL main pane</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <base href="<%= webcontext %>" />
+        <script type="text/javascript">
+            function getTopWindow(checkWindow){
+                if(!checkWindow) checkWindow = window.self;
+                try {
+                    if(checkWindow.parent && !checkWindow.parent.noDialog){
+                        return getTopWindow(checkWindow.parent);
+                    }
+                } catch (e) {}
+                return checkWindow;
+            }
+            function showDialog(windowName){
+                var targetWindow = getTopWindow();
+                if(!targetWindow.dialogPolyfill){
+                    var script = targetWindow.document.createElement("script");
+                    script.setAttribute("src", "topdialog.js");
+                    script.addEventListener("load", function(evt){
+                        targetWindow.postMessage({
+                            dialog:{
+                                name:'a18',
+                                windowName: windowName,
+                                ignoreOnLoad: true
+                            }}, '*');
+                    });
+                    targetWindow.document.head.appendChild(script);
+                } else {
+                    targetWindow.postMessage({
+                        dialog:{
+                            name:'a18',
+                            windowName: windowName,
+                            ignoreOnLoad: true
+                        }}, '*');
+                }                
+            }
+
+            function openDialog(url){
+                var targetWindow = getTopWindow();
+                if(!targetWindow.dialogPolyfill){
+                    var script = targetWindow.document.createElement("script");
+                    script.setAttribute("src", "topdialog.js");
+                    script.addEventListener("load", function(evt){
+                        targetWindow.postMessage({
+                            dialog:{
+                                url: url,
+                                name:'a18',
+                                windowName: 'a18_'+new Date().getTime()
+                            }}, '*');
+                    });
+                    targetWindow.document.head.appendChild(script);
+                } else {
+                    targetWindow.postMessage({
+                        dialog:{
+                            url:url,
+                            name:'a18',
+                            windowName: 'a18_'+new Date().getTime()
+                        }}, '*');
+                }                
+            }
+
+            function openDialogListener(elem, evt) {
+                var targetWindow = getTopWindow();
+                if(!targetWindow.dialogPolyfill){
+                    var script = targetWindow.document.createElement("script");
+                    script.setAttribute("src", "topdialog.js");
+                    script.addEventListener("load", function(evt){
+                        targetWindow.postMessage({
+                            dialog:{
+                                url: elem.dataset.topdialogUrl,
+                                size:{
+                                    width: elem.dataset.topdialogWidth,
+                                    height: elem.dataset.topdialogHeight
+                                },
+                                name:'a18',
+                                windowName: 'a18_'+new Date().getTime()
+                            }}, '*');
+                    });
+                    targetWindow.document.head.appendChild(script);
+                } else {
+                    targetWindow.postMessage({
+                        dialog:{
+                            url:elem.dataset.topdialogUrl,
+                            size:{
+                                width: elem.dataset.topdialogWidth,
+                                height: elem.dataset.topdialogHeight
+                            },
+                            name:'a18',
+                            windowName: 'a18_'+new Date().getTime()
+                        }}, '*');
+                }
+            }
+            function postToDialog(){
+                var postWindow = 'a18_asdf4';
+                var form = document.createElement("FORM");
+                form.method = "post";
+                form.action = '/post';
+                form.target = postWindow;
+                form.style.position = "absolute";
+                form.style.top = 0;
+                form.style.visibility = "hidden";
+                document.body.appendChild(form);
+                var textarea = document.createElement("TEXTAREA");
+                textarea.name = 'dta';
+                textarea.value = 'Hello world! (POSTED)';
+                form.appendChild(textarea);
+                window.addEventListener('message', function(){
+                    form.submit();
+                }, { once: true });
+                showDialog(postWindow);                
+            }
+            function proceedMime(url, param, mime){
+                var mimeCheck = function (type) {
+                    return Array.prototype.reduce.call(navigator.plugins, function (supported, plugin) {
+                        return supported || Array.prototype.reduce.call(plugin, function (supported, mime) {
+                            console.debug('browser plugin mime:', mime.type);
+                            return supported || mime.type == type;
+                        }, supported);
+                    }, false);
+                };
+                if(mimeCheck(mime)){
+                    console.info('MIME', mime, 'supported!');
+                    openDialog(url+'?inline='+param);
+                } else {
+                    //openDialog(url);
+                    var difr = document.createElement('iframe');
+                    difr.style.display='none';
+                    difr.src=url+'?inline='+param;
+                    difr.addEventListener('load', function(){
+                        debugger;
+                        try{
+                            console.info('Loaded document: ', difr.contentWindow.location);
+                            difr.style.display='block';
+                        }catch(e) {
+                            //cross-oring error if plugins
+                            difr.style.display='block';
+                        }
+                    });
+                    try{
+                        document.body.appendChild(difr);
+                    } catch(e){
+                        console.error(e);
+                    }
+                }
+            }
+            function showDocument(url, args){
+                var targetWindow = getTopWindow();
+                args = args || [];
+                var title = args[0] || 'Document';
+                var mime = args[1];
+                if(!targetWindow.dialogPolyfill){
+                    var script = targetWindow.document.createElement("script");
+                    script.setAttribute("src", "topdialog.js");
+                    script.addEventListener("load", function(evt){
+                        targetWindow.postMessage({
+                            downloader:{
+                                url: url,
+                                title: title,
+                                name:'docView',
+                                windowName: 'docView_'+new Date().getTime()
+                            }}, '*');
+                    });
+                    targetWindow.document.head.appendChild(script);
+                } else {
+                    targetWindow.postMessage({
+                        downloader:{
+                            url:url,
+                            title, title,
+                            name:'docView',
+                            windowName: 'docView_'+new Date().getTime()
+                        }}, '*');
+                }
+            }
+        </script>
     </head>
     <body>
         <h1>TABLE</h1>
@@ -14,35 +185,6 @@
         <p>A triggering element (e.g. <code>&lt;button /&gt;</code>) SHOULD have <code>data-topdialog-url</code> attribute:</p>
         <code>&lt;button id="button1" data-topdialog-url="static/html/wizard.html"&gt;SHOW DIALOG&lt;/button&gt;</code>
         <p>And iframe has the script to handle <code>onclick</code>:</p>
-        <code style="display: block;"><pre>
-            &lt;script&gt;
-            // assign listener to elements
-            var triggers = document.querySelectorAll("button");
-            for(var i=0; i&lt;triggers.length; i++){
-                triggers[i].addEventListener("click", function(evt){
-                    openDialogListener(this, evt);
-                });
-            }
-            function openDialogListener(elem, evt) {
-                if(!window.top.dialogPolyfill){
-                    var script = window.top.document.createElement("script");
-                    // load dialog polyfill and script
-                    script.setAttribute("src", "https://denis-kalinin.github.io/DialogForIFrame/static/js/topdialog.js");
-                    script.addEventListener("load", function(evt){
-                        _deferredDialog(elem.dataset.topdialogUrl);
-                    });
-                    window.top.document.head.appendChild(script);
-                } else {
-                    _deferredDialog(elem.dataset.topdialogUrl);
-                }
-            }
-            function _deferredDialog(url){
-                if(window.top.dialogPolyfill){
-                    window.top.postMessage({dialog:{url:url}}, '*');
-                }
-            }
-            &lt;/script&gt;            
-        </pre></code>
         <hr />
         <button id="button1" data-topdialog-url="static/html/wizard.html" data-topdialog-width="100%" data-topdialog-height="200px" onclick="openDialogListener(this);">SHOW DIALOG</button>
         <button id="button2" data-topdialog-url="https://bing.com" onclick="openDialogListener(this);">Bing</button>
@@ -51,6 +193,14 @@
         <button id="button4" data-topdialog-url="static/html/redirect.html" onclick="openDialogListener(this);">Redirect</button>
         <hr />
         <button id="button5" onclick="postToDialog();">POST TO DIALOG</button>
+        <hr />
+        <button id="button6" data-topdialog-url="static/html/download.html" onclick="openDialogListener(this);">Download</button>
+        <button id="button7" onclick="proceedMime('/data', 'pdf', 'application/pdf')">PDF</button>
+        <button id="button8" onclick="proceedMime('/data', 'docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');">DOCX</button>
+        <hr />
+        <button id="button9" onclick="showDocument('/data?inline=pdf', []);">View PDF</button>
+        <button id="button10" onclick="showDocument('/data?inline=docx', []);">View DOCX</button>
+        <button id="button11" onclick="showDocument('/data?format=docx', []);">Download DOCX</button>
         <hr />
         <table>
             <tr>
@@ -113,96 +263,5 @@
                 <td>gaoiewfabao</td>
             </tr>
         </table>
-        <script>
-            /*
-            var triggers = document.querySelectorAll("button");
-            for(var i=0; i<triggers.length; i++){
-                triggers[i].addEventListener("click", function(evt){
-                    openDialogListener(this, evt);
-                });
-            }
-            */
-            function getTopWindow(checkWindow){
-                if(!checkWindow) checkWindow = window.self;
-                try {
-                    if(checkWindow.parent && !checkWindow.parent.noDialog){
-                        return getTopWindow(checkWindow.parent);
-                    }
-                } catch (e) {}
-                return checkWindow;
-            }
-            function showDialog(windowName){
-                var targetWindow = getTopWindow();
-                if(!targetWindow.dialogPolyfill){
-                    var script = targetWindow.document.createElement("script");
-                    script.setAttribute("src", "topdialog.js");
-                    script.addEventListener("load", function(evt){
-                        targetWindow.postMessage({
-                            dialog:{
-                                name:'a18',
-                                windowName: windowName
-                            }}, '*');
-                    });
-                    targetWindow.document.head.appendChild(script);
-                } else {
-                    targetWindow.postMessage({
-                        dialog:{
-                            name:'a18',
-                            windowName: windowName
-                        }}, '*');
-                }                
-            }
-
-            function openDialogListener(elem, evt) {
-                var targetWindow = getTopWindow();
-                if(!targetWindow.dialogPolyfill){
-                    var script = targetWindow.document.createElement("script");
-                    script.setAttribute("src", "topdialog.js");
-                    script.addEventListener("load", function(evt){
-                        targetWindow.postMessage({
-                            dialog:{
-                                url: elem.dataset.topdialogUrl,
-                                size:{
-                                    width: elem.dataset.topdialogWidth,
-                                    height: elem.dataset.topdialogHeight
-                                },
-                                name:'a18',
-                                windowName: 'a18_'+new Date().getTime()
-                            }}, '*');
-                    });
-                    targetWindow.document.head.appendChild(script);
-                } else {
-                    targetWindow.postMessage({
-                        dialog:{
-                            url:elem.dataset.topdialogUrl,
-                            size:{
-                                width: elem.dataset.topdialogWidth,
-                                height: elem.dataset.topdialogHeight
-                            },
-                            name:'a18',
-                            windowName: 'a18_'+new Date().getTime()
-                        }}, '*');
-                }
-            }
-            function postToDialog(){
-                var postWindow = 'a18_asdf4';
-                var form = document.createElement("FORM");
-                form.method = "post";
-                form.action = '/post';
-                form.target = postWindow;
-                form.style.position = "absolute";
-                form.style.top = 0;
-                form.style.visibility = "hidden";
-                document.body.appendChild(form);
-                var textarea = document.createElement("TEXTAREA");
-                textarea.name = 'dta';
-                textarea.value = 'Hello world! (POSTED)';
-                form.appendChild(textarea);
-                window.addEventListener('message', function(){
-                    form.submit();
-                }, { once: true });
-                showDialog(postWindow);                
-            }
-        </script>
     </body>
 </html>
