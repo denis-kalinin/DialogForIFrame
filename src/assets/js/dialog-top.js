@@ -32,7 +32,7 @@
          *  windowName: string,
          *  ignoreOnLoad: boolean,
          *  title: string,
-         *  size: { width: string, height:s tring }
+         *  size: { width: string, height:string }
          * }} dialogObj 
          * @param { window } dialogOpenerWindow
          * @param { HTMLIFrameElement } targetIframe with the content of the dialog and appended to the dialog
@@ -77,6 +77,10 @@
             if(dialogObj.url){
                 iframe.src = dialogObj.url;
                 //ignoreOnLoad = false;
+            } else if(dialogObj.html){
+                iframe.contentDocument.open();
+                iframe.contentDocument.write(dialogObj.html);
+                iframe.contentDocument.close();
             }
             _redrawBreadcrumbs(iframe.dataset.dialogId, !!dialogObj.ignoreOnLoad);
         }
@@ -161,7 +165,7 @@
         }
         function _messageListerner(evt){
             if(evt.data && evt.data.hasOwnProperty('dialog')){
-                if(evt.data.dialog && evt.data.dialog.url){
+                if(evt.data.dialog && (evt.data.dialog.url || evt.data.dialog.html)){
                     _createDialog(evt.data.dialog, evt.source);
                 } else if (evt.data.dialog && evt.data.dialog.close) {
                     _closeTabByDialogId(evt.data.dialog.close);
@@ -189,7 +193,7 @@
                     ifr.dataset.loaded = true;
                     _redrawBreadcrumbs(ifr.dataset.dialogId, true);
                 } else if (evt.data.dialog && evt.data.dialog.windowName) {
-                    // post message 
+                    // post message evt.source is de-facto opener
                     _createDialog(evt.data.dialog, evt.source);
                     evt.source.postMessage({}, '*');
                 } else {
@@ -221,20 +225,6 @@
                     var difr = document.createElement('iframe');
                     difr.src=url;
                     difr.setAttribute('id', 'testdifr');
-                    //tabWindow.appendChild(difr);
-                    //chrome reaches onload if url displayed
-                    //firefox reaches onload and need
-                    /* 
-                    difr.addEventListener('load', function(){
-                        console.debug('difr loaded');
-                        difr.dataset.loaded = true;
-                        //console.debug('ContentWindow', difr.contentWindow.location.href);
-                        console.debug('contentDocument', difr.contentDocument);
-                        console.debug('difr.src', difr.src);
-                        console.debug('contentWindow', difr.contentWindow);
-                    });
-                    */
-                    //add after listener for IE
                     var ie = (function(){
                         var undef,rv = -1; // Return value assumes failure.
                         var ua = window.navigator.userAgent;
@@ -261,6 +251,8 @@
                             dialog.style.top='10px';
                             dialog.style.left='10px';
                             dialog.style.display='block';
+                            var nav = dialog.querySelector('nav');
+                            nav.style.display='none';
                             tabWindow.appendChild(difr);
                         } else {
                             isDialogAlreadyOpened = true;
@@ -277,42 +269,48 @@
                         /* IE11 */
                         console.info('browser: IE', ie);
                         difr.contentWindow.addEventListener('DOMContentLoaded', (function(dialogConfig, evtSource, ifr, doc) {
-                            console.log('window - DOMContentLoaded - capture'); // 1st
-                            var waitForActiveElement = 30;
-                            var intervalId = setInterval(function(){
-                                console.debug('waitForActiveElement :', waitForActiveElement--);
+                            console.debug('window - DOMContentLoaded - capture'); // 1st
+                            function checkPDF(remains){
+                                console.debug('waitForActiveElement :', remains);
                                 try {
+                                    console.debug('activeElement', doc.activeElement);
                                     if (doc.activeElement.tagName.toLocaleLowerCase() === 'object') {
-                                        clearInterval(intervalId);
                                         if(!isDialogAlreadyOpened){
-                                            dialog.removeAttribute("style");                     
-                                            _createDialog(dialogConfig, evtSource, ifr);
-                                        }                                        
-                                    } else { //download
-                                        clearInterval(intervalId);
-                                        if(isDialogAlreadyOpened){
-                                            _closeTabByDialogId(ifr.dataset.dialogId);
-                                        } else {
-                                            console.debug(dialog);
                                             dialog.style.removeAttribute("width");
                                             dialog.style.removeAttribute("height");
-                                            //dialog.style.removeAttribute("margin");
-                                            //dialog.style.removeAttribute("padding");
                                             dialog.style.removeAttribute("position");
                                             dialog.style.removeAttribute("top");
                                             dialog.style.removeAttribute("left");
                                             dialog.style.removeAttribute("display");
-                                            console.debug(dialog);
+                                            var nav = dialog.querySelector('nav');
+                                            nav.style.removeAttribute("display");                   
+                                            _createDialog(dialogConfig, evtSource, ifr);
+                                        }                                        
+                                    } else { //download
+                                        if(isDialogAlreadyOpened){
+                                            _closeTabByDialogId(ifr.dataset.dialogId);
+                                        } else {
+                                            dialog.style.removeAttribute("width");
+                                            dialog.style.removeAttribute("height");
+                                            dialog.style.removeAttribute("position");
+                                            dialog.style.removeAttribute("top");
+                                            dialog.style.removeAttribute("left");
+                                            dialog.style.removeAttribute("display");
+                                            var nav = dialog.querySelector('nav');
+                                            nav.style.removeAttribute("display");
+                                            console.debug('Dialog before removing downaload iframe', dialog);
                                             tabWindow.removeChild(ifr);
                                         }
                                     }
                                 } catch (e) {
-                                    if(waitForActiveElement<=0){
-                                        clearInterval(intervalId);
+                                    if(remains > 0){
+                                        setTimeout(checkPDF, 1000, remains-1);
+                                    } else {
                                         console.error(e);
                                     }
                                 }
-                            }, 1000);
+                            }
+                            setTimeout(checkPDF, 500, 30);
                         })(dialogObj, evt.source, difr, difr.contentDocument ), true);
                     } else {
                         console.info('browser: NOT IE');
@@ -331,46 +329,6 @@
                         }
                         difr.addEventListener('load', loadListener);
                     }
-                    /*
-                    difr.contentDocument.addEventListener('DOMContentLoaded', function() {
-                        console.log('document - DOMContentLoaded - capture'); // 2nd
-                    }, true);
-                    */
-                    console.debug(difr.contentDocument);
-                    console.debug('document protocol', difr.contentDocument.location.protocol);
-                    /*
-                    difr.contentWindow.onload = function(){
-                        console.info('IE contentWindow onload');
-                    }
-                    difr.contentWindow.addEventListener('load', function(){
-                        console.debug('IE contentWidnow load event');
-                    });
-                    difr.contentWindow.addEventListener('onload', function(){
-                        console.debug('IE contentWidnow onload event');
-                    });
-                    */
-                    /*
-                    try {
-                        var difrProtocol = difr.contentWindow.location.protocol;
-                        console.debug('difrProtocol', difrProtocol);
-                        console.debug('before 2s timeout', difr);
-                        setTimeout( (function(pdfDoc){
-                            return function(){
-                                console.debug('after 2s timeout');
-                                console.debug(pdfDoc);
-                                console.debug('Active element: ', pdfDoc.activeElement);
-                            }
-                        })(difr.contentDocument), 2000);
-
-                        if(difr.src.substr(0, difrProtocol.length) === difrProtocol){
-                            //_createDialog(dialogObj, evt.source, difr);
-                        }
-                    } catch (e) {
-                        console.warn(e);
-                        // i.e. FF and rendered
-                        _createDialog(dialogObj, evt.source, difr);
-                    }
-                    */
                 }
             }
         }

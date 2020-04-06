@@ -131,7 +131,6 @@
                     difr.style.display='none';
                     difr.src=url+'?inline='+param;
                     difr.addEventListener('load', function(){
-                        debugger;
                         try{
                             console.info('Loaded document: ', difr.contentWindow.location);
                             difr.style.display='block';
@@ -176,6 +175,20 @@
                         }}, '*');
                 }
             }
+
+            function showHTML(config){
+                var targetWindow = getTopWindow();
+                if(!targetWindow.dialogPolyfill){
+                    var script = targetWindow.document.createElement("script");
+                    script.setAttribute("src", "topdialog.js");
+                    script.addEventListener("load", function(evt){
+                        targetWindow.postMessage({dialog: config}, '*');
+                    });
+                    targetWindow.document.head.appendChild(script);
+                } else {
+                    targetWindow.postMessage({dialog:config}, '*');
+                }                
+            }
         </script>
     </head>
     <body>
@@ -202,6 +215,8 @@
         <button id="button9" onclick="showDocument('/data?inline=pdf', null);">View PDF</button>
         <button id="button10" onclick="showDocument('/data?inline=docx');">View DOCX</button>
         <button id="button11" onclick="showDocument('/data?format=docx');">Download DOCX</button>
+        <hr />
+        <button id="button12" onclick="showHTML({html:'<html><body><strong>Hello</strong> world!</body></html>', title:'Message', size: {width:'null', height:'8em'}});">Write HTML</button>
         <hr />
         <table>
             <tr>

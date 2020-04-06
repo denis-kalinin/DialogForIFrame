@@ -198,8 +198,8 @@ module.exports = ( env, argv ) => {
                 'Content-Type': 'application/pdf; charset=UTF-8',
                 'Content-Disposition': 'inline; filename="print.pdf"'
               });
-              //setTimeout(() => { res.sendFile('src/static/data/print.pdf', { root: __dirname }); }, 2000);
-              res.sendFile('src/static/data/print.pdf', { root: __dirname });
+              setTimeout(() => { res.sendFile('src/static/data/print.pdf', { root: __dirname }); }, 2000);
+              //res.sendFile('src/static/data/print.pdf', { root: __dirname });
               return;
             } else if(req.query.inline === 'docx'){
               res.set({
