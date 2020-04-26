@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>HTML Editor</title>
+        <script>
+            function getTopWindow(checkWindow){
+                if(!checkWindow) checkWindow = window.self;
+                try {
+                    if(checkWindow.parent && !checkWindow.parent.noDialog){
+                        return getTopWindow(checkWindow.parent);
+                    }
+                } catch (e) {}
+                return checkWindow;
+            }
+            function openDialog(url){
+                var targetWindow = getTopWindow();
+                if(!targetWindow.dialogPolyfill){
+                    var script = targetWindow.document.createElement("script");
+                    script.setAttribute("src", "topdialog.js");
+                    script.addEventListener("load", function(evt){
+                        targetWindow.postMessage({
+                            dialog:{
+                                url: url,
+                                name:'a18',
+                                minimizeOpener: true,
+                                windowName: 'a18_'+new Date().getTime()
+                            }}, '*');
+                    });
+                    targetWindow.document.head.appendChild(script);
+                } else {
+                    targetWindow.postMessage({
+                        dialog:{
+                            url:url,
+                            name:'a18',
+                            minimizeOpener: true,
+                            windowName: 'a18_'+new Date().getTime()
+                        }}, '*');
+                }                
+            }
+        </script>
+    </head>
+    <body style="background-color: aquamarine;">
+        <label for="editor">HTML</label>
+        <textarea id="editor">gasfdsaf</textarea>
+        <br />
+        <button onclick="openDialog('static/html/editor/linkeditor.html')">Link editor</button>
+    </body>
+</html>

@@ -1,8 +1,12 @@
 <html>
   <head>
     <script type="text/javascript">
-      function onPageLoad() { document.location = "redirected.html"; }
+      function onPageLoad() {
+        console.debug('redirect.html opener is', window.opener ? window.opener.location.href : '----');
+        document.location = "redirected.html";
+      }
     </script>
+    <script src="../js/closer.js"></script>
   </head>
   <body onload="onPageLoad()"></body>
 </html>

@@ -1,5 +1,5 @@
 (function () {
-    var dialogCss = "dialog{position:absolute;left:0;right:0;width:-moz-fit-content;width:-webkit-fit-content;width:fit-content;height:-moz-fit-content;height:-webkit-fit-content;height:fit-content;margin:auto;order:solid;padding:1em;background:white;color:black;display:block}dialog:not([open]){display:none}._dialog_overlay{position:fixed;top:0;right:0;bottom:0;left:0}dialog.fixed{position:fixed;top:50%;transform:translate(0, -50%)}.lds-ellipsis{display:inline-block;position:relative;min-width:80px;height:12px;top:2px}.lds-ellipsis div{position:absolute;top:0px;width:12px;height:12px;border-radius:50%;background:#fff;animation-timing-function:cubic-bezier(0, 1, 1, 0)}.lds-ellipsis div:nth-child(1){left:8px;animation:lds-ellipsis1 0.6s infinite}.lds-ellipsis div:nth-child(2){left:8px;animation:lds-ellipsis2 0.6s infinite}.lds-ellipsis div:nth-child(3){left:32px;animation:lds-ellipsis2 0.6s infinite}.lds-ellipsis div:nth-child(4){left:56px;animation:lds-ellipsis3 0.6s infinite}@keyframes lds-ellipsis1{0%{transform:scale(0)}100%{transform:scale(1)}}@keyframes lds-ellipsis3{0%{transform:scale(1)}100%{transform:scale(0)}}@keyframes lds-ellipsis2{0%{transform:translate(0, 0)}100%{transform:translate(24px, 0)}}dialog[role=topdialog]{width:95%;height:90%;border:1em;padding:0}dialog::backdrop{background:rgba(0,0,0,0.5)}dialog{max-width:95%;max-height:95%}dialog+.backdrop{background:rgba(0,0,0,0.5);position:fixed;top:0;left:0;right:0;bottom:0}dialog nav{border:1px solid #ccc;background-color:#5e24e6;color:#fff;border-bottom-width:2px;height:2em;min-height:30px;display:flex;align-items:center;justify-content:flex-start}dialog nav .crumb{flex:0 3 auto;padding-left:0.2em;align-items:center;text-overflow:ellipsis;white-space:nowrap;overflow:hidden}dialog nav .crumb.active{min-width:28px;margin-right:30px;flex:0 1 50%}dialog nav .crumb.active .xbutton{display:block;width:24px;height:24px;position:absolute;top:3px;right:3px;border-radius:6px}dialog nav .crumb.active .xbutton:before{-webkit-transform:rotate(45deg);-moz-transform:rotate(45deg);transform:rotate(45deg);left:2px}dialog nav .crumb.active .xbutton:after{-webkit-transform:rotate(-45deg);-moz-transform:rotate(-45deg);transform:rotate(-45deg);right:2px}dialog nav .crumb:not(:first-child):before{content:'\\00a0\\003e\\00a0'}dialog nav .crumb:not(:last-child):hover{text-decoration:underline;cursor:pointer}dialog>.tabbed{height:100%;padding:0;border:0;display:flex;flex-flow:column}dialog>.tabbed>.tabwindow{flex:1 1 auto;display:flex;flex-flow:column}dialog>.tabbed>.tabwindow>iframe{flex-flow:column;flex:1 1 auto;border:0;width:100%}dialog nav .crumb.active .xbutton:before,dialog nav .crumb.active .xbutton:after{content:'';position:absolute;width:20px;height:4px;background-color:white;border-radius:2px;top:10px}\n";
+    var dialogCss = "dialog{position:absolute;left:0;right:0;width:-moz-fit-content;width:-webkit-fit-content;width:fit-content;height:-moz-fit-content;height:-webkit-fit-content;height:fit-content;margin:auto;order:solid;padding:1em;background:white;color:black;display:block}dialog:not([open]){display:none}._dialog_overlay{position:fixed;top:0;right:0;bottom:0;left:0}dialog.fixed{position:fixed;top:50%;transform:translate(0, -50%)}.lds-ellipsis{display:inline-block;position:relative;min-width:80px;height:12px;top:2px}.lds-ellipsis div{position:absolute;top:0px;width:12px;height:12px;border-radius:50%;background:#fff;animation-timing-function:cubic-bezier(0, 1, 1, 0)}.lds-ellipsis div:nth-child(1){left:8px;animation:lds-ellipsis1 0.6s infinite}.lds-ellipsis div:nth-child(2){left:8px;animation:lds-ellipsis2 0.6s infinite}.lds-ellipsis div:nth-child(3){left:32px;animation:lds-ellipsis2 0.6s infinite}.lds-ellipsis div:nth-child(4){left:56px;animation:lds-ellipsis3 0.6s infinite}@keyframes lds-ellipsis1{0%{transform:scale(0)}100%{transform:scale(1)}}@keyframes lds-ellipsis3{0%{transform:scale(1)}100%{transform:scale(0)}}@keyframes lds-ellipsis2{0%{transform:translate(0, 0)}100%{transform:translate(24px, 0)}}dialog[role=topdialog]{width:95%;height:90%;border:1em;padding:0}dialog::backdrop{background:rgba(0,0,0,0.5)}dialog{max-width:95%;max-height:95%}dialog+.backdrop{background:rgba(0,0,0,0.5);position:fixed;top:0;left:0;right:0;bottom:0}dialog nav{border:1px solid #ccc;background-color:#5e24e6;color:#fff;border-bottom-width:2px;height:2em;min-height:30px;display:flex;align-items:center;justify-content:flex-start}dialog nav .crumb{flex:0 3 auto;padding-left:0.2em;align-items:center;text-overflow:ellipsis;white-space:nowrap;overflow:hidden}dialog nav .crumb.active{min-width:28px;margin-right:30px;flex:0 1 50%}dialog nav .crumb.active .xbutton{display:block;width:24px;height:24px;position:absolute;top:3px;right:3px;border-radius:6px}dialog nav .crumb.active .xbutton:before{-webkit-transform:rotate(45deg);-moz-transform:rotate(45deg);transform:rotate(45deg);left:2px}dialog nav .crumb.active .xbutton:after{-webkit-transform:rotate(-45deg);-moz-transform:rotate(-45deg);transform:rotate(-45deg);right:2px}dialog nav .crumb:not(:first-child):before{content:'\\00a0\\003e\\00a0'}dialog nav .crumb:not(:last-child):hover{text-decoration:underline;cursor:pointer}dialog>.tabbed{height:100%;padding:0;border:0;display:flex;flex-flow:column}dialog>.tabbed>.tabwindow{flex:1 1 auto;display:flex;flex-flow:column}dialog>.tabbed>.tabwindow>iframe{flex-flow:column;flex:1 1 auto;border:0;width:100%}dialog>.tabbed>.tabwindow>iframe.minimized{width:0;height:0;position:absolute;top:0;left:0;display:block}dialog>.tabbed>.tabwindow>iframe.inactive{display:none}dialog nav .crumb.active .xbutton:before,dialog nav .crumb.active .xbutton:after{content:'';position:absolute;width:20px;height:4px;background-color:white;border-radius:2px;top:10px}\n";
     var head = document.head || document.getElementsByTagName("head")[0];
     var style = document.createElement("style");
     head.appendChild(style);
@@ -775,6 +775,7 @@
          *  name: string,
          *  windowName: string,
          *  ignoreOnLoad: boolean,
+         *  minimizeOpener: boolean,
          *  title: string,
          *  size: { width: string, height:string }
          * }} dialogObj 
@@ -793,9 +794,13 @@
             } else {
                 _setDialogSize(null, null, iframe);
             }
+            if(dialogObj.minimizeOpener && dialogOpenerWindow && dialogOpenerWindow.frameElement){
+                dialogOpenerWindow.frameElement.dataset.minimzed = '1';
+            }
             if(tabs.length>0){ 
                 for( var k = 0; k < tabs.length; k++ ){
-                    tabs[k].iframe.style.display='none';
+                    var ifrClass = tabs[k].iframe.dataset.minimzed ? 'minimized' : 'inactive';
+                    tabs[k].iframe.classList.add(ifrClass);
                 }
             } else {                
                 dialog.showModal();
@@ -805,7 +810,8 @@
             if(!targetIframe) {
                 tabWindow.appendChild(iframe);
             } else {
-                iframe.style.display='block';
+                iframe.classList.remove('inactive');
+                iframe.classList.remove('minimized');
             }
             try {
                 iframe.contentWindow.opener = dialogOpenerWindow;
@@ -890,7 +896,8 @@
             tabs.splice(iframeAndTabIndex.tabIndex);
             if(tabs.length>0){
                 var ifr = tabs[tabs.length-1].iframe;
-                ifr.style.display='block';
+                ifr.classList.remove('inactive');
+                ifr.classList.remove('minimized');
                 dialog.style.width=ifr.dataset.dwidth;
                 dialog.style.height=ifr.dataset.dheight;
                 dialogPolyfill.reposition(dialog);
@@ -1006,7 +1013,8 @@
                             _createDialog(dialogObj, evt.source, difr);
                         }
                     } else {
-                        difr.style.display='none';
+                        difr.classList.add('inactive');
+                        difr.classList.add('minimized');
                         tabWindow.appendChild(difr);
                     }
                     if(ie){
@@ -1116,6 +1124,7 @@
                     }
                     var textNode = document.createTextNode(ifr.dataset.title?ifr.dataset.title:'');
                     crumb.appendChild( textNode );
+                    ifr.classList.remove('minimized');
                     if(ifr.onload==null && !ignoreOnLoad){
                         console.debug('applying ifr.onload')
                         var spinner = crumb.querySelector('.lds-ellipsis');

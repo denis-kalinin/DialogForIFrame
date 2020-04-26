@@ -3,8 +3,8 @@
         if(document.readyState != 'loading')
           callbackFunction(event)
         else
-          document.addEventListener("DOMContentLoaded", callbackFunction)
-      }
+          document.addEventListener("DOMContentLoaded", callbackFunction);
+    }
     var dialogInitialized = false;
     var tabs = [];
     function _init() {
@@ -31,6 +31,7 @@
          *  name: string,
          *  windowName: string,
          *  ignoreOnLoad: boolean,
+         *  minimizeOpener: boolean,
          *  title: string,
          *  size: { width: string, height:string }
          * }} dialogObj 
@@ -49,9 +50,15 @@
             } else {
                 _setDialogSize(null, null, iframe);
             }
-            if(tabs.length>0){ 
+            if(dialogObj.minimizeOpener && dialogOpenerWindow && dialogOpenerWindow.frameElement){
+                dialogOpenerWindow.frameElement.dataset.minimzed = '1';
+            }
+            if(tabs.length>0){
+                //notifies that previous dialog is hidden
+                dialog.dispatchEvent(new Event('dialog-unload'));
                 for( var k = 0; k < tabs.length; k++ ){
-                    tabs[k].iframe.style.display='none';
+                    var ifrClass = tabs[k].iframe.dataset.minimzed ? 'minimized' : 'inactive';
+                    tabs[k].iframe.classList.add(ifrClass);
                 }
             } else {                
                 dialog.showModal();
@@ -61,7 +68,8 @@
             if(!targetIframe) {
                 tabWindow.appendChild(iframe);
             } else {
-                iframe.style.display='block';
+                iframe.classList.remove('inactive');
+                iframe.classList.remove('minimized');
             }
             try {
                 iframe.contentWindow.opener = dialogOpenerWindow;
@@ -146,7 +154,8 @@
             tabs.splice(iframeAndTabIndex.tabIndex);
             if(tabs.length>0){
                 var ifr = tabs[tabs.length-1].iframe;
-                ifr.style.display='block';
+                ifr.classList.remove('inactive');
+                ifr.classList.remove('minimized');
                 dialog.style.width=ifr.dataset.dwidth;
                 dialog.style.height=ifr.dataset.dheight;
                 dialogPolyfill.reposition(dialog);
@@ -159,6 +168,8 @@
             for (var i=0; i<tabs.length; i++){
                 if(tabs[i].iframe.dataset.dialogId == dialogId){
                     _removeIframe({iframe:tabs[i].iframe, tabIndex:i});
+                    //notifies that last dialog is unloaded
+                    dialog.dispatchEvent(new Event('dialog-unload'));
                     return;
                 }
             }
@@ -183,6 +194,20 @@
                             iIfr.dataset.loaded = true;
                             _redrawBreadcrumbs(iIfr.dataset.dialogId, true);
                             iIfrWin.postMessage({}, '*');
+                        }
+                    }
+                } else if (evt.data.dialog && evt.data.dialog.loaded){
+                    //notifies that dialog's content is fully loaded
+                    var iframeAndTabIndex = _findEventSourceIframe(evt.source);
+                    if(iframeAndTabIndex){
+                        var activeTabId = iframeAndTabIndex.tabIndex;
+                        for( var i=0; i<tabs.length; i++ ){
+                            if(activeTabId == i){
+                                if(tabs[i].opener){
+                                    tabs[i].opener.dispatchEvent(new Event('dialog-loaded'));
+                                }
+                                break;
+                            }
                         }
                     }
                 } else if (evt.data.dialog && evt.data.dialog.title){
@@ -262,7 +287,8 @@
                             _createDialog(dialogObj, evt.source, difr);
                         }
                     } else {
-                        difr.style.display='none';
+                        difr.classList.add('inactive');
+                        difr.classList.add('minimized');
                         tabWindow.appendChild(difr);
                     }
                     if(ie){
@@ -372,6 +398,7 @@
                     }
                     var textNode = document.createTextNode(ifr.dataset.title?ifr.dataset.title:'');
                     crumb.appendChild( textNode );
+                    ifr.classList.remove('minimized');
                     if(ifr.onload==null && !ignoreOnLoad){
                         console.debug('applying ifr.onload')
                         var spinner = crumb.querySelector('.lds-ellipsis');

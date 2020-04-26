@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script>
+            function _isDialog(){
+                var dialogTag = 'DIALOG', el = self.frameElement || {};
+                while( (el=el.parentElement) && el.tagName.toUpperCase()!==dialogTag );
+                return !!el;
+            }
+            function getDialogOrTopWindow(w){
+                if(!w.frameElement) return w;
+                var dialogTag = 'DIALOG', el = w.frameElement || {};
+                while( (el=el.parentElement) && el.tagName.toUpperCase()!==dialogTag );
+                debugger;
+                return !!el ? w : (!!w.parent) ? getDialogOrTopWindow(w.parent) : w;
+            }
+            function alertInDialog(message){
+                var targetWindow = getDialogOrTopWindow(self);
+                console.debug('Target window', targetWindow);
+                targetWindow.showMessage(message);
+            }
+        </script>
+    </head>
+    <body>
+        I am IFRAME in the dialog:
+        <button onclick="alertInDialog('Message from IFRAME')">ALERT</button>
+    </body>
+</html>

@@ -210,6 +210,19 @@ dialog > .tabbed > .tabwindow > iframe {
   width: 100%;
 }
 
+dialog > .tabbed > .tabwindow > iframe.minimized {
+  width: 0;
+  height: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+}
+
+dialog > .tabbed > .tabwindow > iframe.inactive {
+  display: none;
+}
+
 dialog nav .crumb.active .xbutton:before, dialog nav .crumb.active .xbutton:after {
   content: '';
   position: absolute;

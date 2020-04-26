@@ -113,6 +113,17 @@ dialog {
                 flex: 1 1 auto;
                 border: 0;
                 width: 100%;
+                &.minimized {
+                    width: 0;
+                    height: 0;
+                    position: absolute;
+                    top:0;
+                    left:0;
+                    display: block;
+                }
+                &.inactive {
+                    display: none;
+                }
             }
         }
     }

@@ -63,8 +63,8 @@
                       console.debug('running deferred', funcName);
                       loadHandler.apply(w);
                   };
+                  console.debug('Now', funcName, 'is:', w[funcName].toString());
               });
-              console.debug('Now', funcName, 'is:', window[funcName].toString());
           })(funcName, loadHandler);
       } else {
           console.debug('onload is direct');
