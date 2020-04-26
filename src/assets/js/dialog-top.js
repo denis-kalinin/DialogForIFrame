@@ -31,7 +31,7 @@
          *  name: string,
          *  windowName: string,
          *  ignoreOnLoad: boolean,
-         *  minimizeOpener: boolean,
+         *  inactiveOpener: boolean,
          *  title: string,
          *  size: { width: string, height:string }
          * }} dialogObj 
@@ -50,14 +50,14 @@
             } else {
                 _setDialogSize(null, null, iframe);
             }
-            if(dialogObj.minimizeOpener && dialogOpenerWindow && dialogOpenerWindow.frameElement){
-                dialogOpenerWindow.frameElement.dataset.minimzed = '1';
+            if(dialogObj.hiddenOpener && dialogOpenerWindow && dialogOpenerWindow.frameElement){
+                dialogOpenerWindow.frameElement.dataset.inactive = '1';
             }
             if(tabs.length>0){
                 //notifies that previous dialog is hidden
                 dialog.dispatchEvent(new Event('dialog-unload'));
                 for( var k = 0; k < tabs.length; k++ ){
-                    var ifrClass = tabs[k].iframe.dataset.minimzed ? 'minimized' : 'inactive';
+                    var ifrClass = tabs[k].iframe.dataset.inactive ? 'inactive' : 'minimized';
                     tabs[k].iframe.classList.add(ifrClass);
                 }
             } else {                
@@ -145,6 +145,8 @@
             while(tabWindow.lastChild){
                 if(tabWindow.lastChild === iframeAndTabIndex.iframe){
                     tabWindow.removeChild(tabWindow.lastChild);
+                    //notifies that last dialog is unloaded
+                    dialog.dispatchEvent(new Event('dialog-unload'));
                     break;
                 } else {
                     tabWindow.removeChild(tabWindow.lastChild);
@@ -168,8 +170,6 @@
             for (var i=0; i<tabs.length; i++){
                 if(tabs[i].iframe.dataset.dialogId == dialogId){
                     _removeIframe({iframe:tabs[i].iframe, tabIndex:i});
-                    //notifies that last dialog is unloaded
-                    dialog.dispatchEvent(new Event('dialog-unload'));
                     return;
                 }
             }
@@ -191,7 +191,7 @@
                             iIfrWin.opener = tabs[i].opener;
                             var title = iIfr.contentWindow ? iIfr.contentDocument.title : iIfr.document.title;
                             iIfr.dataset.title = title;
-                            iIfr.dataset.loaded = true;
+                            //iIfr.dataset.loaded = true;
                             _redrawBreadcrumbs(iIfr.dataset.dialogId, true);
                             iIfrWin.postMessage({}, '*');
                         }
@@ -203,6 +203,12 @@
                         var activeTabId = iframeAndTabIndex.tabIndex;
                         for( var i=0; i<tabs.length; i++ ){
                             if(activeTabId == i){
+                                var ifr = tabs[i].iframe;
+                                if(ifr) {
+                                    var loadedCounter = parseInt(ifr.dataset.loaded, 10);
+                                    loadedCounter = isNaN(loadedCounter) ? 1 : loadedCounter + 1;
+                                    ifr.dataset.loaded = loadedCounter;
+                                }
                                 if(tabs[i].opener){
                                     tabs[i].opener.dispatchEvent(new Event('dialog-loaded'));
                                 }
@@ -215,7 +221,7 @@
                     var iframeAndTabIndex = _findEventSourceIframe(evt.source);
                     var ifr = iframeAndTabIndex.iframe;
                     ifr.dataset.title = evt.data.dialog.title;
-                    ifr.dataset.loaded = true;
+                    //ifr.dataset.loaded = true;
                     _redrawBreadcrumbs(ifr.dataset.dialogId, true);
                 } else if (evt.data.dialog && evt.data.dialog.windowName) {
                     // post message evt.source is de-facto opener
@@ -289,7 +295,7 @@
                     } else {
                         difr.classList.add('inactive');
                         difr.classList.add('minimized');
-                        tabWindow.appendChild(difr);
+                        //tabWindow.appendChild(difr);
                     }
                     if(ie){
                         /* IE11 */
@@ -346,6 +352,10 @@
                                 if(difr.src.substr(0, difrProtocol.length) === difrProtocol){
                                     console.info('browser is Chrome or Edge')
                                     _createDialog(dialogObj, evt.source, difr);
+                                } else {
+                                    //downloading
+                                    console.info('downloading file in Firefox...');
+                                    tabWindow.removeChild(difr);
                                 }
                             } catch (e) {
                                 console.info('Browser is Firefox');
@@ -354,6 +364,7 @@
                             }
                         }
                         difr.addEventListener('load', loadListener);
+                        tabWindow.appendChild(difr);
                     }
                 }
             }
@@ -388,7 +399,8 @@
                     crumb.appendChild(xButton);
                     crumb.classList.add('active');
                     crumb.classList.add('SIModalTitleActive');
-                    if(!ifr.dataset.loaded && !ifr.dataset.title && ignoreOnLoad){ /** add spinner to show loading process */                    
+                    if(//!ifr.dataset.loaded && 
+                        !ifr.dataset.title && ignoreOnLoad){ /** add spinner to show loading process */                    
                         var spinner = document.createElement('div');
                         spinner.classList.add('lds-ellipsis');
                         for(var u=0; u<4; u++){
@@ -405,7 +417,6 @@
                         var ifrOpener = tabs[i].opener;
                         ifr.onload = function(){
                             try{
-                                ifr.dataset.loaded = true;
                                 var iWin = ifr.contentWindow || ifr;
                                 var doc = ifr.contentWindow ? ifr.contentDocument : ifr.document;
                                 if(spinner && spinner.parentNode){
