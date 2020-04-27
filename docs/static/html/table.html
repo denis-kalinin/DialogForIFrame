@@ -5,6 +5,13 @@
         <title>AL main pane</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <base href="<%= webcontext %>" />
+        <script>
+            function onPageLoaded(){
+                window.self.addEventListener('dialog-loaded', function(){
+                    console.info('[WATIR]: Dialog loaded (opener)');
+                });
+            }
+        </script>
         <script type="text/javascript">
             function getTopWindow(checkWindow){
                 if(!checkWindow) checkWindow = window.self;
@@ -191,7 +198,7 @@
             }
         </script>
     </head>
-    <body>
+    <body onload="onPageLoaded()">
         <h1>TABLE</h1>
         <p>To open a dialog, make sure that <code>dialogPolyfill</code> is installed in <code>window.top</code>
             and send message to <code>window.top</code> with JavaScript:

@@ -185,7 +185,7 @@ module.exports = ( env, argv ) => {
           //res.redirect(req.originalUrl);
           //res.send('Hello!');
           //res.sendFile('src/static/html/htmlEditor.html',  { root: __dirname });
-          res.render('htmlEditor.twig', { dta: req.body.dta });
+          res.render('htmlEditor.twig', { dta: req.body.dta, webcontext: theWebcontext });
       });
       app.get('/data', (req, res) => {
         console.debug(req.query);

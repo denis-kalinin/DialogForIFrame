@@ -5,6 +5,9 @@
         <script>
             function onPageLoad(){
                 _printInfo();
+                window.self.addEventListener('dialog-loaded', function(){
+                    console.info('[WATIR]: Dialog loaded (opener)');
+                });
             }
             function _printInfo(){
                 document.getElementById('openerTitle').textContent = window.opener.location.href;
