@@ -5,10 +5,22 @@
         else
           document.addEventListener("DOMContentLoaded", callbackFunction);
     }
+    var utils = {
+        createEvent: function(eventName) {
+            if(typeof(Event) === 'function') {
+                return new Event(eventName);
+            } else {
+                var ieEvent = document.createEvent('Event');
+                ieEvent.initEvent(eventName, false, true);
+                return ieEvent
+            }
+        }
+    };
     var dialogInitialized = false;
     var tabs = [];
     function _init() {
         if(dialogInitialized===true) return;
+        console.info('dialog initialized');
         dialogInitialized = true;
         var dialog = document.body.querySelector('dialog[role=topdialog]');
         if(!dialog) dialog = getDefaultTopDialog();
@@ -55,7 +67,7 @@
             }
             if(tabs.length>0){
                 //notifies that previous dialog is hidden
-                dialog.dispatchEvent(new Event('dialog-unload'));
+                dialog.dispatchEvent(utils.createEvent('dialog-unload'));
                 for( var k = 0; k < tabs.length; k++ ){
                     var ifrClass = tabs[k].iframe.dataset.inactive ? 'inactive' : 'minimized';
                     tabs[k].iframe.classList.add(ifrClass);
@@ -146,7 +158,7 @@
                 if(tabWindow.lastChild === iframeAndTabIndex.iframe){
                     tabWindow.removeChild(tabWindow.lastChild);
                     //notifies that last dialog is unloaded
-                    dialog.dispatchEvent(new Event('dialog-unload'));
+                    dialog.dispatchEvent(utils.createEvent('dialog-unload'));
                     break;
                 } else {
                     tabWindow.removeChild(tabWindow.lastChild);
@@ -208,9 +220,13 @@
                                     var loadedCounter = parseInt(ifr.dataset.loaded, 10);
                                     loadedCounter = isNaN(loadedCounter) ? 1 : loadedCounter + 1;
                                     ifr.dataset.loaded = loadedCounter;
+                                    var title = ifr.contentWindow ? ifr.contentDocument.title : ifr.document.title;
+                                    title = title && title.length>0 ? title : 'No title ' + i;
+                                    ifr.dataset.title = title;
+                                    _redrawBreadcrumbs(ifr.dataset.dialogId, true);
                                 }
                                 if(tabs[i].opener){
-                                    tabs[i].opener.dispatchEvent(new Event('dialog-loaded'));
+                                    tabs[i].opener.dispatchEvent(utils.createEvent('dialog-loaded'));
                                 }
                                 break;
                             }
@@ -399,15 +415,18 @@
                     crumb.appendChild(xButton);
                     crumb.classList.add('active');
                     crumb.classList.add('SIModalTitleActive');
-                    if(//!ifr.dataset.loaded && 
-                        !ifr.dataset.title && ignoreOnLoad){ /** add spinner to show loading process */                    
-                        var spinner = document.createElement('div');
-                        spinner.classList.add('lds-ellipsis');
-                        for(var u=0; u<4; u++){
-                            spinner.appendChild(document.createElement('div'));
+                    //if(ignoreOnLoad){
+                        if(!ifr.dataset.loaded && !ifr.dataset.title){ /** add spinner to show loading process */                    
+                            var spinner = document.createElement('div');
+                            spinner.classList.add('lds-ellipsis');
+                            for(var u=0; u<4; u++){
+                                spinner.appendChild(document.createElement('div'));
+                            }
+                            crumb.appendChild(spinner);
+                        } else {
+
                         }
-                        crumb.appendChild(spinner);
-                    }
+                    //}
                     var textNode = document.createTextNode(ifr.dataset.title?ifr.dataset.title:'');
                     crumb.appendChild( textNode );
                     ifr.classList.remove('minimized');
@@ -415,40 +434,42 @@
                         console.debug('applying ifr.onload')
                         var spinner = crumb.querySelector('.lds-ellipsis');
                         var ifrOpener = tabs[i].opener;
-                        ifr.onload = function(){
-                            try{
-                                var iWin = ifr.contentWindow || ifr;
-                                var doc = ifr.contentWindow ? ifr.contentDocument : ifr.document;
-                                if(spinner && spinner.parentNode){
-                                    spinner.parentNode.removeChild(spinner);
-                                }
-                                if(!ifr.dataset.title) {
-                                    if(doc && doc.title) {
-                                        ifr.dataset.title=doc.title;
-                                    } else {
-                                        ifr.dataset.title = 'No title ' + i;
+                        (function(index){
+                            ifr.onload = function(){
+                                try{
+                                    var iWin = ifr.contentWindow || ifr;
+                                    var doc = ifr.contentWindow ? ifr.contentDocument : ifr.document;
+                                    if(spinner && spinner.parentNode){
+                                        spinner.parentNode.removeChild(spinner);
+                                    }
+                                    if(!ifr.dataset.title) {
+                                        if(doc && doc.title) {
+                                            ifr.dataset.title=doc.title;
+                                        } else {
+                                            ifr.dataset.title = 'No title ## ' + index;
+                                        }
+                                    }
+                                    if(!!iWin.isDialogCloseable){
+                                        console.debug('ifr.onload is not applied because of isDialogCloseable==true');
+                                        textNode.nodeValue = ifr.dataset.title;
+                                        return;
+                                    }
+                                    console.debug('ifr.onload is applied!');
+                                    iWin.opener = ifrOpener;
+                                    /** window.close() can be overriden in IE by function declaration only */
+                                    var script = doc.createElement('script');
+                                    script.textContent = "function close(){console.debug('close() is defined by topdialog');function getTopWindow(checkWindow){if(!checkWindow) checkWindow = window.self;try {if(checkWindow.parent && !checkWindow.parent.noDialog){return getTopWindow(checkWindow.parent);}}catch(e){}return checkWindow;};getTopWindow().postMessage({dialog:null},'*')}";
+                                    doc.head.appendChild(script);
+                                    iWin.isDialogCloseable = true;
+                                } catch(error){
+                                    if(!ifr.dataset.title) ifr.dataset.title = 'No title #'+ index;
+                                    if(spinner && spinner.parentNode){
+                                        spinner.parentNode.removeChild(spinner);
                                     }
                                 }
-                                if(!!iWin.isDialogCloseable){
-                                    console.debug('ifr.onload is not applied because of isDialogCloseable==true');
-                                    textNode.nodeValue = ifr.dataset.title;
-                                    return;
-                                }
-                                console.debug('ifr.onload is applied!');
-                                iWin.opener = ifrOpener;
-                                /** window.close() can be overriden in IE by function declaration only */
-                                var script = doc.createElement('script');
-                                script.textContent = "function close(){console.debug('close() is defined by topdialog');function getTopWindow(checkWindow){if(!checkWindow) checkWindow = window.self;try {if(checkWindow.parent && !checkWindow.parent.noDialog){return getTopWindow(checkWindow.parent);}}catch(e){}return checkWindow;};getTopWindow().postMessage({dialog:null},'*')}";
-                                doc.head.appendChild(script);
-                                iWin.isDialogCloseable = true;
-                            } catch(error){
-                                if(!ifr.dataset.title) ifr.dataset.title = 'No title #'+ i;
-                                if(spinner && spinner.parentNode){
-                                    spinner.parentNode.removeChild(spinner);
-                                }
+                                textNode.nodeValue = ifr.dataset.title;
                             }
-                            textNode.nodeValue = ifr.dataset.title;
-                        }
+                        })(i);
                     }
                 }                    
                 frag.appendChild(crumb);

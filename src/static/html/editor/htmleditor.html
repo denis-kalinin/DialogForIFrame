@@ -3,6 +3,11 @@
     <head>
         <title>HTML Editor</title>
         <script>
+            function onPageLoad(){
+                window.self.addEventListener('dialog-loaded', function(){
+                    console.info('[WATIR]: Dialog loaded (opener)');
+                });
+            }
             function getTopWindow(checkWindow){
                 if(!checkWindow) checkWindow = window.self;
                 try {
@@ -38,8 +43,9 @@
                 }                
             }
         </script>
+        <script src="../../js/closer.js"></script>
     </head>
-    <body style="background-color: aquamarine;">
+    <body style="background-color: aquamarine;" onload="onPageLoad()">
         <label for="editor">HTML</label>
         <textarea id="editor">gasfdsaf</textarea>
         <br />

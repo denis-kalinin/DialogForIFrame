@@ -1,0 +1,10 @@
+{
+    "editor.tabSize": 2,
+    "files.eol": "\n",
+    "vetur.format.defaultFormatterOptions": {
+        "prettier": {
+          "singleQuote": true,
+          "trailingComma": "all"
+        }
+      }
+}

@@ -87,7 +87,7 @@ module.exports = ( env, argv ) => {
         to: 'topdialog.js',
         transform(content, path){
           const filesToAppend = [
-            'src/assets/js/dialog-polyfill.js',
+            'src/assets/js/dialog-polyfill_patched.js',
             'src/assets/js/dialog-top.js'
           ];
           return concat(content, path, './src/assets/styles/dialog.scss', filesToAppend);
@@ -111,7 +111,7 @@ module.exports = ( env, argv ) => {
         to: 'topdialog.js',
         transform(content, path){
           const filesToAppend = [
-            'src/assets/js/dialog-polyfill.js',
+            'src/assets/js/dialog-polyfill_patched.js',
             'src/assets/js/dialog-top.js'
           ];
           return concat(content, path, './src/assets/styles/dialog.scss', filesToAppend);
@@ -181,11 +181,18 @@ module.exports = ( env, argv ) => {
     setup(app) {
       app.use(express.urlencoded()),
       //intentional timeout app.use((req,res,next) => {setTimeout(next,1000);});
+      app.get(theWebcontext+'static/html/slowtable', (req, res) => {
+        setTimeout( () => {
+          res.sendFile('src/static/html/table.html', { root: __dirname});
+        }, 2500);
+      });
       app.post('/post', (req, res) => {
           //res.redirect(req.originalUrl);
           //res.send('Hello!');
           //res.sendFile('src/static/html/htmlEditor.html',  { root: __dirname });
-          res.render('htmlEditor.twig', { dta: req.body.dta, webcontext: theWebcontext });
+          setTimeout( () => {
+            res.render('htmlEditor.twig', { dta: req.body.dta, webcontext: theWebcontext });
+          }, 3500);
       });
       app.get('/data', (req, res) => {
         console.debug(req.query);
