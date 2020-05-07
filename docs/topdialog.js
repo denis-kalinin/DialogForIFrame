@@ -3,7 +3,6 @@
     var head = document.head || document.getElementsByTagName("head")[0];
     var style = document.createElement("style");
     head.appendChild(style);
-    style.type = "text/css";
     style.appendChild(document.createTextNode(dialogCss));
 })();
 (function (global, factory) {
@@ -11,6 +10,11 @@
     typeof define === 'function' && define.amd ? define(factory) :
     (global = global || self, global.dialogPolyfill = factory());
   }(this, function () { 'use strict';
+
+    //Solution to 100907 - always force the polyfill to be used
+    //if(window.HTMLDialogElement) {
+    //  delete window.HTMLDialogElement;
+    //}
   
     // nb. This is for IE10 and lower _only_.
     var supportCustomEvent = window.CustomEvent;
@@ -413,10 +417,11 @@
      * @param {!Element} element to force upgrade
      */
     dialogPolyfill.forceRegisterDialog = function(element) {
-      if (window.HTMLDialogElement || element.showModal) {
-        console.warn('This browser already supports <dialog>, the polyfill ' +
-            'may not work correctly', element);
-      }
+      // patch for 100907
+      //if (window.HTMLDialogElement || element.showModal) {
+      //  console.warn('This browser already supports <dialog>, the polyfill ' +
+      //      'may not work correctly', element);
+      //}
       if (element.localName !== 'dialog') {
         throw new Error('Failed to register dialog: The element is not a dialog.');
       }
@@ -427,9 +432,10 @@
      * @param {!Element} element to upgrade, if necessary
      */
     dialogPolyfill.registerDialog = function(element) {
-      if (!element.showModal) {
+      // Solution to 100907 - always force the polyfill to be used
+      // if (!element.showModal) {
         dialogPolyfill.forceRegisterDialog(element);
-      }
+      //}
     };
   
     /**
@@ -642,7 +648,8 @@
      * Installs global handlers, such as click listers and native method overrides. These are needed
      * even if a no dialog is registered, as they deal with <form method="dialog">.
      */
-    if (window.HTMLDialogElement === undefined) {
+    //if (window.HTMLDialogElement === undefined) {
+      if(true){
   
       /**
        * If HTMLFormElement translates method="DIALOG" into 'get', then replace the descriptor with
@@ -749,10 +756,22 @@
         else
           document.addEventListener("DOMContentLoaded", callbackFunction);
     }
+    var utils = {
+        createEvent: function(eventName) {
+            if(typeof(Event) === 'function') {
+                return new Event(eventName);
+            } else {
+                var ieEvent = document.createEvent('Event');
+                ieEvent.initEvent(eventName, false, true);
+                return ieEvent
+            }
+        }
+    };
     var dialogInitialized = false;
     var tabs = [];
     function _init() {
         if(dialogInitialized===true) return;
+        console.info('dialog initialized');
         dialogInitialized = true;
         var dialog = document.body.querySelector('dialog[role=topdialog]');
         if(!dialog) dialog = getDefaultTopDialog();
@@ -799,7 +818,7 @@
             }
             if(tabs.length>0){
                 //notifies that previous dialog is hidden
-                dialog.dispatchEvent(new Event('dialog-unload'));
+                dialog.dispatchEvent(utils.createEvent('dialog-unload'));
                 for( var k = 0; k < tabs.length; k++ ){
                     var ifrClass = tabs[k].iframe.dataset.inactive ? 'inactive' : 'minimized';
                     tabs[k].iframe.classList.add(ifrClass);
@@ -890,7 +909,7 @@
                 if(tabWindow.lastChild === iframeAndTabIndex.iframe){
                     tabWindow.removeChild(tabWindow.lastChild);
                     //notifies that last dialog is unloaded
-                    dialog.dispatchEvent(new Event('dialog-unload'));
+                    dialog.dispatchEvent(utils.createEvent('dialog-unload'));
                     break;
                 } else {
                     tabWindow.removeChild(tabWindow.lastChild);
@@ -958,7 +977,7 @@
                                     _redrawBreadcrumbs(ifr.dataset.dialogId, true);
                                 }
                                 if(tabs[i].opener){
-                                    tabs[i].opener.dispatchEvent(new Event('dialog-loaded'));
+                                    tabs[i].opener.dispatchEvent(utils.createEvent('dialog-loaded'));
                                 }
                                 break;
                             }
@@ -1147,7 +1166,7 @@
                     crumb.appendChild(xButton);
                     crumb.classList.add('active');
                     crumb.classList.add('SIModalTitleActive');
-                    if(ignoreOnLoad){
+                    //if(ignoreOnLoad){
                         if(!ifr.dataset.loaded && !ifr.dataset.title){ /** add spinner to show loading process */                    
                             var spinner = document.createElement('div');
                             spinner.classList.add('lds-ellipsis');
@@ -1158,7 +1177,7 @@
                         } else {
 
                         }
-                    }
+                    //}
                     var textNode = document.createTextNode(ifr.dataset.title?ifr.dataset.title:'');
                     crumb.appendChild( textNode );
                     ifr.classList.remove('minimized');

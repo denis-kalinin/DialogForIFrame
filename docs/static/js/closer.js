@@ -1,17 +1,28 @@
 (function(w, loadHandlers){
-    function getTopWindow(checkWindow){
-        if(!checkWindow) checkWindow = window.self;
-        try {if(checkWindow.parent && !checkWindow.parent.noDialog){
-            return getTopWindow(checkWindow.parent);}
-        }catch(e){}
-        return checkWindow;
-    }
-    function _isDialog(){
-        var dialogTag = 'DIALOG', el = w.frameElement || {};
-        while( (el=el.parentElement) && el.tagName.toUpperCase()!==dialogTag );
-        return !!el;
-    }
-    var isInDialog = _isDialog();
+    var utils = {
+        getTopWindow: function(checkWindow) {
+            if(!checkWindow) checkWindow = window.self;
+            try {if(checkWindow.parent && !checkWindow.parent.noDialog){
+                return utils.getTopWindow(checkWindow.parent);}
+            }catch(e){}
+            return checkWindow;
+        },
+        isDialog: function(){
+            var dialogTag = 'DIALOG', el = w.frameElement || {};
+            while( (el=el.parentElement) && el.tagName.toUpperCase()!==dialogTag );
+            return !!el;
+        },
+        createEvent: function(eventName) {
+            if(typeof(Event) === 'function') {
+                return new Event(eventName);
+            } else {
+                var ieEvent = document.createEvent('Event');
+                ieEvent.initEvent(eventName, false, true);
+                return ieEvent
+            }
+        }
+    };
+    var isInDialog = utils.isDialog();
     var hasOpener = !!w.opener;
     if(isInDialog){
         w.isALDialog = true; //gof's Set mark of dialog to be able use it in comparisons later along with self==top
@@ -23,7 +34,6 @@
             w.document.head.appendChild(script);
         }
     }
-    if(loadHandlers.length>1) throw new Error('More than one loader. That is not implemented yet!');
     for(var k=0; k<loadHandlers.length; k++){
         var loadHandler = loadHandlers[k];
         if(!loadHandler) throw new Error("\"loadHandler["+k+"]\" is null or undefined. If \"loadHandler\" is a function expression put it somewhere above.");
@@ -34,40 +44,48 @@
             if(!result) throw new Error("Function expression in IE! DECLARE loadHandler: \"function onPageLoad(){...}\", DON'T express like \"var onPageLoad=function(){...}\"");
             funcName = result[1];
         }
-        if(isInDialog && !hasOpener){
-            (function(funcName, loadHandler){
-                console.debug('registered listener for deferred', funcName);
-                console.debug('openerset listener in', w.document);
+        if(isInDialog){
+            var sendUpdate = k===loadHandlers.length-1 ? true: false;
+            if(!hasOpener){
+                (function(funcName, loadHandler){
+                    console.debug('registered listener for deferred', funcName);
+                    console.debug('openerset listener in', w.document);
+                    w[funcName] = function(){
+                        console.debug('running deferred', funcName);
+                        loadHandler.apply(w);
+                        if(sendUpdate) utils.getTopWindow().postMessage({dialog: {loaded:true}}, '*');
+                    };
+                    w.addEventListener('openerset', function(){
+                    w[funcName] = function(){
+                        console.debug('running deferred', funcName);
+                        loadHandler.apply(w);
+                        if(sendUpdate) utils.getTopWindow().postMessage({dialog: {loaded:true}}, '*');
+                    };
+                    console.debug('Now', funcName, 'is:', w[funcName].toString());
+                    });
+                })(funcName, loadHandler);
+            } else {
+                console.debug('onload is direct');
                 w[funcName] = function(){
-                      console.debug('running deferred', funcName);
-                      loadHandler.apply(w);
-                      getTopWindow().postMessage({dialog: {loaded:true}}, '*');
-                  };
-                w.addEventListener('openerset', function(){
-                  w[funcName] = function(){
-                      console.debug('running deferred', funcName);
-                      loadHandler.apply(w);
-                      getTopWindow().postMessage({dialog: {loaded:true}}, '*');
-                  };
-                  console.debug('Now', funcName, 'is:', w[funcName].toString());
-                });
-            })(funcName, loadHandler);
+                    loadHandler.apply(w);
+                    utils.getTopWindow().postMessage({dialog: {loaded: true}}, '*');
+                };
+            }
         } else {
-          console.debug('onload is direct');
-          w[funcName] = function(){
-            loadHandler.apply(w);
-            getTopWindow().postMessage({dialog: {loaded: true}}, '*');
-          };
+            console.debug('closer.js is not in a dialog');
+            w[funcName] = function(){
+                loadHandler.apply(w);
+            };
         }
     }
     if(isInDialog && !hasOpener){
         (function(w){
             w.addEventListener('message', function(){
                 console.debug('Opener is set, proceed to onload functions');
-                w.dispatchEvent(new Event('openerset'));
+                w.dispatchEvent(utils.createEvent('openerset'));
             });
         })(w);
         console.debug('Request for opener');
-        getTopWindow().postMessage({dialog: {update: true}}, '*');
+        utils.getTopWindow().postMessage({dialog: {update: true}}, '*');
     }
   })(window.self, [onPageLoad]);

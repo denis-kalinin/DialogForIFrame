@@ -3,6 +3,11 @@
     <head>
         <title>Link editor</title>
         <script>
+            function onPageLoad(){
+                window.self.addEventListener('dialog-loaded', function(){
+                    console.info('[WATIR]: Dialog loaded (opener)');
+                });
+            }
             function prevTab(){
                 window.close();
                 /*
@@ -16,8 +21,9 @@
                 */
             }
         </script>
+        <script src="../../js/closer.js"></script>
     </head>
-    <body style="background-color: blueviolet;">
+    <body style="background-color: blueviolet;" onload="onPageLoad()">
         <button onclick="prevTab()">Back to html</button>
     </body>
 </html>

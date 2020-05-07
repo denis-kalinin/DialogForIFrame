@@ -22,7 +22,6 @@
             }
         }
     };
-    if(loadHandlers.length>1) throw new Error('More than one loader. That is not implemented yet!');
     var isInDialog = utils.isDialog();
     var hasOpener = !!w.opener;
     if(isInDialog){
@@ -46,6 +45,7 @@
             funcName = result[1];
         }
         if(isInDialog){
+            var sendUpdate = k===loadHandlers.length-1 ? true: false;
             if(!hasOpener){
                 (function(funcName, loadHandler){
                     console.debug('registered listener for deferred', funcName);
@@ -53,13 +53,13 @@
                     w[funcName] = function(){
                         console.debug('running deferred', funcName);
                         loadHandler.apply(w);
-                        utils.getTopWindow().postMessage({dialog: {loaded:true}}, '*');
+                        if(sendUpdate) utils.getTopWindow().postMessage({dialog: {loaded:true}}, '*');
                     };
                     w.addEventListener('openerset', function(){
                     w[funcName] = function(){
                         console.debug('running deferred', funcName);
                         loadHandler.apply(w);
-                        utils.getTopWindow().postMessage({dialog: {loaded:true}}, '*');
+                        if(sendUpdate) utils.getTopWindow().postMessage({dialog: {loaded:true}}, '*');
                     };
                     console.debug('Now', funcName, 'is:', w[funcName].toString());
                     });

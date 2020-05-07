@@ -52,7 +52,7 @@
          */
         function _createDialog(dialogObj, dialogOpenerWindow, targetIframe){
             document.body.style.overflow = 'hidden';
-            var iframe = targetIframe || document.createElement('iframe');           
+            var iframe = targetIframe || document.createElement('iframe');         
             iframe.dataset.dialogId = ++iframeCounter;
             iframe.dataset.shortcutStopPropagation = '';
             if(dialogObj.name) iframe.dataset.watirName = dialogObj.name;
@@ -78,6 +78,10 @@
             dialogPolyfill.reposition(dialog);
             tabs[tabs.length] = {iframe:iframe,opener:dialogOpenerWindow};
             if(!targetIframe) {
+                /// wrapper for iframe
+                //var iframeDiv = document.createElement('div');
+                //iframeDiv.appendChild(iframe);
+                //tabWindow.appendChild(iframeDiv);
                 tabWindow.appendChild(iframe);
             } else {
                 iframe.classList.remove('inactive');
