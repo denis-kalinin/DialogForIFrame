@@ -108,23 +108,32 @@ dialog {
             flex: 1 1 auto;
             display: flex;
             flex-flow: column;
-            & > iframe {
+            & > div.iwrapper {
                 flex-flow: column;
                 flex: 1 1 auto;
-                border: 0;
                 width: 100%;
+                display: flex;
                 &.minimized {
-                    width: 0;
-                    height: 0;
+                    @extend %minimized;
                     position: absolute;
                     top:0;
                     left:0;
-                    display: block;
+                    //display: block;
                 }
                 &.inactive {
                     display: none;
                 }
+                & > iframe {
+                    border: 0;
+                    flex: 1 1 auto;
+                }
             }
+        }
+    }
+    &.minimized {
+        @extend %minimized;
+        nav {
+            display: none;
         }
     }
 }
@@ -137,4 +146,8 @@ dialog {
     background-color: white;
     border-radius: 2px;
     top: 10px;
+}
+%minimized {
+    width: 0;
+    height: 0;
 }

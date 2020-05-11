@@ -120,6 +120,7 @@ module.exports = ( env, argv ) => {
     ]);
     const mini = new MiniCssExtractPlugin();
     config.plugins.push(staticFolder, indexHtml, twig, mini);
+    //config.plugins.push(staticFolder, indexHtml, mini);
   }
   /// Common plugins ///////
   const localtestPage = 
@@ -172,8 +173,8 @@ module.exports = ( env, argv ) => {
     headers: {
       'Server': 'webpack-dev-server',
     },
-    hot: false,
-    inline: false,
+    hot: true,
+    inline: true,
     openPage: theWebcontext.substr(1),
     port: 8888,
     disableHostCheck: true,

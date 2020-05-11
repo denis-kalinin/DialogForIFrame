@@ -62,15 +62,16 @@
             } else {
                 _setDialogSize(null, null, iframe);
             }
-            if(dialogObj.hiddenOpener && dialogOpenerWindow && dialogOpenerWindow.frameElement){
-                dialogOpenerWindow.frameElement.dataset.inactive = '1';
-            }
+            //if(dialogObj.hiddenOpener && dialogOpenerWindow && dialogOpenerWindow.frameElement){
+            //    dialogOpenerWindow.frameElement.dataset.inactive = '1';
+            //}
             if(tabs.length>0){
                 //notifies that previous dialog is hidden
-                dialog.dispatchEvent(utils.createEvent('dialog-unload'));
+                tabs[tabs.length-1].iframe.parentNode.dispatchEvent(utils.createEvent('dialog-blur'));
+                //dialog.dispatchEvent(utils.createEvent('dialog-unload'));
                 for( var k = 0; k < tabs.length; k++ ){
-                    var ifrClass = tabs[k].iframe.dataset.inactive ? 'inactive' : 'minimized';
-                    tabs[k].iframe.classList.add(ifrClass);
+                    //var ifrClass = tabs[k].iframe.dataset.inactive ? 'inactive' : 'minimized';
+                    tabs[k].iframe.parentNode.classList.add('minimized');
                 }
             } else {                
                 dialog.showModal();
@@ -79,13 +80,14 @@
             tabs[tabs.length] = {iframe:iframe,opener:dialogOpenerWindow};
             if(!targetIframe) {
                 /// wrapper for iframe
-                //var iframeDiv = document.createElement('div');
-                //iframeDiv.appendChild(iframe);
-                //tabWindow.appendChild(iframeDiv);
-                tabWindow.appendChild(iframe);
+                var iframeWrapper = document.createElement('div');
+                iframeWrapper.classList.add('iwrapper');
+                iframeWrapper.appendChild(iframe);
+                tabWindow.appendChild(iframeWrapper);
+                //tabWindow.appendChild(iframe);
             } else {
-                iframe.classList.remove('inactive');
-                iframe.classList.remove('minimized');
+                //iframe.classList.remove('inactive');
+                iframe.parentNode.classList.remove('minimized');
             }
             try {
                 iframe.contentWindow.opener = dialogOpenerWindow;
@@ -115,14 +117,16 @@
             //if height 0 - set height = header + iframe heights
             if(!height){
                 dialog.style.height = null;
-                iframe.dataset.dheight=null;
+                //iframe.dataset.dheight=null;
+                iframe.removeAttribute('data-dheight');
                 return;            
             }
             if(isNaN(height)){//e.g. 20px or 15%
                 var zeroH = height.replace( /\D+/g, '');
                 if(isNaN(zeroH)){// wrong height - without digits at all
                     dialog.style.height = null;
-                    iframe.dataset.dheight=null;
+                    //iframe.dataset.dheight=null;
+                    iframe.removeAttribute('data-dheight');
                     return;
                 }
                 if(parseInt(zeroH, 10) > 0 ){
@@ -159,25 +163,32 @@
         }
         function _removeIframe(iframeAndTabIndex) {
             while(tabWindow.lastChild){
-                if(tabWindow.lastChild === iframeAndTabIndex.iframe){
-                    tabWindow.removeChild(tabWindow.lastChild);
-                    //notifies that last dialog is unloaded
-                    dialog.dispatchEvent(utils.createEvent('dialog-unload'));
-                    break;
-                } else {
+                var iwrapper = tabWindow.lastChild;
+                var lastIframe = iwrapper.querySelector('iframe');
+                var doStop = lastIframe && lastIframe === iframeAndTabIndex.iframe;
+                iwrapper.classList.add('minimized');
+                iwrapper.removeChild(lastIframe);
+                iwrapper.dispatchEvent(utils.createEvent('dialog-destroyed'));
+                //check whether iwrapper is self-destroyed, if not destroy iwrapper
+                if(tabWindow.lastChild && tabWindow.lastChild === iwrapper){
                     tabWindow.removeChild(tabWindow.lastChild);
                 }
+                if(doStop) break;
             }
             // tabWindow.removeChild(iframeAndTabIndex.iframe);
             tabs.splice(iframeAndTabIndex.tabIndex);
             if(tabs.length>0){
                 var ifr = tabs[tabs.length-1].iframe;
-                ifr.classList.remove('inactive');
-                ifr.classList.remove('minimized');
-                dialog.style.width=ifr.dataset.dwidth;
-                dialog.style.height=ifr.dataset.dheight;
+                var iwrapper = ifr.parentNode;
+                //iwrapper.classList.remove('inactive');
+                if(ifr.dataset.dwidth) dialog.style.width=ifr.dataset.dwidth;
+                else dialog.style.width=null;
+                if(ifr.dataset.dheight) dialog.style.height=ifr.dataset.dheight;
+                else dialog.style.height=null;
+                iwrapper.classList.remove('minimized');
                 dialogPolyfill.reposition(dialog);
                 _redrawBreadcrumbs(ifr.dataset.dialogId, true);
+                ifr.parentNode.dispatchEvent(utils.createEvent('dialog-focus'));
             } else {
                 dialog.close();
             }
@@ -274,6 +285,9 @@
                     var url = dialogObj.url;
                     delete dialogObj.url;
                     var difr = document.createElement('iframe');
+                    var iwrapper = document.createElement('div');
+                    iwrapper.classList.add('iwrapper');
+                    iwrapper.appendChild(difr);
                     difr.src=url;
                     difr.setAttribute('id', 'testdifr');
                     var ie = (function(){
@@ -304,17 +318,17 @@
                             dialog.style.display='block';
                             var nav = dialog.querySelector('nav');
                             nav.style.display='none';
-                            tabWindow.appendChild(difr);
+                            tabWindow.appendChild(iwrapper);
                         } else {
                             isDialogAlreadyOpened = true;
                             difr.width=0;
                             difr.height=0;
-                            tabWindow.appendChild(difr);
+                            tabWindow.appendChild(iwrapper);
                             _createDialog(dialogObj, evt.source, difr);
                         }
                     } else {
-                        difr.classList.add('inactive');
-                        difr.classList.add('minimized');
+                        //difr.classList.add('inactive');
+                        iwrapper.classList.add('minimized');
                         //tabWindow.appendChild(difr);
                     }
                     if(ie){
@@ -351,7 +365,7 @@
                                             var nav = dialog.querySelector('nav');
                                             nav.style.removeAttribute("display");
                                             console.debug('Dialog before removing downaload iframe', dialog);
-                                            tabWindow.removeChild(ifr);
+                                            tabWindow.removeChild(iwrapper);
                                         }
                                     }
                                 } catch (e) {
@@ -375,7 +389,7 @@
                                 } else {
                                     //downloading
                                     console.info('downloading file in Firefox...');
-                                    tabWindow.removeChild(difr);
+                                    tabWindow.removeChild(iwrapper);
                                 }
                             } catch (e) {
                                 console.info('Browser is Firefox');
@@ -384,7 +398,7 @@
                             }
                         }
                         difr.addEventListener('load', loadListener);
-                        tabWindow.appendChild(difr);
+                        tabWindow.appendChild(iwrapper);
                     }
                 }
             }
@@ -433,7 +447,7 @@
                     //}
                     var textNode = document.createTextNode(ifr.dataset.title?ifr.dataset.title:'');
                     crumb.appendChild( textNode );
-                    ifr.classList.remove('minimized');
+                    ifr.parentNode.classList.remove('minimized');
                     if(ifr.onload==null && !ignoreOnLoad){
                         console.debug('applying ifr.onload')
                         var spinner = crumb.querySelector('.lds-ellipsis');
