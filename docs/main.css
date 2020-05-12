@@ -206,20 +206,18 @@ dialog > .tabbed > .tabwindow {
 dialog > .tabbed > .tabwindow > iframe {
   flex-flow: column;
   flex: 1 1 auto;
-  border: 0;
   width: 100%;
+  display: flex;
+  border: 0;
 }
 
 dialog > .tabbed > .tabwindow > iframe.minimized {
-  width: 0;
-  height: 0;
   position: absolute;
   top: 0;
   left: 0;
-  display: block;
 }
 
-dialog > .tabbed > .tabwindow > iframe.inactive {
+dialog.minimized nav {
   display: none;
 }
 
@@ -231,6 +229,11 @@ dialog nav .crumb.active .xbutton:before, dialog nav .crumb.active .xbutton:afte
   background-color: white;
   border-radius: 2px;
   top: 10px;
+}
+
+dialog > .tabbed > .tabwindow > iframe.minimized, dialog.minimized {
+  width: 0;
+  height: 0;
 }
 
 body {
