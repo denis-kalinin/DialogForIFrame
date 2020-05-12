@@ -434,7 +434,8 @@
                     var textNode = document.createTextNode(ifr.dataset.title?ifr.dataset.title:'');
                     crumb.appendChild( textNode );
                     ifr.classList.remove('minimized');
-                    if(ifr.onload==null && !ignoreOnLoad){
+                    //if(ifr.onload==null && !ignoreOnLoad){
+                    if(ifr.onload==null){
                         console.debug('applying ifr.onload')
                         var spinner = crumb.querySelector('.lds-ellipsis');
                         var ifrOpener = tabs[i].opener;
@@ -442,6 +443,7 @@
                             ifr.onload = function(){
                                 try{
                                     var iWin = ifr.contentWindow || ifr;
+                                    debugger;
                                     var doc = ifr.contentWindow ? ifr.contentDocument : ifr.document;
                                     if(spinner && spinner.parentNode){
                                         spinner.parentNode.removeChild(spinner);
