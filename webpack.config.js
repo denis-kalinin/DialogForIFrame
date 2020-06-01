@@ -70,7 +70,7 @@ const config = {
     //disableHostCheck: true,
   },
   entry: {
-    dialog: path.resolve(__dirname, 'src/static/js/dialog.js'),
+    //dialog: path.resolve(__dirname, 'src/static/js/dialog.js'),
     main: path.resolve(__dirname, 'src/index.js'),
   },
 }

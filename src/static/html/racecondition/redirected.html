@@ -1,0 +1,25 @@
+<html>
+  <head>
+    <title>REDIRECTED</title>
+    <script>
+function onPageLoad(){
+    console.log("Redirected! window.opener: %s, window.name:", window.opener, window.name);
+};
+</script>
+<script>
+      //////// END OF CUT //////////
+    </script>
+    <script>
+    function testOnload(){
+      console.info('testOnload', !!window.opener);
+    }
+    function testOnload2() {
+      console.info('testOnload2', !!window.opener);
+    };
+    </script>
+    <!--script src="../../js/closer.js"></script-->
+  </head>
+  <body onload="onPageLoad()">
+    Hi, I am redirected (in race condition)!
+  </body>
+</html>

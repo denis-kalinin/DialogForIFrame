@@ -10,6 +10,11 @@
                 window.self.addEventListener('dialog-loaded', function(){
                     console.info('[WATIR]: Dialog loaded (opener)');
                 });
+                document.onkeyup = function(e) {
+                    if (e.ctrlKey && e.altKey && e.which == 89) {
+                        focusAfterDialog("static/html/wizard.html");
+                    }
+                };
             }
         </script>
         <script type="text/javascript">
@@ -46,28 +51,89 @@
                 }                
             }
 
-            function openDialog(url){
-                var targetWindow = getTopWindow();
-                if(!targetWindow.dialogPolyfill){
-                    var script = targetWindow.document.createElement("script");
-                    script.setAttribute("src", "topdialog.js");
-                    script.addEventListener("load", function(evt){
-                        targetWindow.postMessage({
+            function changeContextDialog(){
+                var url = "static/html/wizard.html";
+                var windowName = 'a18_'+new Date().getTime();
+                var $ctx = getTopWindow().document.getElementById('left_pane').contentWindow;
+                //var $ctx = window;
+                openDialog({topdialogScriptUrl: 'topdialog.js', url:url, name: windowName, $ctx: $ctx, size: {width:' ', height: 'null'}});
+            }
+            function focusAfterDialog(url){
+                var watirName = 'a18';
+                var windowName = watirName+'_'+new Date().getTime();
+                openDialog({topdialogScriptUrl: 'topdialog.js', url:url, watirName: watirName, name: windowName});
+            }
+            /**
+             * $ctx
+             * url
+             * windowName
+             * size
+             * topdialogScriptUrl
+             */
+            function openDialog(dialogData){
+                if(!dialogData || !dialogData.topdialogScriptUrl) throw new Error('topdialog.js url is undefined');
+                self.topdialog = self.topdialog || {};
+                self.topdialog.support = self.topdialog.support || {};
+                var contextWindowFunc;
+                if(dialogData.$ctx && dialogData.$ctx!==window.self){
+                    try{
+                        dialogData.$ctx.document.body;
+                        contextWindowFunc = 'getContextWindow_'+new Date().getTime();
+                        self.topdialog.support[contextWindowFunc] = function(){
+                            return dialogData.$ctx;
+                        }
+                    }catch(e){throw new Error('$ctx should be a window element while opening a dialog')};
+                }
+                if(document.activeElement && document.activeElement !== document.body){
+                    var restoreFocusElement = document.activeElement;
+                    self.topdialog.support.restoreFocusAfterDialogClosed = function(){
+                        if(restoreFocusElement) restoreFocusElement.focus();
+                    }
+                }
+                function getTopWindow(checkWindow){
+                    if(!checkWindow) checkWindow = window.self;
+                    try {
+                        if(checkWindow.parent && !checkWindow.parent.noDialog){
+                            return getTopWindow(checkWindow.parent);
+                        }
+                    } catch (e) {}
+                    return checkWindow;
+                }
+                function postOpenDialog(w){
+                    w.postMessage({
                             dialog:{
-                                url: url,
-                                name:'a18',
-                                windowName: 'a18_'+new Date().getTime()
+                                url: dialogData.url,
+                                name: dialogData.watirName,
+                                windowName: dialogData.name,
+                                contextWindow: contextWindowFunc,
+                                size: dialogData.size
                             }}, '*');
-                    });
-                    targetWindow.document.head.appendChild(script);
+                }
+                function loadDialogPolyfill(w){
+                    if(!w.dialogLoading){
+                        w.dialogLoading = true;
+                        var script = w.document.createElement("script");
+                        script.setAttribute("src", dialogData.topdialogScriptUrl);
+                        script.addEventListener("load", function(){
+                            delete w.dialogLoading;
+                            postOpenDialog(w);
+                        });
+                        w.document.head.appendChild(script);
+                    } else {
+                        function dialogListener(){
+                            w.removeEventListener('dialog-initialized', dialogListener);
+                            postOpenDialog(w);
+                        }
+                        w.addEventListener('dialog-initialized', dialogListener);
+                    }
+                }
+
+                var targetWindow = getTopWindow();
+                if(targetWindow.dialogInitialized){
+                    postOpenDialog(targetWindow);
                 } else {
-                    targetWindow.postMessage({
-                        dialog:{
-                            url:url,
-                            name:'a18',
-                            windowName: 'a18_'+new Date().getTime()
-                        }}, '*');
-                }                
+                    loadDialogPolyfill(targetWindow);
+                }         
             }
 
             function openDialogListener(elem, evt) {
@@ -102,11 +168,12 @@
                 }
             }
             function postToDialog(){
-                var postWindow = 'a18_asdf4';
+                var jsWindowUUID = 'a18_asdf4';
+                var watirName = 'a18';
                 var form = document.createElement("FORM");
                 form.method = "post";
                 form.action = '/post';
-                form.target = postWindow;
+                form.target = jsWindowUUID;
                 form.style.position = "absolute";
                 form.style.top = 0;
                 form.style.visibility = "hidden";
@@ -115,10 +182,88 @@
                 textarea.name = 'dta';
                 textarea.value = 'Hello world! (POSTED)';
                 form.appendChild(textarea);
-                window.addEventListener('message', function(){
-                    form.submit();
-                }, { once: true });
-                showDialog(postWindow);                
+                (function(dialogData){
+                    function dialogResultListener(evt){
+                        if(evt.data.dialogResult){
+                            debugger;
+                            window.removeEventListener('message', dialogResultListener);
+                            //<jsp:doBody />
+                            form.submit();  
+                        }
+                    }  
+                    window.addEventListener('message', dialogResultListener);
+                    function openDialog(dialogData){
+                        if(!dialogData || !dialogData.topdialogScriptUrl) throw new Error('topdialog.js url is undefined');
+                        self.topdialog = self.topdialog || {};
+                        self.topdialog.support = self.topdialog.support || {};
+                        var contextWindowFunc;
+                        if(dialogData.$ctx && dialogData.$ctx!==window.self){
+                            try{
+                                dialogData.$ctx.document.body;
+                                contextWindowFunc = 'getContextWindow_'+new Date().getTime();
+                                self.topdialog.support[contextWindowFunc] = function(){
+                                    return dialogData.$ctx;
+                                }
+                            }catch(e){throw new Error('$ctx should be a window element while opening a dialog')};
+                        }
+                        if(document.activeElement && document.activeElement !== document.body){
+                            var restoreFocusElement = document.activeElement;
+                            self.topdialog.support.restoreFocusAfterDialogClosed = function(){
+                                if(restoreFocusElement) restoreFocusElement.focus();
+                            }
+                        }
+                        function getTopWindow(checkWindow){
+                            if(!checkWindow) checkWindow = window.self;
+                            try {
+                                if(checkWindow.parent && !checkWindow.parent.noDialog){
+                                    return getTopWindow(checkWindow.parent);
+                                }
+                            } catch (e) {}
+                            return checkWindow;
+                        }
+                        function postOpenDialog(w){
+                            w.postMessage({
+                                    dialog:{
+                                        url: dialogData.url,
+                                        name: dialogData.watirName,
+                                        windowName: dialogData.name,
+                                        contextWindow: contextWindowFunc,
+                                        size: dialogData.size
+                                    }}, '*');
+                        }
+                        function loadDialogPolyfill(w){
+                            if(!w.dialogLoading){
+                                w.dialogLoading = true;
+                                var script = w.document.createElement("script");
+                                script.setAttribute("src", dialogData.topdialogScriptUrl);
+                                script.addEventListener("load", function(){
+                                    delete w.dialogLoading;
+                                    postOpenDialog(w);
+                                });
+                                w.document.head.appendChild(script);
+                            } else {
+                                function dialogListener(){
+                                    w.removeEventListener('dialog-initialized', dialogListener);
+                                    postOpenDialog(w);
+                                }
+                                w.addEventListener('dialog-initialized', dialogListener);
+                            }
+                        }
+
+                        var targetWindow = getTopWindow();
+                        if(targetWindow.dialogInitialized){
+                            postOpenDialog(targetWindow);
+                        } else {
+                            loadDialogPolyfill(targetWindow);
+                        }         
+                    }
+                    openDialog(dialogData);
+                    //showDialog(postWindow);                
+                })({
+                    watirName:watirName,
+                    name:jsWindowUUID, 
+                    topdialogScriptUrl:'topdialog.js'
+                });
             }
             function proceedMime(url, param, mime){
                 var mimeCheck = function (type) {
@@ -155,7 +300,7 @@
             }
             function showDocument(url, config){
                 var targetWindow = getTopWindow();
-                var title = (config && congig.title) ? config.title : 'Document';
+                var title = (config && congig.title) ? config.title : null;
                 var mime = (config && config.mime) ? config.mime : null;
                 if(!targetWindow.dialogPolyfill){
                     var script = targetWindow.document.createElement("script");
@@ -184,17 +329,172 @@
             }
 
             function showHTML(config){
-                var targetWindow = getTopWindow();
-                if(!targetWindow.dialogPolyfill){
-                    var script = targetWindow.document.createElement("script");
-                    script.setAttribute("src", "topdialog.js");
-                    script.addEventListener("load", function(evt){
-                        targetWindow.postMessage({dialog: config}, '*');
-                    });
-                    targetWindow.document.head.appendChild(script);
-                } else {
-                    targetWindow.postMessage({dialog:config}, '*');
-                }                
+                (function(dialogData){
+                    function openDialog(dialogData){
+                        if(!dialogData || !dialogData.topdialogScriptUrl) throw new Error('topdialog.js url is undefined');
+                        self.topdialog = self.topdialog || {};
+                        self.topdialog.support = self.topdialog.support || {};
+                        var contextWindowFunc;
+                        if(dialogData.$ctx && dialogData.$ctx!==window.self){
+                            try{
+                                dialogData.$ctx.document.body;
+                                contextWindowFunc = 'getContextWindow_'+new Date().getTime();
+                                self.topdialog.support[contextWindowFunc] = function(){
+                                    return dialogData.$ctx;
+                                }
+                            }catch(e){throw new Error('$ctx should be a window element while opening a dialog')};
+                        }
+                        if(document.activeElement && document.activeElement !== document.body){
+                            var restoreFocusElement = document.activeElement;
+                            self.topdialog.support.restoreFocusAfterDialogClosed = function(){
+                                if(restoreFocusElement) restoreFocusElement.focus();
+                            }
+                        }
+                        function getTopWindow(checkWindow){
+                            if(!checkWindow) checkWindow = window.self;
+                            try {
+                                if(checkWindow.parent && !checkWindow.parent.noDialog){
+                                    return getTopWindow(checkWindow.parent);
+                                }
+                            } catch (e) {}
+                            return checkWindow;
+                        }
+                        function postOpenDialog(w){
+                            w.postMessage({
+                                    dialog:{
+                                        url: dialogData.url,
+                                        name: dialogData.watirName,
+                                        windowName: dialogData.name,
+                                        contextWindow: contextWindowFunc,
+                                        size: dialogData.size,
+                                        html: dialogData.html
+                                    }}, '*');
+                        }
+                        function loadDialogPolyfill(w){
+                            if(!w.dialogLoading){
+                                w.dialogLoading = true;
+                                var script = w.document.createElement("script");
+                                script.setAttribute("src", dialogData.topdialogScriptUrl);
+                                script.addEventListener("load", function(){
+                                    delete w.dialogLoading;
+                                    postOpenDialog(w);
+                                });
+                                w.document.head.appendChild(script);
+                            } else {
+                                function dialogListener(){
+                                    w.removeEventListener('dialog-initialized', dialogListener);
+                                    postOpenDialog(w);
+                                }
+                                w.addEventListener('dialog-initialized', dialogListener);
+                            }
+                        }
+
+                        var targetWindow = getTopWindow();
+                        if(targetWindow.dialogInitialized){
+                            postOpenDialog(targetWindow);
+                        } else {
+                            loadDialogPolyfill(targetWindow);
+                        }         
+                    }
+                    openDialog(dialogData);
+                    //showDialog(postWindow);                
+                })({
+                    watirName:'a80',
+                    name:'a80_gsadf',
+                    html:config.html, 
+                    topdialogScriptUrl:'topdialog.js'
+                });              
+            }
+
+            function initRaceCondition(){
+                var url = "static/html/wizard.html";
+                function loadDialog(){
+                    openDialog({url:url, topdialogScriptUrl:'topdialog.js'});
+                }
+                setTimeout(loadDialog, 0);
+                setTimeout(loadDialog, 0);
+                loadDialog();
+            }
+
+            function openTabAndClose(dialogData){
+                (function(dialogData){
+                    function dialogResultListener(evt){
+                        debugger;
+                        if(evt.data.dialogResult){
+                            window.removeEventListener('message', dialogResultListener);
+                            //<jsp:doBody />
+                            window.close(true);
+                        }
+                    }  
+                    window.addEventListener('message', dialogResultListener);
+                    function openDialog(dialogData){
+                        if(!dialogData || !dialogData.topdialogScriptUrl) throw new Error('topdialog.js url is undefined');
+                        self.topdialog = self.topdialog || {};
+                        self.topdialog.support = self.topdialog.support || {};
+                        var contextWindowFunc;
+                        if(dialogData.$ctx && dialogData.$ctx!==window.self){
+                            try{
+                                dialogData.$ctx.document.body;
+                                contextWindowFunc = 'getContextWindow_'+new Date().getTime();
+                                self.topdialog.support[contextWindowFunc] = function(){
+                                    return dialogData.$ctx;
+                                }
+                            }catch(e){throw new Error('$ctx should be a window element while opening a dialog')};
+                        }
+                        if(document.activeElement && document.activeElement !== document.body){
+                            var restoreFocusElement = document.activeElement;
+                            self.topdialog.support.restoreFocusAfterDialogClosed = function(){
+                                if(restoreFocusElement) restoreFocusElement.focus();
+                            }
+                        }
+                        function getTopWindow(checkWindow){
+                            if(!checkWindow) checkWindow = window.self;
+                            try {
+                                if(checkWindow.parent && !checkWindow.parent.noDialog){
+                                    return getTopWindow(checkWindow.parent);
+                                }
+                            } catch (e) {}
+                            return checkWindow;
+                        }
+                        function postOpenDialog(w){
+                            w.postMessage({
+                                    dialog:{
+                                        url: dialogData.url,
+                                        name: dialogData.watirName,
+                                        windowName: dialogData.name,
+                                        contextWindow: contextWindowFunc,
+                                        size: dialogData.size
+                                    }}, '*');
+                        }
+                        function loadDialogPolyfill(w){
+                            if(!w.dialogLoading){
+                                w.dialogLoading = true;
+                                var script = w.document.createElement("script");
+                                script.setAttribute("src", dialogData.topdialogScriptUrl);
+                                script.addEventListener("load", function(){
+                                    delete w.dialogLoading;
+                                    postOpenDialog(w);
+                                });
+                                w.document.head.appendChild(script);
+                            } else {
+                                function dialogListener(){
+                                    w.removeEventListener('dialog-initialized', dialogListener);
+                                    postOpenDialog(w);
+                                }
+                                w.addEventListener('dialog-initialized', dialogListener);
+                            }
+                        }
+
+                        var targetWindow = getTopWindow();
+                        if(targetWindow.dialogInitialized){
+                            postOpenDialog(targetWindow);
+                        } else {
+                            loadDialogPolyfill(targetWindow);
+                        }         
+                    }
+                    openDialog(dialogData);
+                    //showDialog(postWindow);                
+                })(dialogData);
             }
         </script>
         <script src="../js/closer.js"></script>
@@ -210,10 +510,11 @@
         <hr />
         <button id="button1" data-topdialog-url="static/html/wizard.html" data-topdialog-width="100%" data-topdialog-height="350px" onclick="openDialogListener(this);">SHOW DIALOG</button>
         <button id="button2" data-topdialog-url="https://bing.com" onclick="openDialogListener(this);">Bing</button>
-        <button id="button3" data-topdialog-url="static/html/wizard.html" data-topdialog-width="0" data-topdialog-height="0" onclick="openDialogListener(this);">0 size</button>
-        <button id="button3" data-topdialog-url="static/html/wizard.html" data-topdialog-width="300" data-topdialog-height="0" onclick="openDialogListener(this);">wrong size</button>
+        <button id="button3" data-topdialog-url="static/html/wizard.html" data-topdialog-width="0px" data-topdialog-height="0px" onclick="openDialogListener(this);">0 size</button>
+        <button id="button3" data-topdialog-url="static/html/wizard.html" data-topdialog-width="30" data-topdialog-height="0" onclick="openDialogListener(this);">wrong size</button>
         <button id="button4" data-topdialog-url="static/html/redirect.html" onclick="openDialogListener(this);">Redirect</button>
         <button id="button4a" data-topdialog-url="static/html/slowtable" onclick="openDialogListener(this)">SLOW TABLE</button>
+        <button id="button4b" onclick="openTabAndClose({url:'static/html/slowtable',topdialogScriptUrl:'topdialog.js', watirName:'a1', name:'a1_sfewd'});">SLOW TABLE and close</button>
         <hr />
         <button id="button5" onclick="postToDialog();">POST TO DIALOG</button>
         <hr />
@@ -222,6 +523,8 @@
         <button id="button8" onclick="proceedMime('/data', 'docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');">DOCX</button>
         <hr />
         <button id="button9" onclick="showDocument('/data?inline=pdf', null);">View PDF</button>
+        <button id="button9a" onclick="showDocument('static/html/wizard.html', null);">View HTML</button>
+        <button id="button9b" onclick="showDocument('static/html/locate/initlocation.html');">View HTML and change location</button>
         <button id="button10" onclick="showDocument('/data?inline=docx');">View DOCX</button>
         <button id="button11" onclick="showDocument('/data?format=docx');">Download DOCX</button>
         <hr />
@@ -229,10 +532,13 @@
         <button id="button13" data-topdialog-url="static/html/iframed.html" data-topdialog-width="100%" data-topdialog-height="350px" onclick="openDialogListener(this);">IFRAMED DIALOG</button>
         <hr />
         <button id="button14" data-topdialog-url="static/html/editor/htmleditor.html" data-topdialog-width="100%" data-topdialog-height="350px" onclick="openDialogListener(this);">HTML editor</button>
+        <hr />
+        <button id="button15" onclick="initRaceCondition()">Init race-condietion</button>
+        <button id="button16" onclick="changeContextDialog()">Left pane as $ctx</button>
         <table>
             <tr>
-                <td>1124</td>
-                <td>gaoiewfabao</td>
+                <td><input type="text" /></td>
+                <td>Crtl + Alt + Y</td>
             </tr>
             <tr>
                 <td>1124</td>
