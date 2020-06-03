@@ -125,7 +125,11 @@ dialog {
     }
     &.minimized {
         @extend %minimized;
+        display: block;
         nav {
+            display: none;
+        }
+        &+.backdrop{
             display: none;
         }
     }

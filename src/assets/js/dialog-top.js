@@ -325,8 +325,8 @@
                             difr.width=0;
                             difr.height=0;
                             tabWindow.appendChild(difr);
-                            _createDialog(dialogObj, evt.source, difr);
                         }
+                        _createDialog(dialogObj, evt.source, difr);
                     } else {
                         difr.classList.add('minimized');
                     }
@@ -339,19 +339,32 @@
                                 console.debug('waitForActiveElement :', remains);
                                 try {
                                     console.debug('activeElement', doc.activeElement);
-                                    if (doc.activeElement.tagName.toLocaleLowerCase() === 'object') {
+                                    var activeElementTagname = doc.activeElement.tagName.toLocaleLowerCase();
+                                    if (activeElementTagname === 'object') {
                                         if(!isDialogAlreadyOpened){
                                             dialog.classList.remove('minimized');              
                                             _createDialog(dialogConfig, evtSource, ifr);
                                         }                                        
-                                    } else { /* download */
-                                        if(isDialogAlreadyOpened){
-                                            _closeTabByDialogId(ifr.dataset.dialogId);
+                                    } else if(activeElementTagname === 'body'){
+                                        /* body: HTML or download */
+                                        if(doc.activeElement.childNodes.length>0){
+                                            /* HTML */
+                                            if(!isDialogAlreadyOpened){
+                                                dialog.classList.remove("minimized");
+                                                dialogPolyfill.reposition(dialog);
+                                            }
+                                            //_createDialog(dialogConfig, evtSource, ifr);
                                         } else {
-                                            dialog.classList.remove("minimized");
-                                            console.debug('Dialog before removing downaload iframe', dialog);
-                                            tabWindow.removeChild(ifr);
+                                            /* download */
+                                            _closeTabByDialogId(ifr.dataset.dialogId);
+                                            if(!isDialogAlreadyOpened){
+                                                dialog.classList.remove("minimized");
+                                                console.debug('Dialog before removing downaload iframe', dialog);
+                                                //tabWindow.removeChild(ifr);
+                                            }
                                         }
+                                    } else {
+                                        console.warn('unknown active element', activeElementTagname);
                                     }
                                 } catch (e) {
                                     if(remains > 0){
