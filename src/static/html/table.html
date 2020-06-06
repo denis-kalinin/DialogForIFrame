@@ -463,7 +463,8 @@
                                         name: dialogData.watirName,
                                         windowName: dialogData.name,
                                         contextWindow: contextWindowFunc,
-                                        size: dialogData.size
+                                        size: dialogData.size,
+                                        pillar: dialogData.pillar
                                     }}, '*');
                         }
                         function loadDialogPolyfill(w){
@@ -514,7 +515,7 @@
         <button id="button3" data-topdialog-url="static/html/wizard.html" data-topdialog-width="30" data-topdialog-height="0" onclick="openDialogListener(this);">wrong size</button>
         <button id="button4" data-topdialog-url="static/html/redirect.html" onclick="openDialogListener(this);">Redirect</button>
         <button id="button4a" data-topdialog-url="static/html/slowtable" onclick="openDialogListener(this)">SLOW TABLE</button>
-        <button id="button4b" onclick="openTabAndClose({url:'static/html/slowtable',topdialogScriptUrl:'topdialog.js', watirName:'a1', name:'a1_sfewd'});">SLOW TABLE and close</button>
+        <button id="button4b" onclick="openTabAndClose({url:'static/html/slowtable',topdialogScriptUrl:'topdialog.js', watirName:'a1', name:'a1_sfewd', pillar:true});">SLOW TABLE and close</button>
         <hr />
         <button id="button5" onclick="postToDialog();">POST TO DIALOG</button>
         <hr />

@@ -40,10 +40,64 @@
             } else {
                 return evt.source;
             }
+        },
+        getTabs: function(crumbsArray){
+            var tabs = [];
+            for ( var i=0; i<crumbsArray.length; i++ ){
+                if(tabs.length == 0){
+                    tabs[0] = [i];
+                } else {
+                    var ifr = crumbsArray[i].iframe;
+                    if(ifr.dataset.pillar){
+                        var idx = tabs.length;
+                        tabs[idx] = [i];
+                    } else {
+                        var idx = tabs.length-1;
+                        tabs[idx].push(i);
+                    }
+                }
+            }
+            return tabs;
+        },
+        /**
+         * @typedef {Object} TabsInfo
+         * @property {[[number]]} tabs - Crumbs grouped in array of arrays (tabs)
+         * @property {number} activeTabIndex - The index of the active tab
+         * @property {number} activeCrumbIndex - The index of the active crumb
+         */
+        /**
+         * 
+         * @param {[[number]]} crumbsArray 
+         * @param {number} dialogId
+         * @returns {TabsInfo}
+         *  information about tabs
+         */
+        getActiveTab : function(crumbsArray, dialogId){
+            var tabs = [];
+            var activeCrumbIndex, activeTabIndex = 0;
+            for ( var i=0; i<crumbsArray.length; i++ ){
+                var ifr = crumbsArray[i].iframe;
+                if(tabs.length == 0){
+                    tabs[0] = [i];
+                } else {
+                    var isActiveCrumb = dialogId == ifr.dataset.dialogId;
+                    if(ifr.dataset.pillar){
+                        var tabIndex = tabs.length;
+                        tabs[tabIndex] = [i];
+                        if(isActiveCrumb) activeTabIndex = tabIndex;
+                    } else {
+                        var tabIndex = tabs.length-1;
+                        tabs[tabIndex].push(i);
+                        if(isActiveCrumb) activeTabIndex = tabIndex;
+                    }
+                }
+                if(dialogId == ifr.dataset.dialogId) activeCrumbIndex = i;
+            }
+            return { tabs:tabs, activeTabIndex:activeTabIndex, activeCrumbIndex: activeCrumbIndex };
         }
     };
     var dialogInitialized = false;
-    var tabs = [];
+    var crumbs = [];
     function _init() {
         if(dialogInitialized===true) return;
         console.info('dialog initialized');
@@ -56,12 +110,217 @@
         var bodyOverflow = document.body.style.overflow;
         dialog.addEventListener('close', function(){
                 document.body.style.overflow = bodyOverflow;
-                while(tabs.length > 0){
-                    tabWindow.removeChild(tabs.pop());
+                while(crumbs.length > 0){
+                    tabWindow.removeChild(crumbs.pop());
                 }
             });
 
         window.dialogPolyfill.registerDialog(dialog);
+        dialog.setSize = function(size, iframe){
+            function fixSize(sizeName, sizeVal, theIframe, theDialog){
+                if(sizeVal){
+                    var mySize;
+                    if(isNaN(sizeVal)){
+                        /* e.g. 20px or 15% */
+                        var sizeRegex = /^(\d+)(px|%|em|rem|vw|vh)?/gi
+                        var match = sizeRegex.exec(size);
+                        if(match && match.length>0){
+                            var sizeValue = match[1];
+                            var sizeUnit = match[2];
+                            if(parseInt(sizeValue,10) > 0){
+                                mySize = sizeValue + (!sizeUnit ? '' : sizeUnit.toLowerCase());
+                            }
+                        }
+                    } else {
+                        if(sizeVal>0){
+                            mySize = sizeVal+'px';
+                        }
+                    }
+                    if(mySize){
+                        theIframe.dataset['d'+sizeName] = mySize;
+                        theDialog.style[sizeName] = mySize;
+                        return;
+                    }
+                }
+                theIframe.removeAttribute('data-d'+sizeName);
+                theDialog.style[sizeName] = null;
+            }
+            size = size || {};
+            fixSize('width', size.width, iframe, this);
+            fixSize('height', size.height, iframe, this);
+        }
+        dialog.getCrumbIndex = function(theWindow){
+            for(var i=crumbs.length; i--;) {
+                var f = crumbs[i].iframe;
+                if (f.contentWindow==theWindow){
+                    return i;
+                }
+            }
+            return -1;
+        }
+        dialog.switchTab = function(tabIndex){
+            var tabs =  utils.getTabs(crumbs);
+            var crumbsInNewActiveTab = tabs[tabIndex];
+            var activeCrumbIndex = crumbsInNewActiveTab[crumbsInNewActiveTab.length-1];
+            for( var k = 0; k < crumbs.length; k++ ){
+                //FIXME minimize active only
+                var tifr = crumbs[k].iframe;
+                tifr.dispatchEvent(utils.createEvent('dialog-blur'));
+                tifr.classList.add('minimized');
+            }
+            var ifr = crumbs[activeCrumbIndex].iframe;
+            if(ifr.dataset.dwidth) dialog.style.width=ifr.dataset.dwidth;
+            else dialog.style.width=null;
+            if(ifr.dataset.dheight) dialog.style.height=ifr.dataset.dheight;
+            else dialog.style.height=null;         
+            ifr.classList.remove('minimized');
+            dialog.activeDialogId = ifr.dataset.dialogId;
+            dialogPolyfill.reposition(dialog);
+            dialog.updateBreadcrumbs(ifr.dataset.dialogId);
+            ifr.dispatchEvent(utils.createEvent('dialog-focus'));
+        }
+        dialog.updateBreadcrumbs = function(activeDialogId){
+            if(activeDialogId) {
+                dialog.activeDialogId = activeDialogId;
+            } else {
+                activeDialogId = dialog.activeDialogId || crumbs[crumbs.length-1].iframe.dataset.dialogId;
+            }
+            function appendTab(crumbsIndexes, htmlFragment, isActiveTab, tabIndex){ //[0,1,2]
+                var tabDiv = document.createElement('div');
+                tabDiv.classList.add('dialogtab');
+                if(isActiveTab){
+                    tabDiv.classList.add('active');
+                    for(var i=0; i<crumbsIndexes.length; i++){
+                        var crumb = document.createElement('div');
+                        crumb.classList.add('crumb');
+                        var ifr = crumbs[crumbsIndexes[i]].iframe;
+                        if(activeDialogId != ifr.dataset.dialogId){
+                            var title = ifr.dataset.title?ifr.dataset.title:'No title '+i+1;
+                            var textNode = document.createTextNode(title);
+                            crumb.classList.add('SIModalTitlePrev');
+                            crumb.appendChild( textNode );
+                            if(i<crumbsIndexes.length-1 ){
+                                var delIndex = crumbsIndexes[i]+1;
+                                crumb.addEventListener('click', (function(dialogToOpenId){
+                                    return function(){
+                                        //_removeIframe(deleteTabIndex);
+                                        dialog.openCrumb(dialogToOpenId);
+                                    };
+                                })(ifr.dataset.dialogId));
+                                crumb.setAttribute('title', title);
+                            }
+                            ifr.classList.add('minimized');
+                        } else {
+                            crumb.classList.add('active');
+                            crumb.classList.add('SIModalTitleActive');
+                            if(!ifr.dataset.loaded && !ifr.dataset.title){
+                                /** add spinner to show loading process */                    
+                                var spinner = document.createElement('div');
+                                spinner.classList.add('lds-ellipsis');
+                                for(var u=0; u<4; u++){
+                                    spinner.appendChild(document.createElement('div'));
+                                }
+                                crumb.appendChild(spinner);
+                            } else if(!ifr.dataset.title) {
+                                console.warn('Set title in the page at', ifr.src);
+                            }
+                            var textNode = document.createTextNode(ifr.dataset.title?ifr.dataset.title:'');
+                            crumb.appendChild( textNode );
+                            //ifr.classList.remove('minimized');
+                        }
+                        tabDiv.appendChild(crumb);
+                    }
+                } else {
+                    tabDiv.appendChild(document.createTextNode(tabIndex+1));
+                    tabDiv.addEventListener('click', (function(activateTabIndex){
+                        return function(){ dialog.switchTab(activateTabIndex); };
+                    })(tabIndex));
+                }
+                htmlFragment.appendChild(tabDiv);
+                
+            }
+            var tabsInfo = utils.getActiveTab(crumbs, activeDialogId);
+            // we have tabs = [[0,1,2],[3,4,5]]
+            var navTabs = dialog.querySelector('nav > div.dialogtabs');
+            var frag = document.createDocumentFragment();
+            for (var k = 0; k<tabsInfo.tabs.length; k++){
+                appendTab(tabsInfo.tabs[k], frag, k==tabsInfo.activeTabIndex, k);
+            }
+            while (navTabs.lastChild) { navTabs.removeChild(navTabs.lastChild); }
+            navTabs.appendChild(frag);          
+        }
+        /**
+         * Closes the dialog and its crumb and et seq. in the same tab.
+         * @param {number} dialogId
+         * @returns next advised crumb to be opened
+         */
+        dialog.closeDialog = function(dialogId){
+            dialogId = dialogId || dialog.activeDialogId;
+            var tabsInfo = utils.getActiveTab(crumbs, dialogId);
+            var currentTab = tabsInfo.tabs[tabsInfo.activeTabIndex];
+            var nextCrumbIndex = -1; //advised crumb to open
+            var delCounter = 0;
+            if(currentTab[0] == tabsInfo.activeCrumbIndex){//close the whole tab
+                delCounter = currentTab.length;
+                var nextTabIndex = (tabsInfo.tabs.length > tabsInfo.activeTabIndex + 1) ?
+                    tabsInfo.activeTabIndex + 1 : tabsInfo.activeTabIndex - 1;
+                if(nextTabIndex>-1){
+                    var nextTab = tabsInfo.tabs[nextTabIndex];
+                    nextCrumbIndex = nextTab[nextTab.length-1];
+                }
+            } else {
+                nextCrumbIndex = tabsInfo.activeCrumbIndex - 1;
+                for(var k = currentTab.length; k--;){
+                    delCounter++;
+                    if(currentTab[k] == tabsInfo.activeCrumbIndex) break;
+                }
+            }
+            var wasActiveDialogRemoved = false;
+            for(var k=tabsInfo.activeCrumbIndex; k<tabsInfo.activeCrumbIndex+delCounter; k ++){
+                var iframeToRemove = crumbs[k].iframe;
+                if(dialog.activeDialogId == iframeToRemove.dataset.dialogId){
+                    wasActiveDialogRemoved = true;
+                }
+                iframeToRemove.dispatchEvent(utils.createEvent('dialog-destroyed'));
+                tabWindow.removeChild(iframeToRemove);
+            }
+            if(nextCrumbIndex>-1){
+                if(wasActiveDialogRemoved){
+                    var ifr = crumbs[nextCrumbIndex].iframe;
+                    if(ifr.dataset.dwidth) dialog.style.width=ifr.dataset.dwidth;
+                    else dialog.style.width=null;
+                    if(ifr.dataset.dheight) dialog.style.height=ifr.dataset.dheight;
+                    else dialog.style.height=null;         
+                    ifr.classList.remove('minimized');
+                    crumbs.splice(tabsInfo.activeCrumbIndex, delCounter);
+                    dialogPolyfill.reposition(dialog);
+                    dialog.updateBreadcrumbs(ifr.dataset.dialogId);
+                    ifr.dispatchEvent(utils.createEvent('dialog-focus'));
+                    return -1;//we don't advise a crumb to show;
+                } else {
+                    crumbs.splice(tabsInfo.activeCrumbIndex, delCounter);
+                    dialog.updateBreadcrumbs();
+                    return nextCrumbIndex; //we may advise, as visible dialog hasn't been affected
+                    // so one could handle that situation what he likes
+                }
+            } else {
+                crumbs = [];
+                var navTabs = dialog.querySelector('nav > div.dialogtabs');
+                while (navTabs.lastChild) {
+                    navTabs.removeChild(navTabs.lastChild);
+                }
+                dialog.close();
+                return -1;
+            }
+        }
+        dialog.openCrumb = function(dialogId){
+            var tabsInfo = utils.getActiveTab(crumbs, dialogId);
+            var currentTab = tabsInfo.tabs[tabsInfo.activeTabIndex];
+            if(currentTab.length>0 && currentTab[currentTab.length-1] != tabsInfo.activeCrumbIndex){
+                var closeDialogId = crumbs[tabsInfo.activeCrumbIndex + 1].iframe.dataset.dialogId;
+                dialog.closeDialog(closeDialogId);
+            }
+        }
         /**
          * 
          * @param {{
@@ -81,14 +340,12 @@
             iframe.setAttribute('data-shortcut-stop-propagation', '');
             if(dialogObj.name) iframe.dataset.watirName = dialogObj.name;
             if(dialogObj.title) iframe.dataset.title = dialogObj.title;
-            if(dialogObj.size){
-                _setDialogSize(dialogObj.size.width, dialogObj.size.height, iframe);
-            } else {
-                _setDialogSize(null, null, iframe);
-            }
-            if(tabs.length>0){
-                for( var k = 0; k < tabs.length; k++ ){
-                    var tifr = tabs[k].iframe;
+            if(dialogObj.pillar) iframe.dataset.pillar = true;
+            dialog.setSize(dialogObj.size, iframe);
+            if(crumbs.length>0){
+                for( var k = 0; k < crumbs.length; k++ ){
+                    //FIXME minimize active only
+                    var tifr = crumbs[k].iframe;
                     tifr.dispatchEvent(utils.createEvent('dialog-blur'));
                     tifr.classList.add('minimized');
                 }
@@ -96,10 +353,25 @@
                 dialog.showModal();
             }
             dialogPolyfill.reposition(dialog);
+            var noTitleIndex;
             if(iframe.dataset.pages){
                 if(iframe.dataset.title) iframe.removeAttribute('data-title');
             } else {
-                tabs[tabs.length] = {iframe:iframe,opener:dialogOpenerWindow};
+                if(iframe.dataset.pillar){
+                    crumbs[crumbs.length] = {iframe:iframe,opener:dialogOpenerWindow};
+                } else {
+                    //FIXME add to active tab
+                    if(crumbs.length==0){
+                        crumbs[crumbs.length] = {iframe:iframe,opener:dialogOpenerWindow};
+                        noTitleIndex = 1;
+                    } else {
+                        var tabInfo = utils.getActiveTab(crumbs, dialog.activeDialogId);
+                        var newCrumbPosition = tabInfo.activeCrumbIndex+1;
+                        crumbs.splice(newCrumbPosition, 0, {iframe:iframe,opener:dialogOpenerWindow});
+                        noTitleIndex = newCrumbPosition + 1;
+                    }
+                }
+                dialog.activeDialogId = iframe.dataset.dialogId;
             }
             if(targetIframe){
                 iframe.classList.remove('minimized');
@@ -115,101 +387,74 @@
                 }catch(e){}
                 iframe.name = dialogObj.windowName;
             }
+            var crumbPos = noTitleIndex || crumbs.length;
             if(dialogObj.html){
                 iframe.contentDocument.open();
                 iframe.contentDocument.write(dialogObj.html);
                 iframe.contentDocument.close();
-                loadListener(iframe, dialogOpenerWindow, tabs.length);
+                loadListener(iframe, dialogOpenerWindow, crumbPos);
             } else if (dialogObj.downloader) {
-                loadListener(iframe, dialogOpenerWindow, tabs.length);
+                loadListener(iframe, dialogOpenerWindow, crumbPos);
             } else {
                 (function(index){
                     iframe.onload = function(){loadListener(iframe, dialogOpenerWindow, index);}
-                })(tabs.length);
+                })(crumbPos);
                 if(dialogObj.url) iframe.src = dialogObj.url;
             }
-            _redrawBreadcrumbs(iframe.dataset.dialogId);
+            dialog.updateBreadcrumbs(iframe.dataset.dialogId);
         }
-        function _setDialogSize(width, height, iframe){
-            function fixSize(sizeName, size, theIframe, theDialog){
-                if(size){
-                    var mySize;
-                    if(isNaN(size)){
-                        /* e.g. 20px or 15% */
-                        var sizeRegex = /^(\d+)(px|%|em|rem|vw|vh)?/gi
-                        var match = sizeRegex.exec(size);
-                        if(match && match.length>0){
-                            var sizeValue = match[1];
-                            var sizeUnit = match[2];
-                            if(parseInt(sizeValue,10) > 0){
-                                mySize = sizeValue + (!sizeUnit ? '' : sizeUnit.toLowerCase());
-                            }
-                        }
-                    } else {
-                        if(size>0){
-                            mySize = size+'px';
-                        }
-                    }
-                    if(mySize){
-                        theIframe.dataset['d'+sizeName] = mySize;
-                        theDialog.style[sizeName] = mySize;
-                        return;
-                    }
+        function _removeIframe(crumbIndex) {
+            // TODO if tab is closed - activate the last crumb in the next tab
+            var tabInfo = utils.getTabs(crumbs);
+            var delCount = 0;
+            var wasActiveDialogRemoved = false;
+            for( var k = crumbIndex; k<crumbs.length; k++ ){
+                var doRemove = false;
+                if(k==crumbIndex){
+                    doRemove = true;
+                } else if (!crumbs[k].iframe.dataset.pillar){
+                    doRemove = true;
                 }
-                theIframe.removeAttribute('data-d'+sizeName);
-                theDialog.style[sizeName] = null;
-            }
-            fixSize('width', width, iframe, dialog);
-            fixSize('height', height, iframe, dialog);
-        }
-        function _findEventSourceIframe( sourceWindow ){
-            for(var i=0; i<tabs.length; i++) {
-                var f = tabs[i].iframe;
-                if (f.contentWindow==sourceWindow){
-                    return {iframe:f, tabIndex:i};
-                }
-            }
-        }
-        function _removeIframe(iframeAndTabIndex) {
-            while(tabWindow.lastChild){
-                var lastIframe = tabWindow.lastChild;
-                var doStop = lastIframe === iframeAndTabIndex.iframe;
-                //lastIframe.classList.add('minimized');
-                lastIframe.dispatchEvent(utils.createEvent('dialog-destroyed'));
-                tabWindow.removeChild(lastIframe);
-                if(doStop){
-                    var ifrOpenerData = tabs[iframeAndTabIndex.tabIndex];
-                    var ifrOpener = ifrOpenerData.opener;
-                    if(ifrOpener && ifrOpener.topdialog && ifrOpener.topdialog.support &&
-                        ifrOpener.topdialog.support.restoreFocusAfterDialogClosed){
-                        ifrOpener.topdialog.support.restoreFocusAfterDialogClosed.apply(ifrOpener);
+                if(doRemove){
+                    delCount++;
+                    var removedIframe = crumbs[k].iframe;
+                    if(dialog.activeDialogId == removedIframe.dataset.dialogId){
+                        wasActiveDialogRemoved = true;
                     }
+                    removedIframe.dispatchEvent(utils.createEvent('dialog-destroyed'));
+                    tabWindow.removeChild(removedIframe);
+                } else {
                     break;
-                };
+                }
             }
-            tabs.splice(iframeAndTabIndex.tabIndex);
-            if(tabs.length>0){
-                var ifr = tabs[tabs.length-1].iframe;
-                if(ifr.dataset.dwidth) dialog.style.width=ifr.dataset.dwidth;
-                else dialog.style.width=null;
-                if(ifr.dataset.dheight) dialog.style.height=ifr.dataset.dheight;
-                else dialog.style.height=null;         
-                ifr.classList.remove('minimized');
-                dialogPolyfill.reposition(dialog);
-                _redrawBreadcrumbs(ifr.dataset.dialogId);
-                ifr.dispatchEvent(utils.createEvent('dialog-focus'));
+            crumbs.splice(crumbIndex, delCount);
+            if(crumbs.length>0){
+                if(wasActiveDialogRemoved){
+                    var activateCrumb = crumbIndex > 0 ? crumbIndex - 1 : 0;
+                    var ifr = crumbs[activateCrumb].iframe;
+                    if(ifr.dataset.dwidth) dialog.style.width=ifr.dataset.dwidth;
+                    else dialog.style.width=null;
+                    if(ifr.dataset.dheight) dialog.style.height=ifr.dataset.dheight;
+                    else dialog.style.height=null;         
+                    ifr.classList.remove('minimized');
+                    dialogPolyfill.reposition(dialog);
+                    dialog.updateBreadcrumbs(ifr.dataset.dialogId);
+                    ifr.dispatchEvent(utils.createEvent('dialog-focus'));
+                } else {
+                    dialog.updateBreadcrumbs();
+                }
             } else {
-                var nav = dialog.querySelector('nav');
-                while (nav.lastChild) {
-                    nav.removeChild(nav.lastChild);
+                var navTabs = dialog.querySelector('nav > div.dialogtabs');
+                while (navTabs.lastChild) {
+                    navTabs.removeChild(navTabs.lastChild);
                 }
                 dialog.close();
             }
         }
         function _closeTabByDialogId(dialogId){
-            for (var i=0; i<tabs.length; i++){
-                if(tabs[i].iframe.dataset.dialogId == dialogId){
-                    _removeIframe({iframe:tabs[i].iframe, tabIndex:i});
+            for (var i=crumbs.length; i--;){
+                if(crumbs[i].iframe.dataset.dialogId == dialogId){
+                    _removeIframe(i);
                     return;
                 }
             }
@@ -219,31 +464,25 @@
                 if(evt.data.dialog && (evt.data.dialog.url || evt.data.dialog.html)){
                     _createDialog(evt.data.dialog, utils.getContextOpener(evt));
                     evt.source.postMessage({dialogResult:'urlOrHtml'}, '*');
-                } else if (evt.data.dialog && evt.data.dialog.close) {
-                    _closeTabByDialogId(evt.data.dialog.close);
+                } else if (evt.data.dialog && evt.data.dialog.hasOwnProperty('close')) {
+                    dialog.closeDialog(evt.data.dialog.close);
                 } else if (evt.data.dialog && evt.data.dialog.update) {
-                    var iframeAndTabIndex = _findEventSourceIframe(evt.source);
-                    if(!iframeAndTabIndex) throw new Error('IframeAndTabIndex not found for', evt.source);
-                    var updateTabId = iframeAndTabIndex.tabIndex;
-                    for( var i=0; i<tabs.length; i++ ){
-                        if(updateTabId == i){
-                            var iIfr = tabs[i].iframe;
-                            var iIfrWin = iIfr.contentWindow || iIfr;
-                            iIfrWin.opener = tabs[i].opener;
-                            var title = iIfr.contentWindow ? iIfr.contentDocument.title : iIfr.document.title;
-                            iIfr.dataset.title = title;
-                            _redrawBreadcrumbs();
-                            iIfrWin.postMessage({dialogResult:'updated'}, '*');
-                        }
-                    }
+                    var crumbIndex = dialog.getCrumbIndex(evt.source);
+                    if(!crumbIndex) throw new Error('crumbIndex not found for', evt.source);
+                    var iIfr = crumbs[crumbIndex].iframe;
+                    var iIfrWin = iIfr.contentWindow || iIfr;
+                    iIfrWin.opener = crumbs[crumbIndex].opener;
+                    var title = iIfr.contentWindow ? iIfr.contentDocument.title : iIfr.document.title;
+                    iIfr.dataset.title = title;
+                    dialog.updateBreadcrumbs();
+                    iIfrWin.postMessage({dialogResult:'updated'}, '*');
                 } else if (evt.data.dialog && evt.data.dialog.loaded){
                     //notifies that dialog's content is fully loaded
-                    var iframeAndTabIndex = _findEventSourceIframe(evt.source);
-                    if(iframeAndTabIndex){
-                        var activeTabId = iframeAndTabIndex.tabIndex;
-                        for( var i=0; i<tabs.length; i++ ){
-                            if(activeTabId == i){
-                                var ifr = tabs[i].iframe;
+                    var crumbIndex = dialog.getCrumbIndex(evt.source);
+                    if(crumbIndex > -1){
+                        for( var i=crumbs.length; i--; ){
+                            if(crumbIndex == i){
+                                var ifr = crumbs[i].iframe;
                                 if(ifr) {
                                     var loadedCounter = parseInt(ifr.dataset.loaded, 10);
                                     loadedCounter = isNaN(loadedCounter) ? 1 : loadedCounter + 1;
@@ -251,10 +490,10 @@
                                     var title = ifr.contentWindow ? ifr.contentDocument.title : ifr.document.title;
                                     title = title && title.length>0 ? title : 'No title ' + i;
                                     ifr.dataset.title = title;
-                                    _redrawBreadcrumbs();
+                                    dialog.updateBreadcrumbs();
                                 }
-                                if(tabs[i].opener){
-                                    tabs[i].opener.dispatchEvent(utils.createEvent('dialog-loaded'));
+                                if(crumbs[i].opener){
+                                    crumbs[i].opener.dispatchEvent(utils.createEvent('dialog-loaded'));
                                 }
                                 break;
                             }
@@ -262,19 +501,21 @@
                     }
                 } else if (evt.data.dialog && evt.data.dialog.title){
                     /* update title */
-                    var iframeAndTabIndex = _findEventSourceIframe(evt.source);
-                    var ifr = iframeAndTabIndex.iframe;
-                    ifr.dataset.title = evt.data.dialog.title;
-                    _redrawBreadcrumbs();
+                    var crumbIndex = dialog.getCrumbIndex(evt.source);
+                    if(crumbIndex > -1){
+                        var ifr = crumbs[crumbIndex].iframe;
+                        ifr.dataset.title = evt.data.dialog.title;
+                        dialog.updateBreadcrumbs();
+                    }
                 } else if (evt.data.dialog && evt.data.dialog.windowName) {
                     /* post message evt.source is de-facto opener */
                     _createDialog(evt.data.dialog, evt.source);
                     evt.source.postMessage({dialogResult:'namedWindow'}, '*');
                 } else {
-                    var iframeAndTabIndex = _findEventSourceIframe(evt.source);
-                    debugger;
-                    if(iframeAndTabIndex) {
-                        _removeIframe(iframeAndTabIndex);
+                    var crumbIndex = dialog.getCrumbIndex(evt.source);
+                    if(crumbIndex > -1) {
+                        //_removeIframe(crumbIndex);
+                        dialog.closeDialog(crumbs[crumbIndex].iframe.dataset.dialogId);
                     }
                 }
             } else if(evt.data && evt.data.hasOwnProperty('downloader')){
@@ -317,7 +558,7 @@
                     }());
                     var isDialogAlreadyOpened = false;
                     if(ie){
-                        if(tabs.length==0){
+                        if(crumbs.length==0){
                             dialog.classList.add('minimized');
                             tabWindow.appendChild(difr);
                         } else {
@@ -350,15 +591,16 @@
                                         if(doc.activeElement.childNodes.length>0){
                                             /* HTML */
                                             if(!isDialogAlreadyOpened){
-                                                dialog.classList.remove("minimized");
+                                                dialog.classList.remove('minimized');
                                                 dialogPolyfill.reposition(dialog);
                                             }
                                             //_createDialog(dialogConfig, evtSource, ifr);
                                         } else {
                                             /* download */
-                                            _closeTabByDialogId(ifr.dataset.dialogId);
+                                            //_closeTabByDialogId(ifr.dataset.dialogId);
+                                            dialog.closeDialog(ifr.dataset.dialogId);
                                             if(!isDialogAlreadyOpened){
-                                                dialog.classList.remove("minimized");
+                                                dialog.classList.remove('minimized');
                                                 console.debug('Dialog before removing downaload iframe', dialog);
                                                 //tabWindow.removeChild(ifr);
                                             }
@@ -401,59 +643,7 @@
                 }
             }
         }
-        function _redrawBreadcrumbs(activeDialogId){
-            var nav = dialog.querySelector('nav');
-            var frag = document.createDocumentFragment();
-            if(!activeDialogId) {
-                activeDialogId = tabs[tabs.length-1].iframe.dataset.dialogId;
-            }
-            for( var i=0; i<tabs.length; i++ ){
-                var crumb = document.createElement('div');
-                crumb.classList.add('crumb');
-                var ifr = tabs[i].iframe;
-                if(activeDialogId != ifr.dataset.dialogId){
-                    var title = ifr.dataset.title?ifr.dataset.title:'No title '+i+1;
-                    var textNode = document.createTextNode(title);
-                    crumb.classList.add('SIModalTitlePrev');
-                    crumb.appendChild( textNode );
-                    if(i<tabs.length-1 ){
-                        var delIndex = i+1;
-                        crumb.addEventListener('click', (function(deleteIframe, deleteTabIndex){
-                            return function(){ _removeIframe({ iframe: deleteIframe, tabIndex: deleteTabIndex }); };
-                        })(tabs[delIndex].iframe, delIndex));
-                        crumb.setAttribute('title', title);
-                    }
-                } else {
-                    var xButton = document.createElement('div');
-                    xButton.classList.add('xbutton');
-                    xButton.classList.add('SIModalXButton');
-                    xButton.addEventListener('click', (function(dialogId){
-                        return function(){ postMessage({ dialog:{ close: ifr.dataset.dialogId } }, '*'); };
-                    })(ifr.dataset.dialogId));
-                    crumb.appendChild(xButton);
-                    crumb.classList.add('active');
-                    crumb.classList.add('SIModalTitleActive');
-                    if(!ifr.dataset.loaded && !ifr.dataset.title){
-                        /** add spinner to show loading process */                    
-                        var spinner = document.createElement('div');
-                        spinner.classList.add('lds-ellipsis');
-                        for(var u=0; u<4; u++){
-                            spinner.appendChild(document.createElement('div'));
-                        }
-                        crumb.appendChild(spinner);
-                    } else if(!ifr.dataset.title) {
-                        console.warn('Set title in the page at', ifr.src);
-                    }
-                    var textNode = document.createTextNode(ifr.dataset.title?ifr.dataset.title:'');
-                    crumb.appendChild( textNode );
-                    ifr.classList.remove('minimized');
-                }                    
-                frag.appendChild(crumb);
-            }
-            while (nav.lastChild) { nav.removeChild(nav.lastChild); }
-            nav.appendChild(frag);
-        }
-        function loadListener(ifr, ifrOpener, index){
+        function loadListener(ifr, ifrOpener, noTitleIndex){
             var pagesCounter = parseInt(ifr.dataset.pages, 10);
             pagesCounter = isNaN(pagesCounter) ? 1 : pagesCounter + 1;
             ifr.dataset.pages = pagesCounter;
@@ -465,9 +655,9 @@
                     if(doc && doc.title) {
                         ifr.dataset.title=doc.title;
                     } else if(!oldTitle){
-                        ifr.dataset.title = 'No title # ' + index;
+                        ifr.dataset.title = 'No title # ' + noTitleIndex;
                     }
-                    _redrawBreadcrumbs();
+                    dialog.updateBreadcrumbs();
                 }
                 var iWin = ifr.contentWindow || ifr;
                 if(!!iWin.isDialogCloseable){
@@ -481,8 +671,8 @@
                 iWin.isDialogCloseable = true;
             } catch(error){
                 console.warn('onload error', error);
-                if(!ifr.dataset.title) ifr.dataset.title = 'No title ##'+ index;
-                _redrawBreadcrumbs();
+                if(!ifr.dataset.title) ifr.dataset.title = 'No title ##'+ noTitleIndex;
+                dialog.updateBreadcrumbs();
             }
         }
         function getDefaultTopDialog(){
@@ -492,6 +682,16 @@
             tabbedDiv.classList.add("tabbed");
             var nav = document.createElement("nav");
             nav.classList.add('SIModalTitle');
+            var dialogtabs = document.createElement('div');
+            dialogtabs.classList.add('dialogtabs');
+            nav.appendChild(dialogtabs);
+            var xButton = document.createElement('div');
+            xButton.classList.add('xbutton');
+            xButton.classList.add('SIModalXButton');
+            xButton.addEventListener('click', function(){ 
+                postMessage({ dialog:{ close: 0 } }, '*');
+            });
+            nav.appendChild(xButton);
             var tabWindow = document.createElement("div");
             tabWindow.classList.add("tabwindow");            
             tabbedDiv.appendChild(nav);
