@@ -117,13 +117,13 @@
 
         window.dialogPolyfill.registerDialog(dialog);
         dialog.setSize = function(size, iframe){
-            function fixSize(sizeName, sizeVal, theIframe, theDialog){
+            function fixSize(sizeName, sizeVal, theIframe){
                 if(sizeVal){
                     var mySize;
                     if(isNaN(sizeVal)){
                         /* e.g. 20px or 15% */
                         var sizeRegex = /^(\d+)(px|%|em|rem|vw|vh)?/gi
-                        var match = sizeRegex.exec(size);
+                        var match = sizeRegex.exec(sizeVal);
                         if(match && match.length>0){
                             var sizeValue = match[1];
                             var sizeUnit = match[2];
@@ -138,16 +138,16 @@
                     }
                     if(mySize){
                         theIframe.dataset['d'+sizeName] = mySize;
-                        theDialog.style[sizeName] = mySize;
+                        dialog.style[sizeName] = mySize;
                         return;
                     }
                 }
                 theIframe.removeAttribute('data-d'+sizeName);
-                theDialog.style[sizeName] = null;
+                dialog.style[sizeName] = null;
             }
             size = size || {};
-            fixSize('width', size.width, iframe, this);
-            fixSize('height', size.height, iframe, this);
+            fixSize('width', size.width, iframe);
+            fixSize('height', size.height, iframe);
         }
         dialog.getCrumbIndex = function(theWindow){
             for(var i=crumbs.length; i--;) {
@@ -321,6 +321,12 @@
                 dialog.closeDialog(closeDialogId);
             }
         }
+        dialog.getActiveIframe = function(){
+            if(dialog.activeDialogId){
+                var idx = utils.getActiveTab(crumbs, dialog.activeDialogId).activeCrumbIndex;
+                return crumbs[idx].iframe;
+            }
+        }
         /**
          * 
          * @param {{
@@ -449,14 +455,6 @@
                     navTabs.removeChild(navTabs.lastChild);
                 }
                 dialog.close();
-            }
-        }
-        function _closeTabByDialogId(dialogId){
-            for (var i=crumbs.length; i--;){
-                if(crumbs[i].iframe.dataset.dialogId == dialogId){
-                    _removeIframe(i);
-                    return;
-                }
             }
         }
         function _messageListerner(evt){
@@ -691,6 +689,9 @@
             xButton.addEventListener('click', function(){ 
                 postMessage({ dialog:{ close: 0 } }, '*');
             });
+            var resizer = document.createElement('div');
+            resizer.classList.add('resizer');
+            nav.appendChild(resizer);
             nav.appendChild(xButton);
             var tabWindow = document.createElement("div");
             tabWindow.classList.add("tabwindow");            
@@ -698,6 +699,91 @@
             tabbedDiv.appendChild(tabWindow);
             dialog.appendChild(tabbedDiv);
             document.body.appendChild(dialog);
+            //resizeHandlerPolyfill(tabbedDiv, true);
+            (function(elem, moveHandler, resizer){
+                dragresize = new DragResize('dragresize',
+                    {
+                        enabled: false,
+                        minWidth: 200,
+                        minHeight: 200,
+                        minLeft: -1600,
+                        minTop: 0,
+                        maxLeft: 1600,
+                        maxTop: 800,
+                        zIndex: window.getComputedStyle(elem, null).getPropertyValue("z-index")
+                    }
+                );
+
+                // Optional settings/properties of the DragResize object are:
+                //  enabled: Toggle whether the object is active.
+                //  handles[]: An array of drag handles to use (see the .JS file).
+                //  minWidth, minHeight: Minimum size to which elements are resized (in pixels).
+                //  minLeft, maxLeft, minTop, maxTop: Bounding box (in pixels).
+
+                // Next, you must define two functions, isElement and isHandle. These are passed
+                // a given DOM element, and must "return true" if the element in question is a
+                // draggable element or draggable handle. Here, I'm checking for the CSS classname
+                // of the elements, but you have have any combination of conditions you like:
+
+                dragresize.isElement = function(elm){
+                    if (elm.className && elm.className.indexOf('drsElement') > -1) return true;
+                };
+                dragresize.isHandle = function(elm){
+                    if (elm.className && elm.className.indexOf('drsMoveHandle') > -1) return true;
+                };
+
+                // You can define optional functions that are called as elements are dragged/resized.
+                // Some are passed true if the source event was a resize, or false if it's a drag.
+                // The focus/blur events are called as handles are added/removed from an object,
+                // and the others are called as users drag, move and release the object's handles.
+                // You might use these to examine the properties of the DragResize object to sync
+                // other page elements, etc.
+
+                dragresize.ondragfocus = function() { };
+                dragresize.ondragstart = function(isResize) { };
+                dragresize.ondragmove = function(isResize) { };
+                dragresize.ondragend = function(isResize) { };
+                dragresize.ondragblur = function() { };
+
+                // Finally, you must apply() your DragResize object to a DOM node; all children of this
+                // node will then be made draggable. Here, I'm applying to the entire document.
+                dragresize.apply(document);
+                resizer.addEventListener('click', function(){
+                    function dragblurListener(){
+                        if(dragresize.enabled){
+                            dragresize.ondragblur = function(){};
+                            dragresize.deselect(moveHandler);
+                            moveHandler.classList.remove('drsMoveHandle');
+                            elem.classList.remove('drsElement');
+                            var iframes = dialog.querySelectorAll('iframe');
+                            for(var k=iframes.length; k--;){
+                                iframes[k].style.pointerEvents = null;
+                            }
+                            dragresize.enabled = false;
+                            elem.setSize({width:elem.style.width, height:elem.style.height}, elem.getActiveIframe());
+                            elem.style.top = null;
+                            elem.style.left = null;
+                            dialogPolyfill.reposition(dialog);
+                        }
+                    }
+                    if(!dragresize.enabled){
+                        dragresize.ondragstart = function(isResize) {
+                            dragresize.ondragblur = function(){};
+                        };
+                        dragresize.ondragend = function(isResize) {
+                            dragresize.ondragblur = dragblurListener;
+                        };
+                        dragresize.enabled = true;
+                        dragresize.select(moveHandler);
+                        moveHandler.classList.add('drsMoveHandle');
+                        elem.classList.add('drsElement');
+                        var iframes = dialog.querySelectorAll('iframe');
+                        for(var k=iframes.length; k--;){
+                            iframes[k].style.pointerEvents = 'none';
+                        }
+                    }
+                });
+            })(dialog, nav, resizer);
             return dialog;
         }
         window.addEventListener('message', _messageListerner, false);

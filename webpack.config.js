@@ -87,6 +87,7 @@ module.exports = ( env, argv ) => {
         to: 'topdialog.js',
         transform(content, path){
           const filesToAppend = [
+            'src/assets/js/dragresize.js',
             'src/assets/js/dialog-polyfill_patched.js',
             'src/assets/js/dialog-top.js'
           ];
@@ -111,6 +112,7 @@ module.exports = ( env, argv ) => {
         to: 'topdialog.js',
         transform(content, path){
           const filesToAppend = [
+            'src/assets/js/dragresize.js',
             'src/assets/js/dialog-polyfill_patched.js',
             'src/assets/js/dialog-top.js'
           ];
