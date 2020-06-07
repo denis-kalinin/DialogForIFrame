@@ -172,7 +172,8 @@ dialog {
         }
     }
     &.minimized {
-        @extend %minimized;
+        top: -3000px;
+        left: -3000px;
         display: block;
         nav {
             display: none;

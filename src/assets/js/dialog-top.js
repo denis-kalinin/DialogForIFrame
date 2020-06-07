@@ -22,9 +22,11 @@
          */
         overrideCloseFunction: function(doc){
             /** window.close() can be overriden in IE by function declaration only */
-            var script = doc.createElement('script');
-            script.textContent = "function close(){console.debug('close() is defined by topdialog');function getTopWindow(checkWindow){if(!checkWindow) checkWindow = window.self;try {if(checkWindow.parent && !checkWindow.parent.noDialog){return getTopWindow(checkWindow.parent);}}catch(e){}return checkWindow;};getTopWindow().postMessage({dialog:null},'*')}";
-            doc.head.appendChild(script);
+            if(doc && doc.head){
+                var script = doc.createElement('script');
+                script.textContent = "function close(){console.debug('close() is defined by topdialog');function getTopWindow(checkWindow){if(!checkWindow) checkWindow = window.self;try {if(checkWindow.parent && !checkWindow.parent.noDialog){return getTopWindow(checkWindow.parent);}}catch(e){}return checkWindow;};getTopWindow().postMessage({dialog:null},'*')}";
+                doc.head.appendChild(script);
+            }
         },
         /**
          *  gets default value of an iframe without height
@@ -595,8 +597,10 @@
                                     var activeElementTagname = doc.activeElement.tagName.toLocaleLowerCase();
                                     if (activeElementTagname === 'object') {
                                         if(!isDialogAlreadyOpened){
-                                            dialog.classList.remove('minimized');              
-                                            _createDialog(dialogConfig, evtSource, ifr);
+                                            dialog.classList.remove('minimized');
+                                            dialogPolyfill.reposition(dialog);
+                                            ifr.focus();  
+                                            //_createDialog(dialogConfig, evtSource, ifr);
                                         }                                        
                                     } else if(activeElementTagname === 'body'){
                                         /* body: HTML or download */
@@ -612,7 +616,7 @@
                                             //_closeTabByDialogId(ifr.dataset.dialogId);
                                             dialog.closeDialog(ifr.dataset.dialogId);
                                             if(!isDialogAlreadyOpened){
-                                                dialog.classList.remove('minimized');
+                                                //dialog.classList.remove('minimized');
                                                 console.debug('Dialog before removing downaload iframe', dialog);
                                                 //tabWindow.removeChild(ifr);
                                             }
@@ -663,7 +667,7 @@
                 var oldTitle = ifr.dataset.title;
                 if(!oldTitle || pagesCounter>1){
                     var iWin = ifr.contentWindow || ifr;
-                    var doc = ifr.contentWindow ? ifr.contentDocument : ifr.document;
+                    var doc = ifr.contentDocument ? ifr.contentDocument : ifr.document;
                     if(doc && doc.title) {
                         ifr.dataset.title=doc.title;
                     } else if(!oldTitle){
