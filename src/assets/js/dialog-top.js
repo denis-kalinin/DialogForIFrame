@@ -275,17 +275,28 @@
                     if(currentTab[k] == tabsInfo.activeCrumbIndex) break;
                 }
             }
-            var wasActiveDialogRemoved = false;
+            var activeDialogToRemoveCrumbIndex = -1;
             for(var k=tabsInfo.activeCrumbIndex; k<tabsInfo.activeCrumbIndex+delCounter; k ++){
                 var iframeToRemove = crumbs[k].iframe;
-                if(dialog.activeDialogId == iframeToRemove.dataset.dialogId){
-                    wasActiveDialogRemoved = true;
-                }
+                var iframeToRemoveId = iframeToRemove.dataset.dialogId;
                 iframeToRemove.dispatchEvent(utils.createEvent('dialog-destroyed'));
                 tabWindow.removeChild(iframeToRemove);
+                if(dialog.activeDialogId == iframeToRemoveId){
+                    activeDialogToRemoveCrumbIndex = k;
+                }
+            }
+            function setFocusOnOpener(ifrOpener){
+                if(ifrOpener && ifrOpener.topdialog && ifrOpener.topdialog.support &&
+                    ifrOpener.topdialog.support.restoreFocusAfterDialogClosed){
+                    ifrOpener.topdialog.support.restoreFocusAfterDialogClosed.apply(ifrOpener);
+                }
+            }
+            var ifrOpener;
+            if(activeDialogToRemoveCrumbIndex>-1){
+                ifrOpener = crumbs[activeDialogToRemoveCrumbIndex].opener;
             }
             if(nextCrumbIndex>-1){
-                if(wasActiveDialogRemoved){
+                if(activeDialogToRemoveCrumbIndex>-1){
                     var ifr = crumbs[nextCrumbIndex].iframe;
                     if(ifr.dataset.dwidth) dialog.style.width=ifr.dataset.dwidth;
                     else dialog.style.width=null;
@@ -295,11 +306,13 @@
                     crumbs.splice(tabsInfo.activeCrumbIndex, delCounter);
                     dialogPolyfill.reposition(dialog);
                     dialog.updateBreadcrumbs(ifr.dataset.dialogId);
+                    setFocusOnOpener(ifrOpener);
                     ifr.dispatchEvent(utils.createEvent('dialog-focus'));
                     return -1;//we don't advise a crumb to show;
                 } else {
                     crumbs.splice(tabsInfo.activeCrumbIndex, delCounter);
                     dialog.updateBreadcrumbs();
+                    setFocusOnOpener(ifrOpener);
                     return nextCrumbIndex; //we may advise, as visible dialog hasn't been affected
                     // so one could handle that situation what he likes
                 }
@@ -310,6 +323,7 @@
                     navTabs.removeChild(navTabs.lastChild);
                 }
                 dialog.close();
+                setFocusOnOpener(ifrOpener);
                 return -1;
             }
         }
@@ -683,16 +697,20 @@
             var dialogtabs = document.createElement('div');
             dialogtabs.classList.add('dialogtabs');
             nav.appendChild(dialogtabs);
+            //buttons
+            var dialogButtons = document.createElement('div');
+            dialogButtons.classList.add('dialogbuttons');
             var xButton = document.createElement('div');
             xButton.classList.add('xbutton');
             xButton.classList.add('SIModalXButton');
             xButton.addEventListener('click', function(){ 
                 postMessage({ dialog:{ close: 0 } }, '*');
             });
+            dialogButtons.appendChild(xButton);
             var resizer = document.createElement('div');
             resizer.classList.add('resizer');
-            nav.appendChild(resizer);
-            nav.appendChild(xButton);
+            dialogButtons.appendChild(resizer);
+            nav.appendChild(dialogButtons);
             var tabWindow = document.createElement("div");
             tabWindow.classList.add("tabwindow");            
             tabbedDiv.appendChild(nav);

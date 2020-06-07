@@ -35,9 +35,11 @@ dialog {
         border-bottom-width: 2px;
         height: 2em;
         min-height: 30px;
+        //display: flex;//#
+        //justify-content: space-between;//#
         & > .dialogtabs {
             height: 100%;
-            padding-right: 30px;
+            margin-right: 60px;
             display: flex;
             align-items: center;
             justify-content: flex-start;
@@ -98,43 +100,47 @@ dialog {
                 }
             }
         }
-        & > .xbutton{
-            display: block;
-            width: 24px;
-            height: 24px;
-            // background-color:red;
-            position: absolute;
-            //top:-24px;
-            //right:5px;
-            top: 3px;
-            right: 3px;
-            border-radius: 6px;
-            //box-shadow:2px 2px 4px 0 white;
-        }
-        // .xbutton:hover { background-color: $xButtonHoverBackground-Default; }
-        & > .xbutton:before {
-            @extend %xbutton;
-            -webkit-transform:rotate(45deg);
-            -moz-transform:rotate(45deg);
-            transform:rotate(45deg);
-            left:2px;
-        }
-        & > .xbutton:after {
-            @extend %xbutton;
-            -webkit-transform: rotate(-45deg);
-            -moz-transform: rotate(-45deg);
-            transform: rotate(-45deg);
-            right: 2px;
-        }
-        & > .resizer {
-            display: block;
-            width: 24px;
-            height: 24px;
-            background-color:red;
-            position: absolute;
-            top: 3px;
-            right: 30px;
-            border-radius: 6px;
+        & > .dialogbuttons {
+            background-color: #f00;
+            //flex: 0 0 auto;
+            //display: flex;
+            & > .xbutton{
+                display: block;
+                width: 24px;
+                height: 24px;
+                position: absolute;
+                top: 3px;
+                right: 3px;
+                border-radius: 6px;
+                //box-shadow:2px 2px 4px 0 white;
+            }
+            // .xbutton:hover { background-color: $xButtonHoverBackground-Default; }
+            & > .xbutton:before {
+                @extend %xbutton;
+                -webkit-transform:rotate(45deg);
+                -moz-transform:rotate(45deg);
+                transform:rotate(45deg);
+                left:2px;
+                top: 10px;
+            }
+            & > .xbutton:after {
+                @extend %xbutton;
+                -webkit-transform: rotate(-45deg);
+                -moz-transform: rotate(-45deg);
+                transform: rotate(-45deg);
+                left: 2px;
+                top: 6px;
+            }
+            & > .resizer {
+                display: block;
+                width: 24px;
+                height: 24px;
+                background-color:red;
+                position: absolute;
+                top: 3px;
+                right: 30px;
+                border-radius: 6px;
+            }
         }
     }
     & > .tabbed {
@@ -179,12 +185,13 @@ dialog {
 
 %xbutton {
     content: '';
-    position: absolute;
+    //#position: absolute;
+    position: relative;
+    display: block;
     width: 20px;
     height: 4px;
     background-color: white;
     border-radius: 2px;
-    top: 10px;
 }
 %minimized {
     width: 0;

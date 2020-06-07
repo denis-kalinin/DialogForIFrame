@@ -84,6 +84,7 @@
                         }
                     }catch(e){throw new Error('$ctx should be a window element while opening a dialog')};
                 }
+                debugger;
                 if(document.activeElement && document.activeElement !== document.body){
                     var restoreFocusElement = document.activeElement;
                     self.topdialog.support.restoreFocusAfterDialogClosed = function(){

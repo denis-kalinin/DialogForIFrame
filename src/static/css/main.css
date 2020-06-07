@@ -81,6 +81,6 @@ WebKit inertia scrolling is being added here for any present/future devices that
     color: gold;
 }
 .SIModalXButton:hover {
-    background-color: royalblue !important;
+    background-color: royalblue;
 }
   
