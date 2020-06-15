@@ -1,10 +1,363 @@
 (function () {
-    var dialogCss = "dialog{position:absolute;left:0;right:0;width:-moz-fit-content;width:-webkit-fit-content;width:fit-content;height:-moz-fit-content;height:-webkit-fit-content;height:fit-content;margin:auto;order:solid;padding:1em;background:white;color:black;display:block}dialog:not([open]){display:none}._dialog_overlay{position:fixed;top:0;right:0;bottom:0;left:0}dialog.fixed{position:fixed;top:50%;transform:translate(0, -50%)}.lds-ellipsis{display:inline-block;position:relative;min-width:80px;height:12px;top:2px}.lds-ellipsis div{position:absolute;top:0px;width:12px;height:12px;border-radius:50%;background:#fff;animation-timing-function:cubic-bezier(0, 1, 1, 0)}.lds-ellipsis div:nth-child(1){left:8px;animation:lds-ellipsis1 0.6s infinite}.lds-ellipsis div:nth-child(2){left:8px;animation:lds-ellipsis2 0.6s infinite}.lds-ellipsis div:nth-child(3){left:32px;animation:lds-ellipsis2 0.6s infinite}.lds-ellipsis div:nth-child(4){left:56px;animation:lds-ellipsis3 0.6s infinite}@keyframes lds-ellipsis1{0%{transform:scale(0)}100%{transform:scale(1)}}@keyframes lds-ellipsis3{0%{transform:scale(1)}100%{transform:scale(0)}}@keyframes lds-ellipsis2{0%{transform:translate(0, 0)}100%{transform:translate(24px, 0)}}dialog[role=topdialog]{width:95%;height:90%;border:1em;padding:0}dialog::backdrop{background:rgba(0,0,0,0.5)}dialog{max-width:95%;max-height:95%}dialog+.backdrop{background:rgba(0,0,0,0.5);position:fixed;top:0;left:0;right:0;bottom:0}dialog nav{border:1px solid #ccc;background-color:#5e24e6;color:#fff;border-bottom-width:2px;height:2em;min-height:30px;display:flex;align-items:center;justify-content:flex-start}dialog nav .crumb{flex:0 3 auto;padding-left:0.2em;align-items:center;text-overflow:ellipsis;white-space:nowrap;overflow:hidden}dialog nav .crumb.active{min-width:28px;margin-right:30px;flex:0 1 50%}dialog nav .crumb.active .xbutton{display:block;width:24px;height:24px;position:absolute;top:3px;right:3px;border-radius:6px}dialog nav .crumb.active .xbutton:before{-webkit-transform:rotate(45deg);-moz-transform:rotate(45deg);transform:rotate(45deg);left:2px}dialog nav .crumb.active .xbutton:after{-webkit-transform:rotate(-45deg);-moz-transform:rotate(-45deg);transform:rotate(-45deg);right:2px}dialog nav .crumb:not(:first-child):before{content:'\\00a0\\003e\\00a0'}dialog nav .crumb:not(:last-child):hover{text-decoration:underline;cursor:pointer}dialog>.tabbed{height:100%;padding:0;border:0;display:flex;flex-flow:column}dialog>.tabbed>.tabwindow{flex:1 1 auto;display:flex;flex-flow:column}dialog>.tabbed>.tabwindow>iframe{flex-flow:column;flex:1 1 auto;width:100%;display:flex;border:0}dialog>.tabbed>.tabwindow>iframe.minimized{position:absolute;top:0;left:0}dialog.minimized nav{display:none}dialog nav .crumb.active .xbutton:before,dialog nav .crumb.active .xbutton:after{content:'';position:absolute;width:20px;height:4px;background-color:white;border-radius:2px;top:10px}dialog>.tabbed>.tabwindow>iframe.minimized,dialog.minimized{width:0;height:0}\n";
+    var dialogCss = "dialog{position:absolute;left:0;right:0;width:-moz-fit-content;width:-webkit-fit-content;width:fit-content;height:-moz-fit-content;height:-webkit-fit-content;height:fit-content;margin:auto;order:solid;padding:1em;background:white;color:black;display:block}dialog:not([open]){display:none}._dialog_overlay{position:fixed;top:0;right:0;bottom:0;left:0}dialog.fixed{position:fixed;top:50%;transform:translate(0, -50%)}.lds-ellipsis{display:inline-block;position:relative;min-width:80px;height:12px}.lds-ellipsis div{position:absolute;top:0px;width:12px;height:12px;border-radius:50%;background:#fff;animation-timing-function:cubic-bezier(0, 1, 1, 0)}.lds-ellipsis div:nth-child(1){left:8px;animation:lds-ellipsis1 0.6s infinite}.lds-ellipsis div:nth-child(2){left:8px;animation:lds-ellipsis2 0.6s infinite}.lds-ellipsis div:nth-child(3){left:32px;animation:lds-ellipsis2 0.6s infinite}.lds-ellipsis div:nth-child(4){left:56px;animation:lds-ellipsis3 0.6s infinite}@keyframes lds-ellipsis1{0%{transform:scale(0)}100%{transform:scale(1)}}@keyframes lds-ellipsis3{0%{transform:scale(1)}100%{transform:scale(0)}}@keyframes lds-ellipsis2{0%{transform:translate(0, 0)}100%{transform:translate(24px, 0)}}.drsElement{position:absolute}.drsMoveHandle{cursor:move}.dragresize{position:absolute;width:5px;height:5px;font-size:1px;background:#EEE;border:1px solid #333}.dragresize-tl{top:-8px;left:-8px;cursor:nw-resize}.dragresize-tm{top:-8px;left:50%;margin-left:-4px;cursor:n-resize}.dragresize-tr{top:-8px;right:-8px;cursor:ne-resize}.dragresize-ml{top:50%;margin-top:-4px;left:-8px;cursor:w-resize}.dragresize-mr{top:50%;margin-top:-4px;right:-8px;cursor:e-resize}.dragresize-bl{bottom:-8px;left:-8px;cursor:sw-resize}.dragresize-bm{bottom:-8px;left:50%;margin-left:-4px;cursor:s-resize}.dragresize-br{bottom:-8px;right:-8px;cursor:se-resize}dialog[role=topdialog]{width:95%;height:90%;padding:0;border:0;background:rgba(0,0,0,0)}dialog::backdrop{background:rgba(0,0,0,0.5)}dialog{max-width:95%;max-height:95%}dialog+.backdrop{background:rgba(0,0,0,0.5);position:fixed;top:0;left:0;right:0;bottom:0}dialog nav{border:1px solid #ccc;background-color:#5e24e6;color:#fff;border-bottom-width:2px;height:2em;min-height:30px}dialog nav>.dialogtabs{height:100%;margin-right:60px;display:flex;align-items:center;justify-content:flex-start}dialog nav>.dialogtabs>.dialogtab:not(:only-child){background-color:dimgray;border-radius:6px 6px 0 0;margin:0 0.2em;height:100%;flex:0 2 auto;padding:0 1em;align-items:center}dialog nav>.dialogtabs>.dialogtab:not(:only-child).active{background-color:blue}dialog nav>.dialogtabs>.dialogtab:not(:only-child):not(.active){cursor:pointer;display:flex}dialog nav>.dialogtabs>.dialogtab.active{display:flex;flex:0 1 auto;overflow:hidden}dialog nav>.dialogtabs>.dialogtab.active>.crumb{flex:0 5 auto;padding-left:0.2em;align-items:center;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;min-width:3em}dialog nav>.dialogtabs>.dialogtab.active>.crumb.active{min-width:8em;flex:0 1 auto}dialog nav>.dialogtabs>.dialogtab.active>.crumb:not(:first-child):before{content:'\\00a0\\003e\\00a0'}dialog nav>.dialogtabs>.dialogtab.active>.crumb:not(:last-child):hover{text-decoration:underline;cursor:pointer}dialog nav>.dialogbuttons{background-color:#f00}dialog nav>.dialogbuttons>.xbutton{display:block;width:24px;height:24px;position:absolute;top:3px;right:3px;border-radius:6px}dialog nav>.dialogbuttons>.xbutton:before{-webkit-transform:rotate(45deg);-moz-transform:rotate(45deg);transform:rotate(45deg);left:2px;top:10px}dialog nav>.dialogbuttons>.xbutton:after{-webkit-transform:rotate(-45deg);-moz-transform:rotate(-45deg);transform:rotate(-45deg);left:2px;top:6px}dialog nav>.dialogbuttons>.resizer{display:block;width:24px;height:24px;position:absolute;top:3px;right:30px;border-radius:6px;background-repeat:no-repeat;background-position:center;background-image:url(\"data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIj8+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiBoZWlnaHQ9IjE2cHgiIHZpZXdCb3g9IjAgMCAzNzIuNDQ3NTUgMzcyIiB3aWR0aD0iMTZweCIgY2xhc3M9IiI+PGc+PHBhdGggZD0ibTIyOC42NTYyNSAxNzAuODA0Njg4YzMuMTI1IDMuMTI1IDguMTg3NSAzLjEyNSAxMS4zMTI1IDBsNzcuNTc4MTI1LTc3LjU3ODEyNiAxLjMxMjUgMzcuMDExNzE5Yy4wNzQyMTkgMi4xMjUuOTkyMTg3IDQuMTI4OTA3IDIuNTQ2ODc1IDUuNTc4MTI1IDEuNTU0Njg4IDEuNDQ1MzEzIDMuNjIxMDk0IDIuMjE0ODQ0IDUuNzQ2MDk0IDIuMTMyODEzbDM3LjU4OTg0NC0xLjM5NDUzMWM0LjQxNDA2Mi0uMTYwMTU3IDcuODU5Mzc0LTMuODcxMDk0IDcuNjk5MjE4LTguMjg1MTU3bC00LjIzNDM3NS0xMTYuMTEzMjgxYy0uMTUyMzQzLTQuMTg3NS0zLjUxMTcxOS03LjU0Njg3NS03LjY5OTIxOS03LjY5OTIxOWwtMTE2LjEwOTM3NC00LjIzMDQ2OWMtNC40MDYyNS0uMTQ0NTMwOC04LjEwMTU2MyAzLjI4OTA2My04LjI4NTE1NyA3LjY5MTQwN2wtMS40NDUzMTIgMzcuNTM5MDYyYy0uMDgyMDMxIDIuMTI1LjY4NzUgNC4xOTE0MDcgMi4xMzI4MTIgNS43NSAxLjQ0OTIxOSAxLjU1ODU5NCAzLjQ1NzAzMSAyLjQ3MjY1NyA1LjU4MjAzMSAyLjU1MDc4MWwzNi45NzI2NTcgMS4yOTY4NzYtNzcuNTcwMzEzIDc3LjU3MDMxMmMtMy4xMjUgMy4xMjUtMy4xMjUgOC4xOTE0MDYgMCAxMS4zMTY0MDZ6bTAgMCIgY2xhc3M9ImFjdGl2ZS1wYXRoIiBmaWxsPSIjRkZGRkZGIi8+PHBhdGggZD0ibTE3MC42NzE4NzUgMjI4Ljc4OTA2Mi0yNi44NjcxODctMjYuODcxMDkzYy0zLjEyNS0zLjEyNS04LjE5MTQwNy0zLjEyNS0xMS4zMTY0MDcgMGwtNzcuNTc4MTI1IDc3LjU4MjAzMS0xLjMyMDMxMi0zNy4wMjM0MzhjLS4wNzQyMTktMi4xMjEwOTMtLjk5MjE4OC00LjEyODkwNi0yLjU0Njg3NS01LjU3NDIxOC0xLjU1NDY4OC0xLjQ0NTMxMy0zLjYyMTA5NC0yLjIxNDg0NC01Ljc0MjE4OC0yLjEzNjcxOWwtMzcuNTkzNzUgMS4zOTA2MjVjLTQuNDE0MDYyLjE2NDA2Mi03Ljg2MzI4MSAzLjg3MTA5NC03LjcwMzEyNDc1IDguMjg1MTU2bDQuMjI2NTYyNzUgMTE2LjExMzI4MmMuMTU2MjUgNC4xODc1IDMuNTE1NjI1IDcuNTQ2ODc0IDcuNzAzMTI1IDcuNzAzMTI0bDExNi4xMDU0NjggNC4yMjI2NTdoLjMwMDc4MmM0LjI5Mjk2OCAwIDcuODI0MjE4LTMuMzk0NTMxIDcuOTg4MjgxLTcuNjg3NWwxLjQ1MzEyNS0zNy41MzEyNWMuMDc4MTI1LTIuMTI1LS42ODc1LTQuMTk1MzEzLTIuMTM2NzE5LTUuNzUzOTA3LTEuNDQ1MzEyLTEuNTU4NTkzLTMuNDU3MDMxLTIuNDcyNjU2LTUuNTgyMDMxLTIuNTQ2ODc0bC0zNi45NjA5MzgtMS4yODkwNjMgNzcuNTcwMzEzLTc3LjU3MDMxM2MzLjEyNS0zLjEyMTA5MyAzLjEyNS04LjE4NzUgMC0xMS4zMTI1em0wIDAiIGNsYXNzPSJhY3RpdmUtcGF0aCIgZmlsbD0iI0ZGRkZGRiIvPjwvZz48L3N2Zz4K\")}dialog>.tabbed{padding:0;border:0;width:100%;height:100%;display:flex;flex-flow:column;background-color:#fff}dialog>.tabbed>.tabwindow{flex:1 1 auto;display:flex;flex-flow:column}dialog>.tabbed>.tabwindow>iframe{flex-flow:column;flex:1 1 auto;width:100%;display:flex;border:0}dialog>.tabbed>.tabwindow>iframe.minimized{position:absolute;top:0;left:0}dialog.minimized{top:-3000px;left:-3000px;display:block}dialog.minimized nav{display:none}dialog.minimized+.backdrop{display:none}dialog nav>.dialogbuttons>.xbutton:before,dialog nav>.dialogbuttons>.xbutton:after{content:'';position:relative;display:block;width:20px;height:4px;background-color:white;border-radius:2px}dialog>.tabbed>.tabwindow>iframe.minimized{width:0;height:0}\n";
     var head = document.head || document.getElementsByTagName("head")[0];
     var style = document.createElement("style");
     head.appendChild(style);
     style.appendChild(document.createTextNode(dialogCss));
 })();
+/* DragResize */
+// Common API code.
+
+if (typeof addEvent != 'function')
+{
+ var addEvent = function(o, t, f, l)
+ {
+  var d = 'addEventListener', n = 'on' + t, rO = o, rT = t, rF = f, rL = l;
+  if (o[d] && !l) return o[d](t, f, false);
+  if (!o._evts) o._evts = {};
+  if (!o._evts[t])
+  {
+   o._evts[t] = o[n] ? { b: o[n] } : {};
+   o[n] = new Function('e',
+    'var r = true, o = this, a = o._evts["' + t + '"], i; for (i in a) {' +
+     'o._f = a[i]; r = o._f(e||window.event) != false && r; o._f = null;' +
+     '} return r');
+   if (t != 'unload') addEvent(window, 'unload', function() {
+    removeEvent(rO, rT, rF, rL);
+   });
+  }
+  if (!f._i) f._i = addEvent._i++;
+  o._evts[t][f._i] = f;
+ };
+ addEvent._i = 1;
+ var removeEvent = function(o, t, f, l)
+ {
+  var d = 'removeEventListener';
+  if (o[d] && !l) return o[d](t, f, false);
+  if (o._evts && o._evts[t] && f._i) delete o._evts[t][f._i];
+ };
+}
+
+
+function cancelEvent(e, c)
+{
+ e.returnValue = false;
+ if (e.preventDefault) e.preventDefault();
+ if (c)
+ {
+  e.cancelBubble = true;
+  if (e.stopPropagation) e.stopPropagation();
+ }
+};
+
+
+
+
+
+
+
+// *** DRAG/RESIZE CODE ***
+
+function DragResize(myName, config)
+{
+ var props = {
+  myName: myName,                  // Name of the object.
+  enabled: true,                   // Global toggle of drag/resize.
+  handles: ['tl', 'tm', 'tr',
+   'ml', 'mr', 'bl', 'bm', 'br'],  // Array of drag handles: top/mid/bot/right.
+  isElement: null,                 // Function ref to test for an element.
+  isHandle: null,                  // Function ref to test for move handle.
+  element: null,                   // The currently selected element.
+  handle: null,                    // Active handle reference of the element.
+  minWidth: 10, minHeight: 10,     // Minimum pixel size of elements.
+  minLeft: 0, maxLeft: 9999,       // Bounding box area, in pixels.
+  minTop: 0, maxTop: 9999,
+  gridX: 1, gridY: 1,              // Grid granularity.
+  zIndex: 1,                       // The highest Z-Index yet allocated.
+  mouseX: 0, mouseY: 0,            // Current mouse position, recorded live.
+  lastMouseX: 0, lastMouseY: 0,    // Last processed mouse positions.
+  mOffX: 0, mOffY: 0,              // A known offset between position & mouse.
+  elmX: 0, elmY: 0,                // Element position.
+  elmW: 0, elmH: 0,                // Element size.
+  allowBlur: true,                 // Whether to allow automatic blur onclick.
+  ondragfocus: null,               // Event handler functions.
+  ondragstart: null,
+  ondragmove: null,
+  ondragend: null,
+  ondragblur: null
+ };
+
+ for (var p in props)
+  this[p] = (typeof config[p] == 'undefined') ? props[p] : config[p];
+};
+
+
+DragResize.prototype.apply = function(node)
+{
+ // Adds object event handlers to the specified DOM node.
+
+ var obj = this;
+ addEvent(node, 'mousedown', function(e) { obj.mouseDown(e) } );
+ addEvent(node, 'mousemove', function(e) { obj.mouseMove(e) } );
+ addEvent(node, 'mouseup', function(e) { obj.mouseUp(e) } );
+ addEvent(node, 'touchstart', function(e) { obj.mouseDown(e) } );
+ addEvent(node, 'touchmove', function(e) { obj.mouseMove(e) } );
+ addEvent(node, 'touchend', function(e) { obj.mouseUp(e) } );
+};
+
+
+DragResize.prototype.select = function(newElement) { with (this)
+{
+ // Selects an element for dragging.
+
+ if (!document.getElementById || !enabled) return;
+
+ // Activate and record our new dragging element.
+ if (newElement && (newElement != element) && enabled)
+ {
+  element = newElement;
+  // Elevate it and give it resize handles.
+  element.style.zIndex = ++zIndex;
+  if (this.resizeHandleSet) this.resizeHandleSet(element, true);
+  // Handle (badly) right/bottom positioned elements.
+  var eCS = element.currentStyle || window.getComputedStyle(element, null);
+  if (eCS.right)
+  {
+   element.style.left = element.offsetLeft + 'px';
+   element.style.right = '';
+  }
+  if (eCS.bottom)
+  {
+   element.style.top = element.offsetTop + 'px';
+   element.style.bottom = '';
+  }
+  // Record element attributes for mouseMove().
+  elmX = parseInt(element.style.left);
+  elmY = parseInt(element.style.top);
+  elmW = element.clientWidth || element.offsetWidth;
+  elmH = element.clientHeight || element.offsetHeight;
+  if (ondragfocus) this.ondragfocus();
+ }
+}};
+
+
+DragResize.prototype.deselect = function(delHandles) { with (this)
+{
+ // Immediately stops dragging an element. If 'delHandles' is true, this
+ // remove the handles from the element and clears the element flag,
+ // completely resetting the element.
+
+ if (!document.getElementById || !enabled) return;
+
+ if (delHandles)
+ {
+  if (ondragblur) this.ondragblur();
+  if (this.resizeHandleSet) this.resizeHandleSet(element, false);
+  element = null;
+ }
+
+ handle = null;
+ mOffX = 0;
+ mOffY = 0;
+}};
+
+
+DragResize.prototype.mouseDown = function(e) { with (this)
+{
+ // Suitable elements are selected for drag/resize on mousedown.
+ // We also initialise the resize boxes, and drag parameters like mouse position etc.
+ if (!document.getElementById || !enabled) return true;
+
+ // Fake a mousemove for touch devices.
+ if (e.touches && e.touches.length) this.mouseMove(e);
+
+ var elm = e.target || e.srcElement,
+  newElement = null,
+  newHandle = null,
+  hRE = new RegExp(myName + '-([trmbl]{2})', '');
+
+ while (elm)
+ {
+  // Loop up the DOM looking for matching elements. Remember one if found.
+  if (elm.className)
+  {
+   if (!newHandle && (hRE.test(elm.className) || isHandle(elm))) newHandle = elm;
+   if (isElement(elm)) { newElement = elm; break }
+  }
+  elm = elm.parentNode;
+ }
+
+ // If this isn't on the last dragged element, call deselect(),
+ // which will hide its handles and clear element.
+ if (element && (element != newElement) && allowBlur) deselect(true);
+
+ // If we have a new matching element, call select().
+ if (newElement && (!element || (newElement == element)))
+ {
+  // Stop mouse selections if we're dragging a handle.
+  if (newHandle) cancelEvent(e);
+  select(newElement, newHandle);
+  handle = newHandle;
+  if (handle && ondragstart) this.ondragstart(hRE.test(handle.className));
+ }
+}};
+
+
+DragResize.prototype.mouseMove = function(e) { with (this)
+{
+ // This continually offsets the dragged element by the difference between the
+ // last recorded mouse position (mouseX/Y) and the current mouse position.
+ if (!document.getElementById || !enabled) return true;
+
+ // We always record the current mouse/touch position.
+ var mt = (e.touches && e.touches.length) ? e.touches[0] : e;
+ mouseX = mt.pageX || mt.clientX + document.documentElement.scrollLeft;
+ mouseY = mt.pageY || mt.clientY + document.documentElement.scrollTop;
+ // Record the relative mouse movement, in case we're dragging.
+ // Add any previously stored & ignored offset to the calculations.
+ var diffX = mouseX - lastMouseX + mOffX;
+ var diffY = mouseY - lastMouseY + mOffY;
+ mOffX = mOffY = 0;
+ // Update last processed mouse positions.
+ lastMouseX = mouseX;
+ lastMouseY = mouseY;
+
+ // That's all we do if we're not dragging anything.
+ if (!handle) return true;
+
+ // If included in the script, run the resize handle drag routine.
+ // Let it create an object representing the drag offsets.
+ var isResize = false;
+ if (this.resizeHandleDrag && this.resizeHandleDrag(diffX, diffY))
+ {
+  isResize = true;
+ }
+ else
+ {
+  // If the resize drag handler isn't set or returns false (to indicate the drag was
+  // not on a resize handle), we must be dragging the whole element, so move that.
+  // Bounds check left-right...
+  var dX = diffX, dY = diffY;
+  if (elmX + dX < minLeft) mOffX = (dX - (diffX = minLeft - elmX));
+  else if (elmX + elmW + dX > maxLeft) mOffX = (dX - (diffX = maxLeft - elmX - elmW));
+  // ...and up-down.
+  if (elmY + dY < minTop) mOffY = (dY - (diffY = minTop - elmY));
+  else if (elmY + elmH + dY > maxTop) mOffY = (dY - (diffY = maxTop - elmY - elmH));
+  elmX += diffX;
+  elmY += diffY;
+ }
+
+ // Assign new info back to the element, with minimum dimensions / grid align.
+ element.style.left =   (Math.round(elmX / gridX) * gridX) + 'px';
+ element.style.top =    (Math.round(elmY / gridY) * gridY) + 'px';
+ if (isResize)
+ {
+  element.style.width =  (Math.round(elmW / gridX) * gridX) + 'px';
+  element.style.height = (Math.round(elmH / gridY) * gridY) + 'px';
+ }
+
+ // Evil, dirty, hackish Opera select-as-you-drag fix.
+ if (window.opera && document.documentElement)
+ {
+  var oDF = document.getElementById('op-drag-fix');
+  if (!oDF)
+  {
+   var oDF = document.createElement('input');
+   oDF.id = 'op-drag-fix';
+   oDF.style.display = 'none';
+   document.body.appendChild(oDF);
+  }
+  oDF.focus();
+ }
+
+ if (ondragmove) this.ondragmove(isResize);
+
+ // Stop a normal drag event.
+ cancelEvent(e);
+}};
+
+
+DragResize.prototype.mouseUp = function(e) { with (this)
+{
+ // On mouseup, stop dragging, but don't reset handler visibility.
+ if (!document.getElementById || !enabled) return;
+
+ var hRE = new RegExp(myName + '-([trmbl]{2})', '');
+ if (handle && ondragend) this.ondragend(hRE.test(handle.className));
+ deselect(false);
+}};
+
+
+
+/* Resize Code -- can be deleted if you're not using it. */
+
+DragResize.prototype.resizeHandleSet = function(elm, show) {
+  if(!elm) return;
+  with (this){
+    // Either creates, shows or hides the resize handles within an element.
+    // If we're showing them, and no handles have been created, create 4 new ones.
+    if (!elm._handle_tr){
+      for (var h = 0; h < handles.length; h++){
+      // Create 4 news divs, assign each a generic + specific class.
+      var hDiv = document.createElement('div');
+      hDiv.className = myName + ' ' +  myName + '-' + handles[h];
+      elm['_handle_' + handles[h]] = elm.appendChild(hDiv);
+      }
+    }
+    // We now have handles. Find them all and show/hide.
+    for (var h = 0; h < handles.length; h++){
+      elm['_handle_' + handles[h]].style.visibility = show ? 'inherit' : 'hidden';
+    }
+  }
+};
+
+
+DragResize.prototype.resizeHandleDrag = function(diffX, diffY) { with (this)
+{
+ // Passed the mouse movement amounts. This function checks to see whether the
+ // drag is from a resize handle created above; if so, it changes the stored
+ // elm* dimensions and mOffX/Y.
+
+ var hClass = handle && handle.className &&
+  handle.className.match(new RegExp(myName + '-([tmblr]{2})')) ? RegExp.$1 : '';
+
+ // If the hClass is one of the resize handles, resize one or two dimensions.
+ // Bounds checking is the hard bit -- basically for each edge, check that the
+ // element doesn't go under minimum size, and doesn't go beyond its boundary.
+ var dY = diffY, dX = diffX, processed = false;
+ if (hClass.indexOf('t') >= 0)
+ {
+  if (elmH - dY < minHeight) mOffY = (dY - (diffY = elmH - minHeight));
+  else if (elmY + dY < minTop) mOffY = (dY - (diffY = minTop - elmY));
+  elmY += diffY;
+  elmH -= diffY;
+  processed = true;
+ }
+ if (hClass.indexOf('b') >= 0)
+ {
+  if (elmH + dY < minHeight) mOffY = (dY - (diffY = minHeight - elmH));
+  else if (elmY + elmH + dY > maxTop) mOffY = (dY - (diffY = maxTop - elmY - elmH));
+  elmH += diffY;
+  processed = true;
+ }
+ if (hClass.indexOf('l') >= 0)
+ {
+  if (elmW - dX < minWidth) mOffX = (dX - (diffX = elmW - minWidth));
+  else if (elmX + dX < minLeft) mOffX = (dX - (diffX = minLeft - elmX));
+  elmX += diffX;
+  elmW -= diffX;
+  processed = true;
+ }
+ if (hClass.indexOf('r') >= 0)
+ {
+  if (elmW + dX < minWidth) mOffX = (dX - (diffX = minWidth - elmW));
+  else if (elmX + elmW + dX > maxLeft) mOffX = (dX - (diffX = maxLeft - elmX - elmW));
+  elmW += diffX;
+  processed = true;
+ }
+
+ return processed;
+}};
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
     typeof define === 'function' && define.amd ? define(factory) :
@@ -752,7 +1105,7 @@
 (function() {
     function domReady(callbackFunction){
         if(document.readyState != 'loading')
-          callbackFunction(event)
+          callbackFunction();
         else
           document.addEventListener("DOMContentLoaded", callbackFunction);
     }
@@ -773,9 +1126,11 @@
          */
         overrideCloseFunction: function(doc){
             /** window.close() can be overriden in IE by function declaration only */
-            var script = doc.createElement('script');
-            script.textContent = "function close(){console.debug('close() is defined by topdialog');function getTopWindow(checkWindow){if(!checkWindow) checkWindow = window.self;try {if(checkWindow.parent && !checkWindow.parent.noDialog){return getTopWindow(checkWindow.parent);}}catch(e){}return checkWindow;};getTopWindow().postMessage({dialog:null},'*')}";
-            doc.head.appendChild(script);
+            if(doc && doc.head){
+                var script = doc.createElement('script');
+                script.textContent = "function close(){console.debug('close() is defined by topdialog');function getTopWindow(checkWindow){if(!checkWindow) checkWindow = window.self;try {if(checkWindow.parent && !checkWindow.parent.noDialog){return getTopWindow(checkWindow.parent);}}catch(e){}return checkWindow;};getTopWindow().postMessage({dialog:null},'*')}";
+                doc.head.appendChild(script);
+            }
         },
         /**
          *  gets default value of an iframe without height
@@ -791,10 +1146,64 @@
             } else {
                 return evt.source;
             }
+        },
+        getTabs: function(crumbsArray){
+            var tabs = [];
+            for ( var i=0; i<crumbsArray.length; i++ ){
+                if(tabs.length == 0){
+                    tabs[0] = [i];
+                } else {
+                    var ifr = crumbsArray[i].iframe;
+                    if(ifr.dataset.pillar){
+                        var idx = tabs.length;
+                        tabs[idx] = [i];
+                    } else {
+                        var idx = tabs.length-1;
+                        tabs[idx].push(i);
+                    }
+                }
+            }
+            return tabs;
+        },
+        /**
+         * @typedef {Object} TabsInfo
+         * @property {[[number]]} tabs - Crumbs grouped in array of arrays (tabs)
+         * @property {number} activeTabIndex - The index of the active tab
+         * @property {number} activeCrumbIndex - The index of the active crumb
+         */
+        /**
+         * 
+         * @param {[[number]]} crumbsArray 
+         * @param {number} dialogId
+         * @returns {TabsInfo}
+         *  information about tabs
+         */
+        getActiveTab : function(crumbsArray, dialogId){
+            var tabs = [];
+            var activeCrumbIndex, activeTabIndex = 0;
+            for ( var i=0; i<crumbsArray.length; i++ ){
+                var ifr = crumbsArray[i].iframe;
+                if(tabs.length == 0){
+                    tabs[0] = [i];
+                } else {
+                    var isActiveCrumb = dialogId == ifr.dataset.dialogId;
+                    if(ifr.dataset.pillar){
+                        var tabIndex = tabs.length;
+                        tabs[tabIndex] = [i];
+                        if(isActiveCrumb) activeTabIndex = tabIndex;
+                    } else {
+                        var tabIndex = tabs.length-1;
+                        tabs[tabIndex].push(i);
+                        if(isActiveCrumb) activeTabIndex = tabIndex;
+                    }
+                }
+                if(dialogId == ifr.dataset.dialogId) activeCrumbIndex = i;
+            }
+            return { tabs:tabs, activeTabIndex:activeTabIndex, activeCrumbIndex: activeCrumbIndex };
         }
     };
     var dialogInitialized = false;
-    var tabs = [];
+    var crumbs = [];
     function _init() {
         if(dialogInitialized===true) return;
         console.info('dialog initialized');
@@ -807,12 +1216,238 @@
         var bodyOverflow = document.body.style.overflow;
         dialog.addEventListener('close', function(){
                 document.body.style.overflow = bodyOverflow;
-                while(tabs.length > 0){
-                    tabWindow.removeChild(tabs.pop());
+                while(crumbs.length > 0){
+                    tabWindow.removeChild(crumbs.pop());
                 }
             });
 
         window.dialogPolyfill.registerDialog(dialog);
+        dialog.setSize = function(size, iframe){
+            function fixSize(sizeName, sizeVal, theIframe){
+                if(sizeVal){
+                    var mySize;
+                    if(isNaN(sizeVal)){
+                        /* e.g. 20px or 15% */
+                        var sizeRegex = /^(\d+)(px|%|em|rem|vw|vh)?/gi
+                        var match = sizeRegex.exec(sizeVal);
+                        if(match && match.length>0){
+                            var sizeValue = match[1];
+                            var sizeUnit = match[2];
+                            if(parseInt(sizeValue,10) > 0){
+                                mySize = sizeValue + (!sizeUnit ? '' : sizeUnit.toLowerCase());
+                            }
+                        }
+                    } else {
+                        if(sizeVal>0){
+                            mySize = sizeVal+'px';
+                        }
+                    }
+                    if(mySize){
+                        theIframe.dataset['d'+sizeName] = mySize;
+                        dialog.style[sizeName] = mySize;
+                        return;
+                    }
+                }
+                theIframe.removeAttribute('data-d'+sizeName);
+                dialog.style[sizeName] = null;
+            }
+            size = size || {};
+            fixSize('width', size.width, iframe);
+            fixSize('height', size.height, iframe);
+        }
+        dialog.getCrumbIndex = function(evtSource){
+            if(evtSource && evtSource.frameElement){
+                for(var i=crumbs.length; i--;) {
+                    if (crumbs[i].iframe==evtSource.frameElement){
+                        return i;
+                    }
+                }
+            }
+            return -1;
+        }
+        dialog.switchTab = function(tabIndex){
+            var tabs =  utils.getTabs(crumbs);
+            var crumbsInNewActiveTab = tabs[tabIndex];
+            var activeCrumbIndex = crumbsInNewActiveTab[crumbsInNewActiveTab.length-1];
+            for( var k = 0; k < crumbs.length; k++ ){
+                //FIXME minimize active only
+                var tifr = crumbs[k].iframe;
+                tifr.dispatchEvent(utils.createEvent('dialog-blur'));
+                tifr.classList.add('minimized');
+            }
+            var ifr = crumbs[activeCrumbIndex].iframe;
+            if(ifr.dataset.dwidth) dialog.style.width=ifr.dataset.dwidth;
+            else dialog.style.width=null;
+            if(ifr.dataset.dheight) dialog.style.height=ifr.dataset.dheight;
+            else dialog.style.height=null;         
+            ifr.classList.remove('minimized');
+            dialog.activeDialogId = ifr.dataset.dialogId;
+            dialogPolyfill.reposition(dialog);
+            dialog.updateBreadcrumbs(ifr.dataset.dialogId);
+            ifr.dispatchEvent(utils.createEvent('dialog-focus'));
+        }
+        dialog.updateBreadcrumbs = function(activeDialogId){
+            if(activeDialogId) {
+                dialog.activeDialogId = activeDialogId;
+            } else {
+                activeDialogId = dialog.activeDialogId || crumbs[crumbs.length-1].iframe.dataset.dialogId;
+            }
+            function appendTab(crumbsIndexes, htmlFragment, isActiveTab, tabIndex){ //[0,1,2]
+                var tabDiv = document.createElement('div');
+                tabDiv.classList.add('dialogtab');
+                if(isActiveTab){
+                    tabDiv.classList.add('active');
+                    for(var i=0; i<crumbsIndexes.length; i++){
+                        var crumb = document.createElement('div');
+                        crumb.classList.add('crumb');
+                        var ifr = crumbs[crumbsIndexes[i]].iframe;
+                        if(activeDialogId != ifr.dataset.dialogId){
+                            var title = ifr.dataset.title?ifr.dataset.title:'No title '+i+1;
+                            var textNode = document.createTextNode(title);
+                            crumb.classList.add('SIModalTitlePrev');
+                            crumb.appendChild( textNode );
+                            if(i<crumbsIndexes.length-1 ){
+                                var delIndex = crumbsIndexes[i]+1;
+                                crumb.addEventListener('click', (function(dialogToOpenId){
+                                    return function(){
+                                        //_removeIframe(deleteTabIndex);
+                                        dialog.openCrumb(dialogToOpenId);
+                                    };
+                                })(ifr.dataset.dialogId));
+                                crumb.setAttribute('title', title);
+                            }
+                            ifr.classList.add('minimized');
+                        } else {
+                            crumb.classList.add('active');
+                            crumb.classList.add('SIModalTitleActive');
+                            if(!ifr.dataset.loaded && !ifr.dataset.title){
+                                /** add spinner to show loading process */                    
+                                var spinner = document.createElement('div');
+                                spinner.classList.add('lds-ellipsis');
+                                for(var u=0; u<4; u++){
+                                    spinner.appendChild(document.createElement('div'));
+                                }
+                                crumb.appendChild(spinner);
+                            } else if(!ifr.dataset.title) {
+                                console.warn('Set title in the page at', ifr.src);
+                            }
+                            var textNode = document.createTextNode(ifr.dataset.title?ifr.dataset.title:'');
+                            crumb.appendChild( textNode );
+                            //ifr.classList.remove('minimized');
+                        }
+                        tabDiv.appendChild(crumb);
+                    }
+                } else {
+                    tabDiv.appendChild(document.createTextNode(tabIndex+1));
+                    tabDiv.addEventListener('click', (function(activateTabIndex){
+                        return function(){ dialog.switchTab(activateTabIndex); };
+                    })(tabIndex));
+                }
+                htmlFragment.appendChild(tabDiv);
+                
+            }
+            var tabsInfo = utils.getActiveTab(crumbs, activeDialogId);
+            // we have tabs = [[0,1,2],[3,4,5]]
+            var navTabs = dialog.querySelector('nav > div.dialogtabs');
+            var frag = document.createDocumentFragment();
+            for (var k = 0; k<tabsInfo.tabs.length; k++){
+                appendTab(tabsInfo.tabs[k], frag, k==tabsInfo.activeTabIndex, k);
+            }
+            while (navTabs.lastChild) { navTabs.removeChild(navTabs.lastChild); }
+            navTabs.appendChild(frag);          
+        }
+        /**
+         * Closes the dialog and its crumb and et seq. in the same tab.
+         * @param {number} dialogId
+         * @returns next advised crumb to be opened
+         */
+        dialog.closeDialog = function(dialogId){
+            dialogId = dialogId || dialog.activeDialogId;
+            var tabsInfo = utils.getActiveTab(crumbs, dialogId);
+            var currentTab = tabsInfo.tabs[tabsInfo.activeTabIndex];
+            var nextCrumbIndex = -1; //advised crumb to open
+            var delCounter = 0;
+            if(currentTab[0] == tabsInfo.activeCrumbIndex){//close the whole tab
+                delCounter = currentTab.length;
+                var nextTabIndex = (tabsInfo.tabs.length > tabsInfo.activeTabIndex + 1) ?
+                    tabsInfo.activeTabIndex + 1 : tabsInfo.activeTabIndex - 1;
+                if(nextTabIndex>-1){
+                    var nextTab = tabsInfo.tabs[nextTabIndex];
+                    nextCrumbIndex = nextTab[nextTab.length-1];
+                }
+            } else {
+                nextCrumbIndex = tabsInfo.activeCrumbIndex - 1;
+                for(var k = currentTab.length; k--;){
+                    delCounter++;
+                    if(currentTab[k] == tabsInfo.activeCrumbIndex) break;
+                }
+            }
+            var activeDialogToRemoveCrumbIndex = -1;
+            for(var k=tabsInfo.activeCrumbIndex; k<tabsInfo.activeCrumbIndex+delCounter; k ++){
+                var iframeToRemove = crumbs[k].iframe;
+                var iframeToRemoveId = iframeToRemove.dataset.dialogId;
+                iframeToRemove.dispatchEvent(utils.createEvent('dialog-destroyed'));
+                tabWindow.removeChild(iframeToRemove);
+                if(dialog.activeDialogId == iframeToRemoveId){
+                    activeDialogToRemoveCrumbIndex = k;
+                }
+            }
+            function setFocusOnOpener(ifrOpener){
+                if(ifrOpener && ifrOpener.topdialog && ifrOpener.topdialog.support &&
+                    ifrOpener.topdialog.support.restoreFocusAfterDialogClosed){
+                    ifrOpener.topdialog.support.restoreFocusAfterDialogClosed.apply(ifrOpener);
+                }
+            }
+            var ifrOpener;
+            if(activeDialogToRemoveCrumbIndex>-1){
+                ifrOpener = crumbs[activeDialogToRemoveCrumbIndex].opener;
+            }
+            if(nextCrumbIndex>-1){
+                if(activeDialogToRemoveCrumbIndex>-1){
+                    var ifr = crumbs[nextCrumbIndex].iframe;
+                    if(ifr.dataset.dwidth) dialog.style.width=ifr.dataset.dwidth;
+                    else dialog.style.width=null;
+                    if(ifr.dataset.dheight) dialog.style.height=ifr.dataset.dheight;
+                    else dialog.style.height=null;         
+                    ifr.classList.remove('minimized');
+                    crumbs.splice(tabsInfo.activeCrumbIndex, delCounter);
+                    dialogPolyfill.reposition(dialog);
+                    dialog.updateBreadcrumbs(ifr.dataset.dialogId);
+                    setFocusOnOpener(ifrOpener);
+                    ifr.dispatchEvent(utils.createEvent('dialog-focus'));
+                    return -1;//we don't advise a crumb to show;
+                } else {
+                    crumbs.splice(tabsInfo.activeCrumbIndex, delCounter);
+                    dialog.updateBreadcrumbs();
+                    setFocusOnOpener(ifrOpener);
+                    return nextCrumbIndex; //we may advise, as visible dialog hasn't been affected
+                    // so one could handle that situation what he likes
+                }
+            } else {
+                crumbs = [];
+                var navTabs = dialog.querySelector('nav > div.dialogtabs');
+                while (navTabs.lastChild) {
+                    navTabs.removeChild(navTabs.lastChild);
+                }
+                dialog.close();
+                setFocusOnOpener(ifrOpener);
+                return -1;
+            }
+        }
+        dialog.openCrumb = function(dialogId){
+            var tabsInfo = utils.getActiveTab(crumbs, dialogId);
+            var currentTab = tabsInfo.tabs[tabsInfo.activeTabIndex];
+            if(currentTab.length>0 && currentTab[currentTab.length-1] != tabsInfo.activeCrumbIndex){
+                var closeDialogId = crumbs[tabsInfo.activeCrumbIndex + 1].iframe.dataset.dialogId;
+                dialog.closeDialog(closeDialogId);
+            }
+        }
+        dialog.getActiveIframe = function(){
+            if(dialog.activeDialogId){
+                var idx = utils.getActiveTab(crumbs, dialog.activeDialogId).activeCrumbIndex;
+                return crumbs[idx].iframe;
+            }
+        }
         /**
          * 
          * @param {{
@@ -829,17 +1464,15 @@
             document.body.style.overflow = 'hidden';
             var iframe = targetIframe || document.createElement('iframe');         
             iframe.dataset.dialogId = ++iframeCounter;
-            iframe.dataset.shortcutStopPropagation = '';
+            iframe.setAttribute('data-shortcut-stop-propagation', '');
             if(dialogObj.name) iframe.dataset.watirName = dialogObj.name;
             if(dialogObj.title) iframe.dataset.title = dialogObj.title;
-            if(dialogObj.size){
-                _setDialogSize(dialogObj.size.width, dialogObj.size.height, iframe);
-            } else {
-                _setDialogSize(null, null, iframe);
-            }
-            if(tabs.length>0){
-                for( var k = 0; k < tabs.length; k++ ){
-                    var tifr = tabs[k].iframe;
+            if(dialogObj.pillar) iframe.dataset.pillar = true;
+            dialog.setSize(dialogObj.size, iframe);
+            if(crumbs.length>0){
+                for( var k = 0; k < crumbs.length; k++ ){
+                    //FIXME minimize active only
+                    var tifr = crumbs[k].iframe;
                     tifr.dispatchEvent(utils.createEvent('dialog-blur'));
                     tifr.classList.add('minimized');
                 }
@@ -847,10 +1480,25 @@
                 dialog.showModal();
             }
             dialogPolyfill.reposition(dialog);
+            var noTitleIndex;
             if(iframe.dataset.pages){
                 if(iframe.dataset.title) iframe.removeAttribute('data-title');
             } else {
-                tabs[tabs.length] = {iframe:iframe,opener:dialogOpenerWindow};
+                if(iframe.dataset.pillar){
+                    crumbs[crumbs.length] = {iframe:iframe,opener:dialogOpenerWindow};
+                } else {
+                    //FIXME add to active tab
+                    if(crumbs.length==0){
+                        crumbs[crumbs.length] = {iframe:iframe,opener:dialogOpenerWindow};
+                        noTitleIndex = 1;
+                    } else {
+                        var tabInfo = utils.getActiveTab(crumbs, dialog.activeDialogId);
+                        var newCrumbPosition = tabInfo.activeCrumbIndex+1;
+                        crumbs.splice(newCrumbPosition, 0, {iframe:iframe,opener:dialogOpenerWindow});
+                        noTitleIndex = newCrumbPosition + 1;
+                    }
+                }
+                dialog.activeDialogId = iframe.dataset.dialogId;
             }
             if(targetIframe){
                 iframe.classList.remove('minimized');
@@ -866,134 +1514,46 @@
                 }catch(e){}
                 iframe.name = dialogObj.windowName;
             }
+            var crumbPos = noTitleIndex || crumbs.length;
             if(dialogObj.html){
                 iframe.contentDocument.open();
                 iframe.contentDocument.write(dialogObj.html);
                 iframe.contentDocument.close();
-                loadListener(iframe, dialogOpenerWindow, tabs.length);
+                loadListener(iframe, dialogOpenerWindow, crumbPos);
             } else if (dialogObj.downloader) {
-                loadListener(iframe, dialogOpenerWindow, tabs.length);
+                loadListener(iframe, dialogOpenerWindow, crumbPos);
             } else {
                 (function(index){
                     iframe.onload = function(){loadListener(iframe, dialogOpenerWindow, index);}
-                })(tabs.length);
+                })(crumbPos);
                 if(dialogObj.url) iframe.src = dialogObj.url;
             }
-            _redrawBreadcrumbs(iframe.dataset.dialogId);
-        }
-        function _setDialogSize(width, height, iframe){
-            function fixSize(sizeName, size, theIframe, theDialog){
-                if(size){
-                    var mySize;
-                    if(isNaN(size)){
-                        /* e.g. 20px or 15% */
-                        var sizeRegex = /^(\d+)(px|%|em|rem|vw|vh)?/gi
-                        var match = sizeRegex.exec(size);
-                        if(match && match.length>0){
-                            var sizeValue = match[1];
-                            var sizeUnit = match[2];
-                            if(parseInt(sizeValue,10) > 0){
-                                mySize = sizeValue + (!sizeUnit ? '' : sizeUnit.toLowerCase());
-                            }
-                        }
-                    } else {
-                        if(size>0){
-                            mySize = size+'px';
-                        }
-                    }
-                    if(mySize){
-                        theIframe.dataset['d'+sizeName] = mySize;
-                        theDialog.style[sizeName] = mySize;
-                        return;
-                    }
-                }
-                theIframe.removeAttribute('data-d'+sizeName);
-                theDialog.style[sizeName] = null;
-            }
-            fixSize('width', width, iframe, dialog);
-            fixSize('height', height, iframe, dialog);
-        }
-        function _findEventSourceIframe( sourceWindow ){
-            for(var i=0; i<tabs.length; i++) {
-                var f = tabs[i].iframe;
-                if (f.contentWindow==sourceWindow){
-                    return {iframe:f, tabIndex:i};
-                }
-            }
-        }
-        function _removeIframe(iframeAndTabIndex) {
-            while(tabWindow.lastChild){
-                var lastIframe = tabWindow.lastChild;
-                var doStop = lastIframe === iframeAndTabIndex.iframe;
-                //lastIframe.classList.add('minimized');
-                lastIframe.dispatchEvent(utils.createEvent('dialog-destroyed'));
-                tabWindow.removeChild(lastIframe);
-                if(doStop){
-                    var ifrOpenerData = tabs[iframeAndTabIndex.tabIndex];
-                    var ifrOpener = ifrOpenerData.opener;
-                    if(ifrOpener && ifrOpener.topdialog && ifrOpener.topdialog.support &&
-                        ifrOpener.topdialog.support.restoreFocusAfterDialogClosed){
-                        ifrOpener.topdialog.support.restoreFocusAfterDialogClosed.apply(ifrOpener);
-                    }
-                    break;
-                };
-            }
-            tabs.splice(iframeAndTabIndex.tabIndex);
-            if(tabs.length>0){
-                var ifr = tabs[tabs.length-1].iframe;
-                if(ifr.dataset.dwidth) dialog.style.width=ifr.dataset.dwidth;
-                else dialog.style.width=null;
-                if(ifr.dataset.dheight) dialog.style.height=ifr.dataset.dheight;
-                else dialog.style.height=null;         
-                ifr.classList.remove('minimized');
-                dialogPolyfill.reposition(dialog);
-                _redrawBreadcrumbs(ifr.dataset.dialogId);
-                ifr.dispatchEvent(utils.createEvent('dialog-focus'));
-            } else {
-                var nav = dialog.querySelector('nav');
-                while (nav.lastChild) {
-                    nav.removeChild(nav.lastChild);
-                }
-                dialog.close();
-            }
-        }
-        function _closeTabByDialogId(dialogId){
-            for (var i=0; i<tabs.length; i++){
-                if(tabs[i].iframe.dataset.dialogId == dialogId){
-                    _removeIframe({iframe:tabs[i].iframe, tabIndex:i});
-                    return;
-                }
-            }
+            dialog.updateBreadcrumbs(iframe.dataset.dialogId);
         }
         function _messageListerner(evt){
             if(evt.data && evt.data.hasOwnProperty('dialog')){
                 if(evt.data.dialog && (evt.data.dialog.url || evt.data.dialog.html)){
                     _createDialog(evt.data.dialog, utils.getContextOpener(evt));
-                } else if (evt.data.dialog && evt.data.dialog.close) {
-                    _closeTabByDialogId(evt.data.dialog.close);
+                    evt.source.postMessage({dialogResult:'urlOrHtml'}, '*');
+                } else if (evt.data.dialog && evt.data.dialog.hasOwnProperty('close')) {
+                    dialog.closeDialog(evt.data.dialog.close);
                 } else if (evt.data.dialog && evt.data.dialog.update) {
-                    var iframeAndTabIndex = _findEventSourceIframe(evt.source);
-                    if(!iframeAndTabIndex) throw new Error('IframeAndTabIndex not found for', evt.source);
-                    var updateTabId = iframeAndTabIndex.tabIndex;
-                    for( var i=0; i<tabs.length; i++ ){
-                        if(updateTabId == i){
-                            var iIfr = tabs[i].iframe;
-                            var iIfrWin = iIfr.contentWindow || iIfr;
-                            iIfrWin.opener = tabs[i].opener;
-                            var title = iIfr.contentWindow ? iIfr.contentDocument.title : iIfr.document.title;
-                            iIfr.dataset.title = title;
-                            _redrawBreadcrumbs();
-                            iIfrWin.postMessage({dialogResult:'updated'}, '*');
-                        }
-                    }
+                    var crumbIndex = dialog.getCrumbIndex(evt.source);
+                    if(crumbIndex<0) throw new Error('crumbIndex not found for', evt.source);
+                    var iIfr = crumbs[crumbIndex].iframe;
+                    var iIfrWin = iIfr.contentWindow || iIfr;
+                    iIfrWin.opener = crumbs[crumbIndex].opener;
+                    var title = iIfr.contentWindow ? iIfr.contentDocument.title : iIfr.document.title;
+                    iIfr.dataset.title = title;
+                    dialog.updateBreadcrumbs();
+                    iIfrWin.postMessage({dialogResult:'updated'}, '*');
                 } else if (evt.data.dialog && evt.data.dialog.loaded){
                     //notifies that dialog's content is fully loaded
-                    var iframeAndTabIndex = _findEventSourceIframe(evt.source);
-                    if(iframeAndTabIndex){
-                        var activeTabId = iframeAndTabIndex.tabIndex;
-                        for( var i=0; i<tabs.length; i++ ){
-                            if(activeTabId == i){
-                                var ifr = tabs[i].iframe;
+                    var crumbIndex = dialog.getCrumbIndex(evt.source);
+                    if(crumbIndex > -1){
+                        for( var i=crumbs.length; i--; ){
+                            if(crumbIndex == i){
+                                var ifr = crumbs[i].iframe;
                                 if(ifr) {
                                     var loadedCounter = parseInt(ifr.dataset.loaded, 10);
                                     loadedCounter = isNaN(loadedCounter) ? 1 : loadedCounter + 1;
@@ -1001,10 +1561,10 @@
                                     var title = ifr.contentWindow ? ifr.contentDocument.title : ifr.document.title;
                                     title = title && title.length>0 ? title : 'No title ' + i;
                                     ifr.dataset.title = title;
-                                    _redrawBreadcrumbs();
+                                    dialog.updateBreadcrumbs();
                                 }
-                                if(tabs[i].opener){
-                                    tabs[i].opener.dispatchEvent(utils.createEvent('dialog-loaded'));
+                                if(crumbs[i].opener){
+                                    crumbs[i].opener.dispatchEvent(utils.createEvent('dialog-loaded'));
                                 }
                                 break;
                             }
@@ -1012,18 +1572,21 @@
                     }
                 } else if (evt.data.dialog && evt.data.dialog.title){
                     /* update title */
-                    var iframeAndTabIndex = _findEventSourceIframe(evt.source);
-                    var ifr = iframeAndTabIndex.iframe;
-                    ifr.dataset.title = evt.data.dialog.title;
-                    _redrawBreadcrumbs();
+                    var crumbIndex = dialog.getCrumbIndex(evt.source);
+                    if(crumbIndex > -1){
+                        var ifr = crumbs[crumbIndex].iframe;
+                        ifr.dataset.title = evt.data.dialog.title;
+                        dialog.updateBreadcrumbs();
+                    }
                 } else if (evt.data.dialog && evt.data.dialog.windowName) {
                     /* post message evt.source is de-facto opener */
                     _createDialog(evt.data.dialog, evt.source);
                     evt.source.postMessage({dialogResult:'namedWindow'}, '*');
                 } else {
-                    var iframeAndTabIndex = _findEventSourceIframe(evt.source);
-                    if(iframeAndTabIndex) {
-                        _removeIframe(iframeAndTabIndex);
+                    var crumbIndex = dialog.getCrumbIndex(evt.source);
+                    if(crumbIndex > -1) {
+                        //_removeIframe(crumbIndex);
+                        dialog.closeDialog(crumbs[crumbIndex].iframe.dataset.dialogId);
                     }
                 }
             } else if(evt.data && evt.data.hasOwnProperty('downloader')){
@@ -1066,7 +1629,7 @@
                     }());
                     var isDialogAlreadyOpened = false;
                     if(ie){
-                        if(tabs.length==0){
+                        if(crumbs.length==0){
                             dialog.classList.add('minimized');
                             tabWindow.appendChild(difr);
                         } else {
@@ -1074,8 +1637,8 @@
                             difr.width=0;
                             difr.height=0;
                             tabWindow.appendChild(difr);
-                            _createDialog(dialogObj, evt.source, difr);
                         }
+                        _createDialog(dialogObj, evt.source, difr);
                     } else {
                         difr.classList.add('minimized');
                     }
@@ -1088,19 +1651,35 @@
                                 console.debug('waitForActiveElement :', remains);
                                 try {
                                     console.debug('activeElement', doc.activeElement);
-                                    if (doc.activeElement.tagName.toLocaleLowerCase() === 'object') {
+                                    var activeElementTagname = doc.activeElement.tagName.toLocaleLowerCase();
+                                    if (activeElementTagname === 'object') {
                                         if(!isDialogAlreadyOpened){
-                                            dialog.classList.remove('minimized');              
-                                            _createDialog(dialogConfig, evtSource, ifr);
+                                            dialog.classList.remove('minimized');
+                                            dialogPolyfill.reposition(dialog);
+                                            ifr.focus();  
+                                            //_createDialog(dialogConfig, evtSource, ifr);
                                         }                                        
-                                    } else { /* download */
-                                        if(isDialogAlreadyOpened){
-                                            _closeTabByDialogId(ifr.dataset.dialogId);
+                                    } else if(activeElementTagname === 'body'){
+                                        /* body: HTML or download */
+                                        if(doc.activeElement.childNodes.length>0){
+                                            /* HTML */
+                                            if(!isDialogAlreadyOpened){
+                                                dialog.classList.remove('minimized');
+                                                dialogPolyfill.reposition(dialog);
+                                            }
+                                            //_createDialog(dialogConfig, evtSource, ifr);
                                         } else {
-                                            dialog.classList.remove("minimized");
-                                            console.debug('Dialog before removing downaload iframe', dialog);
-                                            tabWindow.removeChild(ifr);
+                                            /* download */
+                                            //_closeTabByDialogId(ifr.dataset.dialogId);
+                                            dialog.closeDialog(ifr.dataset.dialogId);
+                                            if(!isDialogAlreadyOpened){
+                                                //dialog.classList.remove('minimized');
+                                                console.debug('Dialog before removing downaload iframe', dialog);
+                                                //tabWindow.removeChild(ifr);
+                                            }
                                         }
+                                    } else {
+                                        console.warn('unknown active element', activeElementTagname);
                                     }
                                 } catch (e) {
                                     if(remains > 0){
@@ -1137,59 +1716,7 @@
                 }
             }
         }
-        function _redrawBreadcrumbs(activeDialogId){
-            var nav = dialog.querySelector('nav');
-            var frag = document.createDocumentFragment();
-            if(!activeDialogId) {
-                activeDialogId = tabs[tabs.length-1].iframe.dataset.dialogId;
-            }
-            for( var i=0; i<tabs.length; i++ ){
-                var crumb = document.createElement('div');
-                crumb.classList.add('crumb');
-                var ifr = tabs[i].iframe;
-                if(activeDialogId != ifr.dataset.dialogId){
-                    var title = ifr.dataset.title?ifr.dataset.title:'No title '+i+1;
-                    var textNode = document.createTextNode(title);
-                    crumb.classList.add('SIModalTitlePrev');
-                    crumb.appendChild( textNode );
-                    if(i<tabs.length-1 ){
-                        var delIndex = i+1;
-                        crumb.addEventListener('click', (function(deleteIframe, deleteTabIndex){
-                            return function(){ _removeIframe({ iframe: deleteIframe, tabIndex: deleteTabIndex }); };
-                        })(tabs[delIndex].iframe, delIndex));
-                        crumb.setAttribute('title', title);
-                    }
-                } else {
-                    var xButton = document.createElement('div');
-                    xButton.classList.add('xbutton');
-                    xButton.classList.add('SIModalXButton');
-                    xButton.addEventListener('click', (function(dialogId){
-                        return function(){ postMessage({ dialog:{ close: ifr.dataset.dialogId } }, '*'); };
-                    })(ifr.dataset.dialogId));
-                    crumb.appendChild(xButton);
-                    crumb.classList.add('active');
-                    crumb.classList.add('SIModalTitleActive');
-                    if(!ifr.dataset.loaded && !ifr.dataset.title){
-                        /** add spinner to show loading process */                    
-                        var spinner = document.createElement('div');
-                        spinner.classList.add('lds-ellipsis');
-                        for(var u=0; u<4; u++){
-                            spinner.appendChild(document.createElement('div'));
-                        }
-                        crumb.appendChild(spinner);
-                    } else if(!ifr.dataset.title) {
-                        console.warn('Set title in the page at', ifr.src);
-                    }
-                    var textNode = document.createTextNode(ifr.dataset.title?ifr.dataset.title:'');
-                    crumb.appendChild( textNode );
-                    ifr.classList.remove('minimized');
-                }                    
-                frag.appendChild(crumb);
-            }
-            while (nav.lastChild) { nav.removeChild(nav.lastChild); }
-            nav.appendChild(frag);
-        }
-        function loadListener(ifr, ifrOpener, index){
+        function loadListener(ifr, ifrOpener, noTitleIndex){
             var pagesCounter = parseInt(ifr.dataset.pages, 10);
             pagesCounter = isNaN(pagesCounter) ? 1 : pagesCounter + 1;
             ifr.dataset.pages = pagesCounter;
@@ -1197,13 +1724,13 @@
                 var oldTitle = ifr.dataset.title;
                 if(!oldTitle || pagesCounter>1){
                     var iWin = ifr.contentWindow || ifr;
-                    var doc = ifr.contentWindow ? ifr.contentDocument : ifr.document;
+                    var doc = ifr.contentDocument ? ifr.contentDocument : ifr.document;
                     if(doc && doc.title) {
                         ifr.dataset.title=doc.title;
                     } else if(!oldTitle){
-                        ifr.dataset.title = 'No title # ' + index;
+                        ifr.dataset.title = 'No title # ' + noTitleIndex;
                     }
-                    _redrawBreadcrumbs();
+                    dialog.updateBreadcrumbs();
                 }
                 var iWin = ifr.contentWindow || ifr;
                 if(!!iWin.isDialogCloseable){
@@ -1217,8 +1744,8 @@
                 iWin.isDialogCloseable = true;
             } catch(error){
                 console.warn('onload error', error);
-                if(!ifr.dataset.title) ifr.dataset.title = 'No title ##'+ index;
-                _redrawBreadcrumbs();
+                if(!ifr.dataset.title) ifr.dataset.title = 'No title ##'+ noTitleIndex;
+                dialog.updateBreadcrumbs();
             }
         }
         function getDefaultTopDialog(){
@@ -1228,12 +1755,115 @@
             tabbedDiv.classList.add("tabbed");
             var nav = document.createElement("nav");
             nav.classList.add('SIModalTitle');
+            var dialogtabs = document.createElement('div');
+            dialogtabs.classList.add('dialogtabs');
+            nav.appendChild(dialogtabs);
+            //buttons
+            var dialogButtons = document.createElement('div');
+            dialogButtons.classList.add('dialogbuttons');
+            var xButton = document.createElement('div');
+            xButton.classList.add('xbutton');
+            xButton.classList.add('SIModalXButton');
+            xButton.addEventListener('click', function(){ 
+                postMessage({ dialog:{ close: 0 } }, '*');
+            });
+            dialogButtons.appendChild(xButton);
+            var resizer = document.createElement('div');
+            resizer.classList.add('resizer');
+            resizer.classList.add('SIModalXButton');
+            dialogButtons.appendChild(resizer);
+            nav.appendChild(dialogButtons);
             var tabWindow = document.createElement("div");
             tabWindow.classList.add("tabwindow");            
             tabbedDiv.appendChild(nav);
             tabbedDiv.appendChild(tabWindow);
             dialog.appendChild(tabbedDiv);
             document.body.appendChild(dialog);
+            //resizeHandlerPolyfill(tabbedDiv, true);
+            (function(elem, moveHandler, resizer){
+                dragresize = new DragResize('dragresize',
+                    {
+                        enabled: false,
+                        minWidth: 200,
+                        minHeight: 200,
+                        minLeft: -1600,
+                        minTop: 0,
+                        maxLeft: 1600,
+                        maxTop: 800,
+                        zIndex: window.getComputedStyle(elem, null).getPropertyValue("z-index")
+                    }
+                );
+
+                // Optional settings/properties of the DragResize object are:
+                //  enabled: Toggle whether the object is active.
+                //  handles[]: An array of drag handles to use (see the .JS file).
+                //  minWidth, minHeight: Minimum size to which elements are resized (in pixels).
+                //  minLeft, maxLeft, minTop, maxTop: Bounding box (in pixels).
+
+                // Next, you must define two functions, isElement and isHandle. These are passed
+                // a given DOM element, and must "return true" if the element in question is a
+                // draggable element or draggable handle. Here, I'm checking for the CSS classname
+                // of the elements, but you have have any combination of conditions you like:
+
+                dragresize.isElement = function(elm){
+                    if (elm.className && elm.className.indexOf('drsElement') > -1) return true;
+                };
+                dragresize.isHandle = function(elm){
+                    if (elm.className && elm.className.indexOf('drsMoveHandle') > -1) return true;
+                };
+
+                // You can define optional functions that are called as elements are dragged/resized.
+                // Some are passed true if the source event was a resize, or false if it's a drag.
+                // The focus/blur events are called as handles are added/removed from an object,
+                // and the others are called as users drag, move and release the object's handles.
+                // You might use these to examine the properties of the DragResize object to sync
+                // other page elements, etc.
+
+                dragresize.ondragfocus = function() { };
+                dragresize.ondragstart = function(isResize) { };
+                dragresize.ondragmove = function(isResize) { };
+                dragresize.ondragend = function(isResize) { };
+                dragresize.ondragblur = function() { };
+
+                // Finally, you must apply() your DragResize object to a DOM node; all children of this
+                // node will then be made draggable. Here, I'm applying to the entire document.
+                dragresize.apply(document);
+                resizer.addEventListener('click', function(){
+                    function dragblurListener(){
+                        if(dragresize.enabled){
+                            dragresize.ondragblur = function(){};
+                            dragresize.deselect(moveHandler);
+                            moveHandler.classList.remove('drsMoveHandle');
+                            elem.classList.remove('drsElement');
+                            var iframes = dialog.querySelectorAll('iframe');
+                            for(var k=iframes.length; k--;){
+                                iframes[k].style.pointerEvents = null;
+                            }
+                            dragresize.enabled = false;
+                            elem.setSize({width:elem.style.width, height:elem.style.height}, elem.getActiveIframe());
+                            elem.style.top = null;
+                            elem.style.left = null;
+                            dialogPolyfill.reposition(dialog);
+                        }
+                    }
+                    if(!dragresize.enabled){
+                        dragresize.ondragstart = function(isResize) {
+                            dragresize.ondragblur = function(){};
+                        };
+                        dragresize.ondragend = function(isResize) {
+                            dragresize.ondragblur = dragblurListener;
+                        };
+                        dragresize.enabled = true;
+                        dragresize.select(moveHandler);
+                        moveHandler.classList.add('drsMoveHandle');
+                        elem.classList.add('drsElement');
+                        var iframes = dialog.querySelectorAll('iframe');
+                        for(var k=iframes.length; k--;){
+                            iframes[k].style.pointerEvents = 'none';
+                        }
+                    }
+                });
+            })(dialog, nav, resizer);
             return dialog;
         }
         window.addEventListener('message', _messageListerner, false);

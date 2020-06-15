@@ -18,8 +18,18 @@
             } else {
                 var ieEvent = document.createEvent('Event');
                 ieEvent.initEvent(eventName, false, true);
-                return ieEvent
+                return ieEvent;
             }
+        },
+        requestDialogUpdate: function(){
+            console.debug('[requestDialogUpdate] Request for opener');
+            utils.getTopWindow().postMessage({dialog: {update: true}}, '*');
+        },
+        runHandler: function(dialogWindow, theLoadHandler, isSendUpdate) {
+            console.debug('[runHandler] Running deferred', funcName);
+            theLoadHandler.apply(dialogWindow);
+            if(isSendUpdate) utils.getTopWindow().postMessage({dialog: {loaded:true}}, '*');
+                    
         }
     };
     var isInDialog = utils.isDialog();
@@ -47,33 +57,41 @@
         if(isInDialog){
             var sendUpdate = k===loadHandlers.length-1 ? true: false;
             if(!hasOpener){
-                (function(funcName, loadHandler){
-                    console.debug('registered listener for deferred', funcName);
-                    console.debug('openerset listener in', w.document);
+                (function(funcName, loadHandler, isSendUpdate){
+                    console.debug('registering listener for deferred onload:', funcName);
+                    //FF
+                    function openersetListener(){
+                        w.removeEventListener('openerset', openersetListener);
+                        w.removeEventListener('openerset', openersetListener2);
+                        console.debug('opener is set [Firefox], call body.onload=', funcName);
+                        utils.runHandler(w, loadHandler, isSendUpdate);
+                    }
                     w[funcName] = function(){
-                        console.debug('running deferred', funcName);
-                        loadHandler.apply(w);
-                        if(sendUpdate) utils.getTopWindow().postMessage({dialog: {loaded:true}}, '*');
+                        console.debug(funcName, 'for Firefox');
+                        w.removeEventListener('openerset', openersetListener2);
+                        w.addEventListener('openerset', openersetListener);
                     };
-                    w.addEventListener('openerset', function(){
-                    w[funcName] = function(){
-                        console.debug('running deferred', funcName);
-                        loadHandler.apply(w);
-                        if(sendUpdate) utils.getTopWindow().postMessage({dialog: {loaded:true}}, '*');
-                    };
-                    console.debug('Now', funcName, 'is:', w[funcName].toString());
-                    });
-                })(funcName, loadHandler);
+                    //Chrome
+                    function openersetListener2(){
+                        console.debug('opener is set [Chrome], waiting for calling body.onload =', funcName);
+                        w.removeEventListener('openerset', openersetListener);
+                        w.removeEventListener('openerset', openersetListener2);
+                        w[funcName] = function(){
+                            console.debug(funcName, 'for Chrome');
+                            utils.runHandler(w, loadHandler, isSendUpdate);
+                        };
+                    }
+                    w.addEventListener('openerset', openersetListener2);
+                })(funcName, loadHandler, sendUpdate);
             } else {
-                console.debug('onload is direct');
                 w[funcName] = function(){
+                    console.debug('onload is direct:', funcName);
                     loadHandler.apply(w);
-                    utils.getTopWindow().postMessage({dialog: {loaded: true}}, '*');
                 };
             }
         } else {
-            console.debug('closer.js is not in a dialog');
             w[funcName] = function(){
+                console.debug('closer.js is not in a dialog');
                 loadHandler.apply(w);
             };
         }
@@ -85,7 +103,6 @@
                 w.dispatchEvent(utils.createEvent('openerset'));
             });
         })(w);
-        console.debug('Request for opener');
-        utils.getTopWindow().postMessage({dialog: {update: true}}, '*');
+        utils.requestDialogUpdate();
     }
   })(window.self, [onPageLoad]);

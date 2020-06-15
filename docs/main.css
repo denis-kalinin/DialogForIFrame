@@ -44,7 +44,6 @@ dialog.fixed {
   position: relative;
   min-width: 80px;
   height: 12px;
-  top: 2px;
 }
 
 .lds-ellipsis div {
@@ -104,11 +103,95 @@ dialog.fixed {
   }
 }
 
+/* Required CSS classes: must be included in all pages using this script */
+/* Apply the element you want to drag/resize */
+.drsElement {
+  position: absolute;
+}
+
+/*
+  The main mouse handle that moves the whole element.
+  You can apply to the same tag as drsElement if you want.
+ */
+.drsMoveHandle {
+  cursor: move;
+}
+
+/*
+  The DragResize object name is automatically applied to all generated
+  corner resize handles, as well as one of the individual classes below.
+ */
+.dragresize {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  font-size: 1px;
+  background: #EEE;
+  border: 1px solid #333;
+}
+
+/*
+  Individual corner classes - required for resize support.
+  These are based on the object name plus the handle ID.
+ */
+.dragresize-tl {
+  top: -8px;
+  left: -8px;
+  cursor: nw-resize;
+}
+
+.dragresize-tm {
+  top: -8px;
+  left: 50%;
+  margin-left: -4px;
+  cursor: n-resize;
+}
+
+.dragresize-tr {
+  top: -8px;
+  right: -8px;
+  cursor: ne-resize;
+}
+
+.dragresize-ml {
+  top: 50%;
+  margin-top: -4px;
+  left: -8px;
+  cursor: w-resize;
+}
+
+.dragresize-mr {
+  top: 50%;
+  margin-top: -4px;
+  right: -8px;
+  cursor: e-resize;
+}
+
+.dragresize-bl {
+  bottom: -8px;
+  left: -8px;
+  cursor: sw-resize;
+}
+
+.dragresize-bm {
+  bottom: -8px;
+  left: 50%;
+  margin-left: -4px;
+  cursor: s-resize;
+}
+
+.dragresize-br {
+  bottom: -8px;
+  right: -8px;
+  cursor: se-resize;
+}
+
 dialog[role=topdialog] {
   width: 95%;
   height: 90%;
-  border: 1em;
   padding: 0;
+  border: 0;
+  background: rgba(0, 0, 0, 0);
 }
 
 dialog::backdrop {
@@ -136,27 +219,70 @@ dialog nav {
   border-bottom-width: 2px;
   height: 2em;
   min-height: 30px;
+}
+
+dialog nav > .dialogtabs {
+  height: 100%;
+  margin-right: 60px;
   display: flex;
   align-items: center;
   justify-content: flex-start;
 }
 
-dialog nav .crumb {
-  flex: 0 3 auto;
+dialog nav > .dialogtabs > .dialogtab:not(:only-child) {
+  background-color: dimgray;
+  border-radius: 6px 6px 0 0;
+  margin: 0 0.2em;
+  height: 100%;
+  flex: 0 2 auto;
+  padding: 0 1em;
+  align-items: center;
+}
+
+dialog nav > .dialogtabs > .dialogtab:not(:only-child).active {
+  background-color: blue;
+}
+
+dialog nav > .dialogtabs > .dialogtab:not(:only-child):not(.active) {
+  cursor: pointer;
+  display: flex;
+}
+
+dialog nav > .dialogtabs > .dialogtab.active {
+  display: flex;
+  flex: 0 1 auto;
+  overflow: hidden;
+}
+
+dialog nav > .dialogtabs > .dialogtab.active > .crumb {
+  flex: 0 5 auto;
   padding-left: 0.2em;
   align-items: center;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
+  min-width: 3em;
 }
 
-dialog nav .crumb.active {
-  min-width: 28px;
-  margin-right: 30px;
-  flex: 0 1 50%;
+dialog nav > .dialogtabs > .dialogtab.active > .crumb.active {
+  min-width: 8em;
+  flex: 0 1 auto;
 }
 
-dialog nav .crumb.active .xbutton {
+dialog nav > .dialogtabs > .dialogtab.active > .crumb:not(:first-child):before {
+  content: '\00a0\003e\00a0';
+}
+
+dialog nav > .dialogtabs > .dialogtab.active > .crumb:not(:last-child):hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+dialog nav > .dialogbuttons {
+  background-color: #f00;
+}
+
+dialog nav > .dialogbuttons > .xbutton {
   display: block;
   width: 24px;
   height: 24px;
@@ -166,35 +292,43 @@ dialog nav .crumb.active .xbutton {
   border-radius: 6px;
 }
 
-dialog nav .crumb.active .xbutton:before {
+dialog nav > .dialogbuttons > .xbutton:before {
   -webkit-transform: rotate(45deg);
   -moz-transform: rotate(45deg);
   transform: rotate(45deg);
   left: 2px;
+  top: 10px;
 }
 
-dialog nav .crumb.active .xbutton:after {
+dialog nav > .dialogbuttons > .xbutton:after {
   -webkit-transform: rotate(-45deg);
   -moz-transform: rotate(-45deg);
   transform: rotate(-45deg);
-  right: 2px;
+  left: 2px;
+  top: 6px;
 }
 
-dialog nav .crumb:not(:first-child):before {
-  content: '\00a0\003e\00a0';
-}
-
-dialog nav .crumb:not(:last-child):hover {
-  text-decoration: underline;
-  cursor: pointer;
+dialog nav > .dialogbuttons > .resizer {
+  display: block;
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  top: 3px;
+  right: 30px;
+  border-radius: 6px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIj8+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiBoZWlnaHQ9IjE2cHgiIHZpZXdCb3g9IjAgMCAzNzIuNDQ3NTUgMzcyIiB3aWR0aD0iMTZweCIgY2xhc3M9IiI+PGc+PHBhdGggZD0ibTIyOC42NTYyNSAxNzAuODA0Njg4YzMuMTI1IDMuMTI1IDguMTg3NSAzLjEyNSAxMS4zMTI1IDBsNzcuNTc4MTI1LTc3LjU3ODEyNiAxLjMxMjUgMzcuMDExNzE5Yy4wNzQyMTkgMi4xMjUuOTkyMTg3IDQuMTI4OTA3IDIuNTQ2ODc1IDUuNTc4MTI1IDEuNTU0Njg4IDEuNDQ1MzEzIDMuNjIxMDk0IDIuMjE0ODQ0IDUuNzQ2MDk0IDIuMTMyODEzbDM3LjU4OTg0NC0xLjM5NDUzMWM0LjQxNDA2Mi0uMTYwMTU3IDcuODU5Mzc0LTMuODcxMDk0IDcuNjk5MjE4LTguMjg1MTU3bC00LjIzNDM3NS0xMTYuMTEzMjgxYy0uMTUyMzQzLTQuMTg3NS0zLjUxMTcxOS03LjU0Njg3NS03LjY5OTIxOS03LjY5OTIxOWwtMTE2LjEwOTM3NC00LjIzMDQ2OWMtNC40MDYyNS0uMTQ0NTMwOC04LjEwMTU2MyAzLjI4OTA2My04LjI4NTE1NyA3LjY5MTQwN2wtMS40NDUzMTIgMzcuNTM5MDYyYy0uMDgyMDMxIDIuMTI1LjY4NzUgNC4xOTE0MDcgMi4xMzI4MTIgNS43NSAxLjQ0OTIxOSAxLjU1ODU5NCAzLjQ1NzAzMSAyLjQ3MjY1NyA1LjU4MjAzMSAyLjU1MDc4MWwzNi45NzI2NTcgMS4yOTY4NzYtNzcuNTcwMzEzIDc3LjU3MDMxMmMtMy4xMjUgMy4xMjUtMy4xMjUgOC4xOTE0MDYgMCAxMS4zMTY0MDZ6bTAgMCIgY2xhc3M9ImFjdGl2ZS1wYXRoIiBmaWxsPSIjRkZGRkZGIi8+PHBhdGggZD0ibTE3MC42NzE4NzUgMjI4Ljc4OTA2Mi0yNi44NjcxODctMjYuODcxMDkzYy0zLjEyNS0zLjEyNS04LjE5MTQwNy0zLjEyNS0xMS4zMTY0MDcgMGwtNzcuNTc4MTI1IDc3LjU4MjAzMS0xLjMyMDMxMi0zNy4wMjM0MzhjLS4wNzQyMTktMi4xMjEwOTMtLjk5MjE4OC00LjEyODkwNi0yLjU0Njg3NS01LjU3NDIxOC0xLjU1NDY4OC0xLjQ0NTMxMy0zLjYyMTA5NC0yLjIxNDg0NC01Ljc0MjE4OC0yLjEzNjcxOWwtMzcuNTkzNzUgMS4zOTA2MjVjLTQuNDE0MDYyLjE2NDA2Mi03Ljg2MzI4MSAzLjg3MTA5NC03LjcwMzEyNDc1IDguMjg1MTU2bDQuMjI2NTYyNzUgMTE2LjExMzI4MmMuMTU2MjUgNC4xODc1IDMuNTE1NjI1IDcuNTQ2ODc0IDcuNzAzMTI1IDcuNzAzMTI0bDExNi4xMDU0NjggNC4yMjI2NTdoLjMwMDc4MmM0LjI5Mjk2OCAwIDcuODI0MjE4LTMuMzk0NTMxIDcuOTg4MjgxLTcuNjg3NWwxLjQ1MzEyNS0zNy41MzEyNWMuMDc4MTI1LTIuMTI1LS42ODc1LTQuMTk1MzEzLTIuMTM2NzE5LTUuNzUzOTA3LTEuNDQ1MzEyLTEuNTU4NTkzLTMuNDU3MDMxLTIuNDcyNjU2LTUuNTgyMDMxLTIuNTQ2ODc0bC0zNi45NjA5MzgtMS4yODkwNjMgNzcuNTcwMzEzLTc3LjU3MDMxM2MzLjEyNS0zLjEyMTA5MyAzLjEyNS04LjE4NzUgMC0xMS4zMTI1em0wIDAiIGNsYXNzPSJhY3RpdmUtcGF0aCIgZmlsbD0iI0ZGRkZGRiIvPjwvZz48L3N2Zz4K");
 }
 
 dialog > .tabbed {
-  height: 100%;
   padding: 0;
   border: 0;
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-flow: column;
+  background-color: #fff;
 }
 
 dialog > .tabbed > .tabwindow {
@@ -217,21 +351,31 @@ dialog > .tabbed > .tabwindow > iframe.minimized {
   left: 0;
 }
 
+dialog.minimized {
+  top: -3000px;
+  left: -3000px;
+  display: block;
+}
+
 dialog.minimized nav {
   display: none;
 }
 
-dialog nav .crumb.active .xbutton:before, dialog nav .crumb.active .xbutton:after {
+dialog.minimized + .backdrop {
+  display: none;
+}
+
+dialog nav > .dialogbuttons > .xbutton:before, dialog nav > .dialogbuttons > .xbutton:after {
   content: '';
-  position: absolute;
+  position: relative;
+  display: block;
   width: 20px;
   height: 4px;
   background-color: white;
   border-radius: 2px;
-  top: 10px;
 }
 
-dialog > .tabbed > .tabwindow > iframe.minimized, dialog.minimized {
+dialog > .tabbed > .tabwindow > iframe.minimized {
   width: 0;
   height: 0;
 }

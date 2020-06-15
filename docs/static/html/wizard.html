@@ -10,8 +10,8 @@
                 });
             }
             function _printInfo(){
-                document.getElementById('openerTitle').textContent = window.opener.location.href;
                 document.getElementById('topLocation').textContent = window.top.location;
+                if(window.opener) document.getElementById('openerTitle').textContent = window.opener.location.href;
             }
             function destroy() {
                 if(window.opener){

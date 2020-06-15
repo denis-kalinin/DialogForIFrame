@@ -1,7 +1,7 @@
 (function() {
     function domReady(callbackFunction){
         if(document.readyState != 'loading')
-          callbackFunction(event)
+          callbackFunction();
         else
           document.addEventListener("DOMContentLoaded", callbackFunction);
     }
@@ -151,11 +151,12 @@
             fixSize('width', size.width, iframe);
             fixSize('height', size.height, iframe);
         }
-        dialog.getCrumbIndex = function(theWindow){
-            for(var i=crumbs.length; i--;) {
-                var f = crumbs[i].iframe;
-                if (f.contentWindow==theWindow){
-                    return i;
+        dialog.getCrumbIndex = function(evtSource){
+            if(evtSource && evtSource.frameElement){
+                for(var i=crumbs.length; i--;) {
+                    if (crumbs[i].iframe==evtSource.frameElement){
+                        return i;
+                    }
                 }
             }
             return -1;
@@ -425,54 +426,6 @@
             }
             dialog.updateBreadcrumbs(iframe.dataset.dialogId);
         }
-        function _removeIframe(crumbIndex) {
-            // TODO if tab is closed - activate the last crumb in the next tab
-            var tabInfo = utils.getTabs(crumbs);
-            var delCount = 0;
-            var wasActiveDialogRemoved = false;
-            for( var k = crumbIndex; k<crumbs.length; k++ ){
-                var doRemove = false;
-                if(k==crumbIndex){
-                    doRemove = true;
-                } else if (!crumbs[k].iframe.dataset.pillar){
-                    doRemove = true;
-                }
-                if(doRemove){
-                    delCount++;
-                    var removedIframe = crumbs[k].iframe;
-                    if(dialog.activeDialogId == removedIframe.dataset.dialogId){
-                        wasActiveDialogRemoved = true;
-                    }
-                    removedIframe.dispatchEvent(utils.createEvent('dialog-destroyed'));
-                    tabWindow.removeChild(removedIframe);
-                } else {
-                    break;
-                }
-            }
-            crumbs.splice(crumbIndex, delCount);
-            if(crumbs.length>0){
-                if(wasActiveDialogRemoved){
-                    var activateCrumb = crumbIndex > 0 ? crumbIndex - 1 : 0;
-                    var ifr = crumbs[activateCrumb].iframe;
-                    if(ifr.dataset.dwidth) dialog.style.width=ifr.dataset.dwidth;
-                    else dialog.style.width=null;
-                    if(ifr.dataset.dheight) dialog.style.height=ifr.dataset.dheight;
-                    else dialog.style.height=null;         
-                    ifr.classList.remove('minimized');
-                    dialogPolyfill.reposition(dialog);
-                    dialog.updateBreadcrumbs(ifr.dataset.dialogId);
-                    ifr.dispatchEvent(utils.createEvent('dialog-focus'));
-                } else {
-                    dialog.updateBreadcrumbs();
-                }
-            } else {
-                var navTabs = dialog.querySelector('nav > div.dialogtabs');
-                while (navTabs.lastChild) {
-                    navTabs.removeChild(navTabs.lastChild);
-                }
-                dialog.close();
-            }
-        }
         function _messageListerner(evt){
             if(evt.data && evt.data.hasOwnProperty('dialog')){
                 if(evt.data.dialog && (evt.data.dialog.url || evt.data.dialog.html)){
@@ -482,7 +435,7 @@
                     dialog.closeDialog(evt.data.dialog.close);
                 } else if (evt.data.dialog && evt.data.dialog.update) {
                     var crumbIndex = dialog.getCrumbIndex(evt.source);
-                    if(!crumbIndex) throw new Error('crumbIndex not found for', evt.source);
+                    if(crumbIndex<0) throw new Error('crumbIndex not found for', evt.source);
                     var iIfr = crumbs[crumbIndex].iframe;
                     var iIfrWin = iIfr.contentWindow || iIfr;
                     iIfrWin.opener = crumbs[crumbIndex].opener;
@@ -713,6 +666,7 @@
             dialogButtons.appendChild(xButton);
             var resizer = document.createElement('div');
             resizer.classList.add('resizer');
+            resizer.classList.add('SIModalXButton');
             dialogButtons.appendChild(resizer);
             nav.appendChild(dialogButtons);
             var tabWindow = document.createElement("div");
