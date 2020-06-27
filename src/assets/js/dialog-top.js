@@ -113,7 +113,7 @@
         dialog.addEventListener('close', function(){
                 document.body.style.overflow = bodyOverflow;
                 while(crumbs.length > 0){
-                    tabWindow.removeChild(crumbs.pop());
+                    tabWindow.removeChild(crumbs.pop().iframe.parentNode);
                 }
             });
 
@@ -169,14 +169,14 @@
                 //FIXME minimize active only
                 var tifr = crumbs[k].iframe;
                 tifr.dispatchEvent(utils.createEvent('dialog-blur'));
-                tifr.classList.add('minimized');
+                tifr.parentNode.classList.add('minimized');
             }
             var ifr = crumbs[activeCrumbIndex].iframe;
             if(ifr.dataset.dwidth) dialog.style.width=ifr.dataset.dwidth;
             else dialog.style.width=null;
             if(ifr.dataset.dheight) dialog.style.height=ifr.dataset.dheight;
             else dialog.style.height=null;         
-            ifr.classList.remove('minimized');
+            ifr.parentNode.classList.remove('minimized');
             dialog.activeDialogId = ifr.dataset.dialogId;
             dialogPolyfill.reposition(dialog);
             dialog.updateBreadcrumbs(ifr.dataset.dialogId);
@@ -212,7 +212,7 @@
                                 })(ifr.dataset.dialogId));
                                 crumb.setAttribute('title', title);
                             }
-                            ifr.classList.add('minimized');
+                            ifr.parentNode.classList.add('minimized');
                         } else {
                             crumb.classList.add('active');
                             crumb.classList.add('SIModalTitleActive');
@@ -283,7 +283,7 @@
                 var iframeToRemove = crumbs[k].iframe;
                 var iframeToRemoveId = iframeToRemove.dataset.dialogId;
                 iframeToRemove.dispatchEvent(utils.createEvent('dialog-destroyed'));
-                tabWindow.removeChild(iframeToRemove);
+                tabWindow.removeChild(iframeToRemove.parentNode);
                 if(dialog.activeDialogId == iframeToRemoveId){
                     activeDialogToRemoveCrumbIndex = k;
                 }
@@ -305,7 +305,7 @@
                     else dialog.style.width=null;
                     if(ifr.dataset.dheight) dialog.style.height=ifr.dataset.dheight;
                     else dialog.style.height=null;         
-                    ifr.classList.remove('minimized');
+                    ifr.parentNode.classList.remove('minimized');
                     crumbs.splice(tabsInfo.activeCrumbIndex, delCounter);
                     dialogPolyfill.reposition(dialog);
                     dialog.updateBreadcrumbs(ifr.dataset.dialogId);
@@ -370,7 +370,7 @@
                     //FIXME minimize active only
                     var tifr = crumbs[k].iframe;
                     tifr.dispatchEvent(utils.createEvent('dialog-blur'));
-                    tifr.classList.add('minimized');
+                    tifr.parentNode.classList.add('minimized');
                 }
             } else {                
                 dialog.showModal();
@@ -397,9 +397,45 @@
                 dialog.activeDialogId = iframe.dataset.dialogId;
             }
             if(targetIframe){
-                iframe.classList.remove('minimized');
+                iframe.parentNode.classList.remove('minimized');
             } else {
-                tabWindow.appendChild(iframe);
+                var ifrWrapper = document.createElement('div');
+                ifrWrapper.classList.add('ifrWrapper');
+                var enterFocusInput = document.createElement('input');
+                enterFocusInput.addEventListener('focus', function(event){
+                    event.target.parentNode.parentNode.querySelector('.backcircle').focus();
+                });
+                var enterLocker = document.createElement('div');
+                enterLocker.classList.add('focusLocker');
+                enterLocker.appendChild(enterFocusInput);
+                ifrWrapper.appendChild(enterLocker);
+
+                
+                var forwardCircle = document.createElement('span');
+                forwardCircle.classList.add('forwardcircle');
+                forwardCircle.setAttribute('tabindex', '-1');
+                ifrWrapper.appendChild(forwardCircle);
+                
+
+                ifrWrapper.appendChild(iframe);
+
+
+                var backcircleInput = document.createElement('span');
+                backcircleInput.classList.add('backcircle')
+                backcircleInput.setAttribute('tabindex', '-1');
+                ifrWrapper.appendChild(backcircleInput);
+
+                var exitFocusInput = document.createElement('input');
+                exitFocusInput.addEventListener('focus', function(event){
+                    event.target.parentNode.parentNode.querySelector('.forwardcircle').focus();
+                });
+                var exitLocker = document.createElement('div');
+                exitLocker.classList.add('focusLocker');
+                exitLocker.appendChild(exitFocusInput);
+                ifrWrapper.appendChild(exitLocker);
+
+                //tabWindow.appendChild(iframe);
+                tabWindow.appendChild(ifrWrapper);
             }
             try {
                 iframe.contentWindow.opener = dialogOpenerWindow;
@@ -527,16 +563,18 @@
                     if(ie){
                         if(crumbs.length==0){
                             dialog.classList.add('minimized');
-                            tabWindow.appendChild(difr);
                         } else {
                             isDialogAlreadyOpened = true;
                             difr.width=0;
                             difr.height=0;
-                            tabWindow.appendChild(difr);
                         }
+                        var ifrWrapper = document.createElement('div');
+                        ifrWrapper.classList.add('ifrWrapper');
+                        ifrWrapper.appendChild(difr);
+                        tabWindow.appendChild(ifrWrapper);
                         _createDialog(dialogObj, evt.source, difr);
                     } else {
-                        difr.classList.add('minimized');
+                        difr.parentNode.classList.add('minimized');
                     }
                     if(ie){
                         /* IE11 */

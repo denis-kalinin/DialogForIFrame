@@ -1,5 +1,5 @@
 (function () {
-    var dialogCss = "dialog{position:absolute;left:0;right:0;width:-moz-fit-content;width:-webkit-fit-content;width:fit-content;height:-moz-fit-content;height:-webkit-fit-content;height:fit-content;margin:auto;order:solid;padding:1em;background:white;color:black;display:block}dialog:not([open]){display:none}._dialog_overlay{position:fixed;top:0;right:0;bottom:0;left:0}dialog.fixed{position:fixed;top:50%;transform:translate(0, -50%)}.lds-ellipsis{display:inline-block;position:relative;min-width:80px;height:12px}.lds-ellipsis div{position:absolute;top:0px;width:12px;height:12px;border-radius:50%;background:#fff;animation-timing-function:cubic-bezier(0, 1, 1, 0)}.lds-ellipsis div:nth-child(1){left:8px;animation:lds-ellipsis1 0.6s infinite}.lds-ellipsis div:nth-child(2){left:8px;animation:lds-ellipsis2 0.6s infinite}.lds-ellipsis div:nth-child(3){left:32px;animation:lds-ellipsis2 0.6s infinite}.lds-ellipsis div:nth-child(4){left:56px;animation:lds-ellipsis3 0.6s infinite}@keyframes lds-ellipsis1{0%{transform:scale(0)}100%{transform:scale(1)}}@keyframes lds-ellipsis3{0%{transform:scale(1)}100%{transform:scale(0)}}@keyframes lds-ellipsis2{0%{transform:translate(0, 0)}100%{transform:translate(24px, 0)}}.drsElement{position:absolute}.drsMoveHandle{cursor:move}.dragresize{position:absolute;width:5px;height:5px;font-size:1px;background:#EEE;border:1px solid #333}.dragresize-tl{top:-8px;left:-8px;cursor:nw-resize}.dragresize-tm{top:-8px;left:50%;margin-left:-4px;cursor:n-resize}.dragresize-tr{top:-8px;right:-8px;cursor:ne-resize}.dragresize-ml{top:50%;margin-top:-4px;left:-8px;cursor:w-resize}.dragresize-mr{top:50%;margin-top:-4px;right:-8px;cursor:e-resize}.dragresize-bl{bottom:-8px;left:-8px;cursor:sw-resize}.dragresize-bm{bottom:-8px;left:50%;margin-left:-4px;cursor:s-resize}.dragresize-br{bottom:-8px;right:-8px;cursor:se-resize}dialog[role=topdialog]{width:95%;height:90%;padding:0;border:0;background:rgba(0,0,0,0)}dialog::backdrop{background:rgba(0,0,0,0.5)}dialog{max-width:95%;max-height:95%}dialog+.backdrop{background:rgba(0,0,0,0.5);position:fixed;top:0;left:0;right:0;bottom:0}dialog nav{border:1px solid #ccc;background-color:#5e24e6;color:#fff;border-bottom-width:2px;height:2em;min-height:30px}dialog nav>.dialogtabs{height:100%;margin-right:60px;display:flex;align-items:center;justify-content:flex-start}dialog nav>.dialogtabs>.dialogtab:not(:only-child){background-color:dimgray;border-radius:6px 6px 0 0;margin:0 0.2em;height:100%;flex:0 2 auto;padding:0 1em;align-items:center}dialog nav>.dialogtabs>.dialogtab:not(:only-child).active{background-color:blue}dialog nav>.dialogtabs>.dialogtab:not(:only-child):not(.active){cursor:pointer;display:flex}dialog nav>.dialogtabs>.dialogtab.active{display:flex;flex:0 1 auto;overflow:hidden}dialog nav>.dialogtabs>.dialogtab.active>.crumb{flex:0 5 auto;padding-left:0.2em;align-items:center;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;min-width:3em}dialog nav>.dialogtabs>.dialogtab.active>.crumb.active{min-width:8em;flex:0 1 auto}dialog nav>.dialogtabs>.dialogtab.active>.crumb:not(:first-child):before{content:'\\00a0\\003e\\00a0'}dialog nav>.dialogtabs>.dialogtab.active>.crumb:not(:last-child):hover{text-decoration:underline;cursor:pointer}dialog nav>.dialogbuttons{background-color:#f00}dialog nav>.dialogbuttons>.xbutton{display:block;width:24px;height:24px;position:absolute;top:3px;right:3px;border-radius:6px}dialog nav>.dialogbuttons>.xbutton:before{-webkit-transform:rotate(45deg);-moz-transform:rotate(45deg);transform:rotate(45deg);left:2px;top:10px}dialog nav>.dialogbuttons>.xbutton:after{-webkit-transform:rotate(-45deg);-moz-transform:rotate(-45deg);transform:rotate(-45deg);left:2px;top:6px}dialog nav>.dialogbuttons>.resizer{display:block;width:24px;height:24px;position:absolute;top:3px;right:30px;border-radius:6px;background-repeat:no-repeat;background-position:center;background-image:url(\"data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIj8+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiBoZWlnaHQ9IjE2cHgiIHZpZXdCb3g9IjAgMCAzNzIuNDQ3NTUgMzcyIiB3aWR0aD0iMTZweCIgY2xhc3M9IiI+PGc+PHBhdGggZD0ibTIyOC42NTYyNSAxNzAuODA0Njg4YzMuMTI1IDMuMTI1IDguMTg3NSAzLjEyNSAxMS4zMTI1IDBsNzcuNTc4MTI1LTc3LjU3ODEyNiAxLjMxMjUgMzcuMDExNzE5Yy4wNzQyMTkgMi4xMjUuOTkyMTg3IDQuMTI4OTA3IDIuNTQ2ODc1IDUuNTc4MTI1IDEuNTU0Njg4IDEuNDQ1MzEzIDMuNjIxMDk0IDIuMjE0ODQ0IDUuNzQ2MDk0IDIuMTMyODEzbDM3LjU4OTg0NC0xLjM5NDUzMWM0LjQxNDA2Mi0uMTYwMTU3IDcuODU5Mzc0LTMuODcxMDk0IDcuNjk5MjE4LTguMjg1MTU3bC00LjIzNDM3NS0xMTYuMTEzMjgxYy0uMTUyMzQzLTQuMTg3NS0zLjUxMTcxOS03LjU0Njg3NS03LjY5OTIxOS03LjY5OTIxOWwtMTE2LjEwOTM3NC00LjIzMDQ2OWMtNC40MDYyNS0uMTQ0NTMwOC04LjEwMTU2MyAzLjI4OTA2My04LjI4NTE1NyA3LjY5MTQwN2wtMS40NDUzMTIgMzcuNTM5MDYyYy0uMDgyMDMxIDIuMTI1LjY4NzUgNC4xOTE0MDcgMi4xMzI4MTIgNS43NSAxLjQ0OTIxOSAxLjU1ODU5NCAzLjQ1NzAzMSAyLjQ3MjY1NyA1LjU4MjAzMSAyLjU1MDc4MWwzNi45NzI2NTcgMS4yOTY4NzYtNzcuNTcwMzEzIDc3LjU3MDMxMmMtMy4xMjUgMy4xMjUtMy4xMjUgOC4xOTE0MDYgMCAxMS4zMTY0MDZ6bTAgMCIgY2xhc3M9ImFjdGl2ZS1wYXRoIiBmaWxsPSIjRkZGRkZGIi8+PHBhdGggZD0ibTE3MC42NzE4NzUgMjI4Ljc4OTA2Mi0yNi44NjcxODctMjYuODcxMDkzYy0zLjEyNS0zLjEyNS04LjE5MTQwNy0zLjEyNS0xMS4zMTY0MDcgMGwtNzcuNTc4MTI1IDc3LjU4MjAzMS0xLjMyMDMxMi0zNy4wMjM0MzhjLS4wNzQyMTktMi4xMjEwOTMtLjk5MjE4OC00LjEyODkwNi0yLjU0Njg3NS01LjU3NDIxOC0xLjU1NDY4OC0xLjQ0NTMxMy0zLjYyMTA5NC0yLjIxNDg0NC01Ljc0MjE4OC0yLjEzNjcxOWwtMzcuNTkzNzUgMS4zOTA2MjVjLTQuNDE0MDYyLjE2NDA2Mi03Ljg2MzI4MSAzLjg3MTA5NC03LjcwMzEyNDc1IDguMjg1MTU2bDQuMjI2NTYyNzUgMTE2LjExMzI4MmMuMTU2MjUgNC4xODc1IDMuNTE1NjI1IDcuNTQ2ODc0IDcuNzAzMTI1IDcuNzAzMTI0bDExNi4xMDU0NjggNC4yMjI2NTdoLjMwMDc4MmM0LjI5Mjk2OCAwIDcuODI0MjE4LTMuMzk0NTMxIDcuOTg4MjgxLTcuNjg3NWwxLjQ1MzEyNS0zNy41MzEyNWMuMDc4MTI1LTIuMTI1LS42ODc1LTQuMTk1MzEzLTIuMTM2NzE5LTUuNzUzOTA3LTEuNDQ1MzEyLTEuNTU4NTkzLTMuNDU3MDMxLTIuNDcyNjU2LTUuNTgyMDMxLTIuNTQ2ODc0bC0zNi45NjA5MzgtMS4yODkwNjMgNzcuNTcwMzEzLTc3LjU3MDMxM2MzLjEyNS0zLjEyMTA5MyAzLjEyNS04LjE4NzUgMC0xMS4zMTI1em0wIDAiIGNsYXNzPSJhY3RpdmUtcGF0aCIgZmlsbD0iI0ZGRkZGRiIvPjwvZz48L3N2Zz4K\")}dialog>.tabbed{padding:0;border:0;width:100%;height:100%;display:flex;flex-flow:column;background-color:#fff}dialog>.tabbed>.tabwindow{flex:1 1 auto;display:flex;flex-flow:column}dialog>.tabbed>.tabwindow>iframe{flex-flow:column;flex:1 1 auto;width:100%;display:flex;border:0}dialog>.tabbed>.tabwindow>iframe.minimized{position:absolute;top:0;left:0}dialog.minimized{top:-3000px;left:-3000px;display:block}dialog.minimized nav{display:none}dialog.minimized+.backdrop{display:none}dialog nav>.dialogbuttons>.xbutton:before,dialog nav>.dialogbuttons>.xbutton:after{content:'';position:relative;display:block;width:20px;height:4px;background-color:white;border-radius:2px}dialog>.tabbed>.tabwindow>iframe.minimized{width:0;height:0}\n";
+    var dialogCss = "dialog{position:absolute;left:0;right:0;width:-moz-fit-content;width:-webkit-fit-content;width:fit-content;height:-moz-fit-content;height:-webkit-fit-content;height:fit-content;margin:auto;order:solid;padding:1em;background:white;color:black;display:block}dialog:not([open]){display:none}._dialog_overlay{position:fixed;top:0;right:0;bottom:0;left:0}dialog.fixed{position:fixed;top:50%;transform:translate(0, -50%)}.lds-ellipsis{display:inline-block;position:relative;min-width:80px;height:12px}.lds-ellipsis div{position:absolute;top:0px;width:12px;height:12px;border-radius:50%;background:#fff;animation-timing-function:cubic-bezier(0, 1, 1, 0)}.lds-ellipsis div:nth-child(1){left:8px;animation:lds-ellipsis1 0.6s infinite}.lds-ellipsis div:nth-child(2){left:8px;animation:lds-ellipsis2 0.6s infinite}.lds-ellipsis div:nth-child(3){left:32px;animation:lds-ellipsis2 0.6s infinite}.lds-ellipsis div:nth-child(4){left:56px;animation:lds-ellipsis3 0.6s infinite}@keyframes lds-ellipsis1{0%{transform:scale(0)}100%{transform:scale(1)}}@keyframes lds-ellipsis3{0%{transform:scale(1)}100%{transform:scale(0)}}@keyframes lds-ellipsis2{0%{transform:translate(0, 0)}100%{transform:translate(24px, 0)}}.drsElement{position:absolute}.drsMoveHandle{cursor:move}.dragresize{position:absolute;width:5px;height:5px;font-size:1px;background:#EEE;border:1px solid #333}.dragresize-tl{top:-8px;left:-8px;cursor:nw-resize}.dragresize-tm{top:-8px;left:50%;margin-left:-4px;cursor:n-resize}.dragresize-tr{top:-8px;right:-8px;cursor:ne-resize}.dragresize-ml{top:50%;margin-top:-4px;left:-8px;cursor:w-resize}.dragresize-mr{top:50%;margin-top:-4px;right:-8px;cursor:e-resize}.dragresize-bl{bottom:-8px;left:-8px;cursor:sw-resize}.dragresize-bm{bottom:-8px;left:50%;margin-left:-4px;cursor:s-resize}.dragresize-br{bottom:-8px;right:-8px;cursor:se-resize}dialog[role=topdialog]{width:95%;height:90%;padding:0;border:0;background:rgba(0,0,0,0)}dialog::backdrop{background:rgba(0,0,0,0.5)}dialog{max-width:95%;max-height:95%}dialog+.backdrop{background:rgba(0,0,0,0.5);position:fixed;top:0;left:0;right:0;bottom:0}dialog nav{border:1px solid #ccc;background-color:#5e24e6;color:#fff;border-bottom-width:2px;height:2em;min-height:30px}dialog nav>.dialogtabs{height:100%;margin-right:60px;display:flex;align-items:center;justify-content:flex-start}dialog nav>.dialogtabs>.dialogtab:not(:only-child){background-color:dimgray;border-radius:6px 6px 0 0;margin:0 0.2em;height:100%;flex:0 2 auto;padding:0 1em;align-items:center}dialog nav>.dialogtabs>.dialogtab:not(:only-child).active{background-color:blue}dialog nav>.dialogtabs>.dialogtab:not(:only-child):not(.active){cursor:pointer;display:flex}dialog nav>.dialogtabs>.dialogtab.active{display:flex;flex:0 1 auto;overflow:hidden}dialog nav>.dialogtabs>.dialogtab.active>.crumb{flex:0 5 auto;padding-left:0.2em;align-items:center;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;min-width:3em}dialog nav>.dialogtabs>.dialogtab.active>.crumb.active{min-width:8em;flex:0 1 auto}dialog nav>.dialogtabs>.dialogtab.active>.crumb:not(:first-child):before{content:'\\00a0\\003e\\00a0'}dialog nav>.dialogtabs>.dialogtab.active>.crumb:not(:last-child):hover{text-decoration:underline;cursor:pointer}dialog nav>.dialogbuttons{background-color:#f00}dialog nav>.dialogbuttons>.xbutton{display:block;width:24px;height:24px;position:absolute;top:3px;right:3px;border-radius:6px}dialog nav>.dialogbuttons>.xbutton:before{-webkit-transform:rotate(45deg);-moz-transform:rotate(45deg);transform:rotate(45deg);left:2px;top:10px}dialog nav>.dialogbuttons>.xbutton:after{-webkit-transform:rotate(-45deg);-moz-transform:rotate(-45deg);transform:rotate(-45deg);left:2px;top:6px}dialog nav>.dialogbuttons>.resizer{display:block;width:24px;height:24px;position:absolute;top:3px;right:30px;border-radius:6px;background-repeat:no-repeat;background-position:center;background-image:url(\"data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIj8+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiBoZWlnaHQ9IjE2cHgiIHZpZXdCb3g9IjAgMCAzNzIuNDQ3NTUgMzcyIiB3aWR0aD0iMTZweCIgY2xhc3M9IiI+PGc+PHBhdGggZD0ibTIyOC42NTYyNSAxNzAuODA0Njg4YzMuMTI1IDMuMTI1IDguMTg3NSAzLjEyNSAxMS4zMTI1IDBsNzcuNTc4MTI1LTc3LjU3ODEyNiAxLjMxMjUgMzcuMDExNzE5Yy4wNzQyMTkgMi4xMjUuOTkyMTg3IDQuMTI4OTA3IDIuNTQ2ODc1IDUuNTc4MTI1IDEuNTU0Njg4IDEuNDQ1MzEzIDMuNjIxMDk0IDIuMjE0ODQ0IDUuNzQ2MDk0IDIuMTMyODEzbDM3LjU4OTg0NC0xLjM5NDUzMWM0LjQxNDA2Mi0uMTYwMTU3IDcuODU5Mzc0LTMuODcxMDk0IDcuNjk5MjE4LTguMjg1MTU3bC00LjIzNDM3NS0xMTYuMTEzMjgxYy0uMTUyMzQzLTQuMTg3NS0zLjUxMTcxOS03LjU0Njg3NS03LjY5OTIxOS03LjY5OTIxOWwtMTE2LjEwOTM3NC00LjIzMDQ2OWMtNC40MDYyNS0uMTQ0NTMwOC04LjEwMTU2MyAzLjI4OTA2My04LjI4NTE1NyA3LjY5MTQwN2wtMS40NDUzMTIgMzcuNTM5MDYyYy0uMDgyMDMxIDIuMTI1LjY4NzUgNC4xOTE0MDcgMi4xMzI4MTIgNS43NSAxLjQ0OTIxOSAxLjU1ODU5NCAzLjQ1NzAzMSAyLjQ3MjY1NyA1LjU4MjAzMSAyLjU1MDc4MWwzNi45NzI2NTcgMS4yOTY4NzYtNzcuNTcwMzEzIDc3LjU3MDMxMmMtMy4xMjUgMy4xMjUtMy4xMjUgOC4xOTE0MDYgMCAxMS4zMTY0MDZ6bTAgMCIgY2xhc3M9ImFjdGl2ZS1wYXRoIiBmaWxsPSIjRkZGRkZGIi8+PHBhdGggZD0ibTE3MC42NzE4NzUgMjI4Ljc4OTA2Mi0yNi44NjcxODctMjYuODcxMDkzYy0zLjEyNS0zLjEyNS04LjE5MTQwNy0zLjEyNS0xMS4zMTY0MDcgMGwtNzcuNTc4MTI1IDc3LjU4MjAzMS0xLjMyMDMxMi0zNy4wMjM0MzhjLS4wNzQyMTktMi4xMjEwOTMtLjk5MjE4OC00LjEyODkwNi0yLjU0Njg3NS01LjU3NDIxOC0xLjU1NDY4OC0xLjQ0NTMxMy0zLjYyMTA5NC0yLjIxNDg0NC01Ljc0MjE4OC0yLjEzNjcxOWwtMzcuNTkzNzUgMS4zOTA2MjVjLTQuNDE0MDYyLjE2NDA2Mi03Ljg2MzI4MSAzLjg3MTA5NC03LjcwMzEyNDc1IDguMjg1MTU2bDQuMjI2NTYyNzUgMTE2LjExMzI4MmMuMTU2MjUgNC4xODc1IDMuNTE1NjI1IDcuNTQ2ODc0IDcuNzAzMTI1IDcuNzAzMTI0bDExNi4xMDU0NjggNC4yMjI2NTdoLjMwMDc4MmM0LjI5Mjk2OCAwIDcuODI0MjE4LTMuMzk0NTMxIDcuOTg4MjgxLTcuNjg3NWwxLjQ1MzEyNS0zNy41MzEyNWMuMDc4MTI1LTIuMTI1LS42ODc1LTQuMTk1MzEzLTIuMTM2NzE5LTUuNzUzOTA3LTEuNDQ1MzEyLTEuNTU4NTkzLTMuNDU3MDMxLTIuNDcyNjU2LTUuNTgyMDMxLTIuNTQ2ODc0bC0zNi45NjA5MzgtMS4yODkwNjMgNzcuNTcwMzEzLTc3LjU3MDMxM2MzLjEyNS0zLjEyMTA5MyAzLjEyNS04LjE4NzUgMC0xMS4zMTI1em0wIDAiIGNsYXNzPSJhY3RpdmUtcGF0aCIgZmlsbD0iI0ZGRkZGRiIvPjwvZz48L3N2Zz4K\")}dialog>.tabbed{padding:0;border:0;width:100%;height:100%;display:flex;flex-flow:column;background-color:#fff}dialog>.tabbed>.tabwindow{flex:1 1 auto;display:flex;flex-flow:column}dialog>.tabbed>.tabwindow>.ifrWrapper{flex-flow:column;flex:1 1 auto;width:100%;display:flex}dialog>.tabbed>.tabwindow>.ifrWrapper.minimized{position:absolute;top:0;left:0}dialog>.tabbed>.tabwindow>.ifrWrapper>.focusLocker{width:0;height:0}dialog>.tabbed>.tabwindow>.ifrWrapper>.focusLocker>input{width:0;height:0;padding:0;border:0;margin:0}dialog>.tabbed>.tabwindow>.ifrWrapper>iframe{height:100%;border:0}dialog.minimized{top:-3000px;left:-3000px;display:block}dialog.minimized nav{display:none}dialog.minimized+.backdrop{display:none}dialog nav>.dialogbuttons>.xbutton:before,dialog nav>.dialogbuttons>.xbutton:after{content:'';position:relative;display:block;width:20px;height:4px;background-color:white;border-radius:2px}dialog>.tabbed>.tabwindow>.ifrWrapper.minimized{width:0;height:0}\n";
     var head = document.head || document.getElementsByTagName("head")[0];
     var style = document.createElement("style");
     head.appendChild(style);
@@ -1217,7 +1217,7 @@ DragResize.prototype.resizeHandleDrag = function(diffX, diffY) { with (this)
         dialog.addEventListener('close', function(){
                 document.body.style.overflow = bodyOverflow;
                 while(crumbs.length > 0){
-                    tabWindow.removeChild(crumbs.pop());
+                    tabWindow.removeChild(crumbs.pop().iframe.parentNode);
                 }
             });
 
@@ -1273,14 +1273,14 @@ DragResize.prototype.resizeHandleDrag = function(diffX, diffY) { with (this)
                 //FIXME minimize active only
                 var tifr = crumbs[k].iframe;
                 tifr.dispatchEvent(utils.createEvent('dialog-blur'));
-                tifr.classList.add('minimized');
+                tifr.parentNode.classList.add('minimized');
             }
             var ifr = crumbs[activeCrumbIndex].iframe;
             if(ifr.dataset.dwidth) dialog.style.width=ifr.dataset.dwidth;
             else dialog.style.width=null;
             if(ifr.dataset.dheight) dialog.style.height=ifr.dataset.dheight;
             else dialog.style.height=null;         
-            ifr.classList.remove('minimized');
+            ifr.parentNode.classList.remove('minimized');
             dialog.activeDialogId = ifr.dataset.dialogId;
             dialogPolyfill.reposition(dialog);
             dialog.updateBreadcrumbs(ifr.dataset.dialogId);
@@ -1316,7 +1316,7 @@ DragResize.prototype.resizeHandleDrag = function(diffX, diffY) { with (this)
                                 })(ifr.dataset.dialogId));
                                 crumb.setAttribute('title', title);
                             }
-                            ifr.classList.add('minimized');
+                            ifr.parentNode.classList.add('minimized');
                         } else {
                             crumb.classList.add('active');
                             crumb.classList.add('SIModalTitleActive');
@@ -1387,7 +1387,7 @@ DragResize.prototype.resizeHandleDrag = function(diffX, diffY) { with (this)
                 var iframeToRemove = crumbs[k].iframe;
                 var iframeToRemoveId = iframeToRemove.dataset.dialogId;
                 iframeToRemove.dispatchEvent(utils.createEvent('dialog-destroyed'));
-                tabWindow.removeChild(iframeToRemove);
+                tabWindow.removeChild(iframeToRemove.parentNode);
                 if(dialog.activeDialogId == iframeToRemoveId){
                     activeDialogToRemoveCrumbIndex = k;
                 }
@@ -1409,7 +1409,7 @@ DragResize.prototype.resizeHandleDrag = function(diffX, diffY) { with (this)
                     else dialog.style.width=null;
                     if(ifr.dataset.dheight) dialog.style.height=ifr.dataset.dheight;
                     else dialog.style.height=null;         
-                    ifr.classList.remove('minimized');
+                    ifr.parentNode.classList.remove('minimized');
                     crumbs.splice(tabsInfo.activeCrumbIndex, delCounter);
                     dialogPolyfill.reposition(dialog);
                     dialog.updateBreadcrumbs(ifr.dataset.dialogId);
@@ -1474,7 +1474,7 @@ DragResize.prototype.resizeHandleDrag = function(diffX, diffY) { with (this)
                     //FIXME minimize active only
                     var tifr = crumbs[k].iframe;
                     tifr.dispatchEvent(utils.createEvent('dialog-blur'));
-                    tifr.classList.add('minimized');
+                    tifr.parentNode.classList.add('minimized');
                 }
             } else {                
                 dialog.showModal();
@@ -1501,9 +1501,45 @@ DragResize.prototype.resizeHandleDrag = function(diffX, diffY) { with (this)
                 dialog.activeDialogId = iframe.dataset.dialogId;
             }
             if(targetIframe){
-                iframe.classList.remove('minimized');
+                iframe.parentNode.classList.remove('minimized');
             } else {
-                tabWindow.appendChild(iframe);
+                var ifrWrapper = document.createElement('div');
+                ifrWrapper.classList.add('ifrWrapper');
+                var enterFocusInput = document.createElement('input');
+                enterFocusInput.addEventListener('focus', function(event){
+                    event.target.parentNode.parentNode.querySelector('.backcircle').focus();
+                });
+                var enterLocker = document.createElement('div');
+                enterLocker.classList.add('focusLocker');
+                enterLocker.appendChild(enterFocusInput);
+                ifrWrapper.appendChild(enterLocker);
+
+                
+                var forwardCircle = document.createElement('span');
+                forwardCircle.classList.add('forwardcircle');
+                forwardCircle.setAttribute('tabindex', '-1');
+                ifrWrapper.appendChild(forwardCircle);
+                
+
+                ifrWrapper.appendChild(iframe);
+
+
+                var backcircleInput = document.createElement('span');
+                backcircleInput.classList.add('backcircle')
+                backcircleInput.setAttribute('tabindex', '-1');
+                ifrWrapper.appendChild(backcircleInput);
+
+                var exitFocusInput = document.createElement('input');
+                exitFocusInput.addEventListener('focus', function(event){
+                    event.target.parentNode.parentNode.querySelector('.forwardcircle').focus();
+                });
+                var exitLocker = document.createElement('div');
+                exitLocker.classList.add('focusLocker');
+                exitLocker.appendChild(exitFocusInput);
+                ifrWrapper.appendChild(exitLocker);
+
+                //tabWindow.appendChild(iframe);
+                tabWindow.appendChild(ifrWrapper);
             }
             try {
                 iframe.contentWindow.opener = dialogOpenerWindow;
@@ -1631,16 +1667,18 @@ DragResize.prototype.resizeHandleDrag = function(diffX, diffY) { with (this)
                     if(ie){
                         if(crumbs.length==0){
                             dialog.classList.add('minimized');
-                            tabWindow.appendChild(difr);
                         } else {
                             isDialogAlreadyOpened = true;
                             difr.width=0;
                             difr.height=0;
-                            tabWindow.appendChild(difr);
                         }
+                        var ifrWrapper = document.createElement('div');
+                        ifrWrapper.classList.add('ifrWrapper');
+                        ifrWrapper.appendChild(difr);
+                        tabWindow.appendChild(ifrWrapper);
                         _createDialog(dialogObj, evt.source, difr);
                     } else {
-                        difr.classList.add('minimized');
+                        difr.parentNode.classList.add('minimized');
                     }
                     if(ie){
                         /* IE11 */

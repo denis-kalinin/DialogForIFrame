@@ -159,17 +159,31 @@ dialog {
             flex: 1 1 auto;
             display: flex;
             flex-flow: column;
-            & > iframe {
+            & > .ifrWrapper {
                 flex-flow: column;
                 flex: 1 1 auto;
                 width: 100%;
                 display: flex;
-                border: 0;
                 &.minimized {
                     @extend %minimized;
                     position: absolute;
                     top:0;
                     left:0;
+                }
+                & > .focusLocker {
+                    width: 0;
+                    height: 0;
+                    & > input {
+                        width: 0;
+                        height: 0;
+                        padding: 0;
+                        border: 0;
+                        margin: 0;
+                    }
+                }
+                & > iframe {
+                    height: 100%;
+                    border: 0;
                 }
             }
         }

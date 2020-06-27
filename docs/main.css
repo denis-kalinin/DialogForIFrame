@@ -337,18 +337,35 @@ dialog > .tabbed > .tabwindow {
   flex-flow: column;
 }
 
-dialog > .tabbed > .tabwindow > iframe {
+dialog > .tabbed > .tabwindow > .ifrWrapper {
   flex-flow: column;
   flex: 1 1 auto;
   width: 100%;
   display: flex;
-  border: 0;
 }
 
-dialog > .tabbed > .tabwindow > iframe.minimized {
+dialog > .tabbed > .tabwindow > .ifrWrapper.minimized {
   position: absolute;
   top: 0;
   left: 0;
+}
+
+dialog > .tabbed > .tabwindow > .ifrWrapper > .focusLocker {
+  width: 0;
+  height: 0;
+}
+
+dialog > .tabbed > .tabwindow > .ifrWrapper > .focusLocker > input {
+  width: 0;
+  height: 0;
+  padding: 0;
+  border: 0;
+  margin: 0;
+}
+
+dialog > .tabbed > .tabwindow > .ifrWrapper > iframe {
+  height: 100%;
+  border: 0;
 }
 
 dialog.minimized {
@@ -375,7 +392,7 @@ dialog nav > .dialogbuttons > .xbutton:before, dialog nav > .dialogbuttons > .xb
   border-radius: 2px;
 }
 
-dialog > .tabbed > .tabwindow > iframe.minimized {
+dialog > .tabbed > .tabwindow > .ifrWrapper.minimized {
   width: 0;
   height: 0;
 }

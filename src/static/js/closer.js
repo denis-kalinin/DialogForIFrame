@@ -59,15 +59,15 @@
             if(!hasOpener){
                 (function(funcName, loadHandler, isSendUpdate){
                     console.debug('registering listener for deferred onload:', funcName);
-                    //FF
+                    //FF IE Edge Safari
                     function openersetListener(){
                         w.removeEventListener('openerset', openersetListener);
                         w.removeEventListener('openerset', openersetListener2);
-                        console.debug('opener is set [Firefox], call body.onload=', funcName);
+                        console.debug('opener is set [Firefox/IE/Edge/Safari], call body.onload=', funcName);
                         utils.runHandler(w, loadHandler, isSendUpdate);
                     }
                     w[funcName] = function(){
-                        console.debug(funcName, 'for Firefox');
+                        console.debug(funcName, 'for Firefox/IE/Edge/Safari');
                         w.removeEventListener('openerset', openersetListener2);
                         w.addEventListener('openerset', openersetListener);
                     };
