@@ -84,7 +84,6 @@
                         }
                     }catch(e){throw new Error('$ctx should be a window element while opening a dialog')};
                 }
-                debugger;
                 if(document.activeElement && document.activeElement !== document.body){
                     var restoreFocusElement = document.activeElement;
                     self.topdialog.support.restoreFocusAfterDialogClosed = function(){
@@ -420,7 +419,6 @@
             function openTabAndClose(dialogData){
                 (function(dialogData){
                     function dialogResultListener(evt){
-                        debugger;
                         if(evt.data.dialogResult){
                             window.removeEventListener('message', dialogResultListener);
                             //<jsp:doBody />
@@ -498,6 +496,21 @@
                     //showDialog(postWindow);                
                 })(dialogData);
             }
+            function iframeListener(){
+                function dialogResultListener(evt){
+                    if(evt.data.dialogResult){
+                        self.removeEventListener('message', dialogResultListener);
+                        console.info('Dialog loaded', evt.data.dialogId);
+                        var topWindow = getTopWindow();
+                        var targetIframe = topWindow.document.querySelector('dialog iframe[data-dialog-id="'+evt.data.dialogId+'"]');
+                        targetIframe.addEventListener('dialog-destroyed', function(){
+                            console.debug('destroyed', evt.data.dialogId);
+                        });
+                    }
+                }  
+                window.addEventListener('message', dialogResultListener);
+                openDialog({url:"static/html/wizard.html", topdialogScriptUrl:"topdialog.js"});
+            }
         </script>
         <script src="../js/closer.js"></script>
     </head>
@@ -543,8 +556,8 @@
                 <td>Crtl + Alt + Y</td>
             </tr>
             <tr>
-                <td>1124</td>
-                <td>gaoiewfabao</td>
+                <td id="iframeStatus"></td>
+                <td><button id="button17" onclick="iframeListener()">Listener</button></td>
             </tr>            <tr>
                 <td>1124</td>
                 <td>gaoiewfabao</td>

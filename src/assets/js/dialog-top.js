@@ -96,6 +96,55 @@
                 if(dialogId == ifr.dataset.dialogId) activeCrumbIndex = i;
             }
             return { tabs:tabs, activeTabIndex:activeTabIndex, activeCrumbIndex: activeCrumbIndex };
+        },
+        /**
+         * 
+         * @param {*} iframe 
+         * @returns div wrapper around iframe to handle focus
+         */
+        wrapIframe: function(iframe){
+            var ifrWrapper = document.createElement('div');
+            ifrWrapper.classList.add('ifrWrapper');
+            var enterFocusInput = document.createElement('input');
+            enterFocusInput.addEventListener('focus', function(event){
+                event.target.parentNode.querySelector('span[data-focus-direction="fromEnd"]').focus();
+            });
+            //var enterLocker = document.createElement('div');
+            //enterLocker.classList.add('focusLocker');
+            //enterLocker.appendChild(enterFocusInput);
+            //ifrWrapper.appendChild(enterLocker);
+            enterFocusInput.classList.add('focusLocker');
+            ifrWrapper.appendChild(enterFocusInput);
+
+            
+            var forwardCircle = document.createElement('span');
+            forwardCircle.classList.add('forwardcircle');
+            forwardCircle.setAttribute('tabindex', '-1');
+            forwardCircle.dataset.focusDirection="fromStart";
+            ifrWrapper.appendChild(forwardCircle);
+            
+
+            ifrWrapper.appendChild(iframe);
+
+
+            var backcircleInput = document.createElement('span');
+            backcircleInput.classList.add('backcircle')
+            backcircleInput.setAttribute('tabindex', '-1');
+            backcircleInput.dataset.focusDirection="fromEnd"
+            ifrWrapper.appendChild(backcircleInput);
+
+            var exitFocusInput = document.createElement('input');
+            exitFocusInput.addEventListener('focus', function(event){
+                event.target.parentNode.querySelector('span[data-focus-direction="fromStart"]').focus();
+            });
+            //var exitLocker = document.createElement('div');
+            //exitLocker.classList.add('focusLocker');
+            //exitLocker.appendChild(exitFocusInput);
+            //ifrWrapper.appendChild(exitLocker);
+            exitFocusInput.classList.add('focusLocker');
+            ifrWrapper.appendChild(exitFocusInput);
+
+            return ifrWrapper;
         }
     };
     var dialogInitialized = false;
@@ -399,43 +448,7 @@
             if(targetIframe){
                 iframe.parentNode.classList.remove('minimized');
             } else {
-                var ifrWrapper = document.createElement('div');
-                ifrWrapper.classList.add('ifrWrapper');
-                var enterFocusInput = document.createElement('input');
-                enterFocusInput.addEventListener('focus', function(event){
-                    event.target.parentNode.parentNode.querySelector('.backcircle').focus();
-                });
-                var enterLocker = document.createElement('div');
-                enterLocker.classList.add('focusLocker');
-                enterLocker.appendChild(enterFocusInput);
-                ifrWrapper.appendChild(enterLocker);
-
-                
-                var forwardCircle = document.createElement('span');
-                forwardCircle.classList.add('forwardcircle');
-                forwardCircle.setAttribute('tabindex', '-1');
-                ifrWrapper.appendChild(forwardCircle);
-                
-
-                ifrWrapper.appendChild(iframe);
-
-
-                var backcircleInput = document.createElement('span');
-                backcircleInput.classList.add('backcircle')
-                backcircleInput.setAttribute('tabindex', '-1');
-                ifrWrapper.appendChild(backcircleInput);
-
-                var exitFocusInput = document.createElement('input');
-                exitFocusInput.addEventListener('focus', function(event){
-                    event.target.parentNode.parentNode.querySelector('.forwardcircle').focus();
-                });
-                var exitLocker = document.createElement('div');
-                exitLocker.classList.add('focusLocker');
-                exitLocker.appendChild(exitFocusInput);
-                ifrWrapper.appendChild(exitLocker);
-
-                //tabWindow.appendChild(iframe);
-                tabWindow.appendChild(ifrWrapper);
+                tabWindow.appendChild(utils.wrapIframe(iframe));
             }
             try {
                 iframe.contentWindow.opener = dialogOpenerWindow;
@@ -461,12 +474,13 @@
                 if(dialogObj.url) iframe.src = dialogObj.url;
             }
             dialog.updateBreadcrumbs(iframe.dataset.dialogId);
+            return iframe.dataset.dialogId;
         }
         function _messageListerner(evt){
             if(evt.data && evt.data.hasOwnProperty('dialog')){
                 if(evt.data.dialog && (evt.data.dialog.url || evt.data.dialog.html)){
-                    _createDialog(evt.data.dialog, utils.getContextOpener(evt));
-                    evt.source.postMessage({dialogResult:'urlOrHtml'}, '*');
+                    var theDialogId = _createDialog(evt.data.dialog, utils.getContextOpener(evt));
+                    evt.source.postMessage({dialogResult:'urlOrHtml', dialogId: theDialogId}, '*');
                 } else if (evt.data.dialog && evt.data.dialog.hasOwnProperty('close')) {
                     dialog.closeDialog(evt.data.dialog.close);
                 } else if (evt.data.dialog && evt.data.dialog.update) {
@@ -512,8 +526,8 @@
                     }
                 } else if (evt.data.dialog && evt.data.dialog.windowName) {
                     /* post message evt.source is de-facto opener */
-                    _createDialog(evt.data.dialog, evt.source);
-                    evt.source.postMessage({dialogResult:'namedWindow'}, '*');
+                    var theDialogId = _createDialog(evt.data.dialog, evt.source);
+                    evt.source.postMessage({dialogResult:'namedWindow', dialogId: theDialogId}, '*');
                 } else {
                     var crumbIndex = dialog.getCrumbIndex(evt.source);
                     if(crumbIndex > -1) {
@@ -544,6 +558,7 @@
                     var difr = document.createElement('iframe');
                     difr.src=url;
                     difr.setAttribute('id', 'testdifr');
+                    tabWindow.appendChild(utils.wrapIframe(difr));
                     var ie = (function(){
                         var undef,rv = -1; /* Return value assumes failure.*/
                         var ua = window.navigator.userAgent;
@@ -568,10 +583,6 @@
                             difr.width=0;
                             difr.height=0;
                         }
-                        var ifrWrapper = document.createElement('div');
-                        ifrWrapper.classList.add('ifrWrapper');
-                        ifrWrapper.appendChild(difr);
-                        tabWindow.appendChild(ifrWrapper);
                         _createDialog(dialogObj, evt.source, difr);
                     } else {
                         difr.parentNode.classList.add('minimized');
@@ -636,7 +647,7 @@
                                 } else {
                                     /* downloading */
                                     console.info('downloading file in Firefox...');
-                                    tabWindow.removeChild(difr);
+                                    tabWindow.removeChild(difr.parentNode);
                                 }
                             } catch (e) {
                                 console.info('Browser is Firefox');
@@ -645,7 +656,7 @@
                             }
                         }
                         difr.addEventListener('load', downloadListener);
-                        tabWindow.appendChild(difr);
+                        tabWindow.appendChild(utils.wrapIframe(difr));
                     }
                 }
             }
@@ -712,6 +723,13 @@
             tabbedDiv.appendChild(nav);
             tabbedDiv.appendChild(tabWindow);
             dialog.appendChild(tabbedDiv);
+            //resier
+            var resizeDiv = document.createElement('div');
+            resizeDiv.classList.add('dialog-resize-handle');
+            var resizeMarker = document.createElement('div');
+            resizeMarker.classList.add('dialog-resize-marker');
+            resizeDiv.appendChild(resizeMarker);
+            dialog.appendChild(resizeDiv);
             document.body.appendChild(dialog);
             //resizeHandlerPolyfill(tabbedDiv, true);
             (function(elem, moveHandler, resizer){
