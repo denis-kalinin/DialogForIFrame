@@ -1,7 +1,6 @@
 @import 'dialog-polyfill';
 @import 'spinner';
 @import 'theme-al';
-@import 'dragresize';
 @import 'resizer';
 @mixin backdropper {
     background: rgba(0, 0, 0, 0.5);
@@ -42,6 +41,7 @@ dialog {
         & > .dialogtabs {
             height: 100%;
             margin-right: 60px;
+            margin-left: 8px;
             display: flex;
             align-items: center;
             justify-content: flex-start;

@@ -1,7 +1,5 @@
 dialog {
   position: absolute;
-  left: 0;
-  right: 0;
   width: -moz-fit-content;
   width: -webkit-fit-content;
   width: fit-content;
@@ -103,87 +101,43 @@ dialog.fixed {
   }
 }
 
-/* Required CSS classes: must be included in all pages using this script */
-/* Apply the element you want to drag/resize */
-.drsElement {
+/* resize marker size */
+/* how thick is the marker */
+/* a transparent area around marker that also act as resizer */
+/* resize marker color when dialog is hover */
+/* active resize marker color, i.e. when one can resize */
+dialog > .dialog-resize-br {
+  z-index: -1;
+  width: 50px;
+  height: 50px;
   position: absolute;
+  bottom: -29px;
+  right: -29px;
+  cursor: nwse-resize;
+  opacity: 0;
 }
 
-/*
-  The main mouse handle that moves the whole element.
-  You can apply to the same tag as drsElement if you want.
- */
-.drsMoveHandle {
-  cursor: move;
+dialog > .dialog-resize-br > .dialog-resize-br-marker {
+  width: 25px;
+  height: 25px;
+  background-color: #da1717;
+  border-radius: 0 5px 0 5px;
 }
 
-/*
-  The DragResize object name is automatically applied to all generated
-  corner resize handles, as well as one of the individual classes below.
- */
-.dragresize {
-  position: absolute;
-  width: 5px;
-  height: 5px;
-  font-size: 1px;
-  background: #EEE;
-  border: 1px solid #333;
+dialog > .dialog-resize-br > .dialog-resize-br-marker:hover {
+  background-color: #175fe6;
 }
 
-/*
-  Individual corner classes - required for resize support.
-  These are based on the object name plus the handle ID.
- */
-.dragresize-tl {
-  top: -8px;
-  left: -8px;
-  cursor: nw-resize;
+dialog > .dialog-resize-br:hover {
+  opacity: 1;
 }
 
-.dragresize-tm {
-  top: -8px;
-  left: 50%;
-  margin-left: -4px;
-  cursor: n-resize;
+dialog > .dialog-resize-br:hover > .dialog-resize-br-marker {
+  background-color: #175fe6;
 }
 
-.dragresize-tr {
-  top: -8px;
-  right: -8px;
-  cursor: ne-resize;
-}
-
-.dragresize-ml {
-  top: 50%;
-  margin-top: -4px;
-  left: -8px;
-  cursor: w-resize;
-}
-
-.dragresize-mr {
-  top: 50%;
-  margin-top: -4px;
-  right: -8px;
-  cursor: e-resize;
-}
-
-.dragresize-bl {
-  bottom: -8px;
-  left: -8px;
-  cursor: sw-resize;
-}
-
-.dragresize-bm {
-  bottom: -8px;
-  left: 50%;
-  margin-left: -4px;
-  cursor: s-resize;
-}
-
-.dragresize-br {
-  bottom: -8px;
-  right: -8px;
-  cursor: se-resize;
+dialog:hover > .dialog-resize-br {
+  opacity: 1;
 }
 
 dialog[role=topdialog] {
@@ -224,6 +178,7 @@ dialog nav {
 dialog nav > .dialogtabs {
   height: 100%;
   margin-right: 60px;
+  margin-left: 8px;
   display: flex;
   align-items: center;
   justify-content: flex-start;
