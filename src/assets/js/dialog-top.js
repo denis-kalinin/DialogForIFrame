@@ -780,6 +780,7 @@
         window.addEventListener('message', _messageListerner, false);
         ///// DRAG-RESIZE  /////
         (function(elem){
+            if(!elem) return;
             var moveHandler = elem.querySelector('nav');
             var dragresize = new DragResize('dialog-resize',
                 {
@@ -863,7 +864,7 @@
                 console.debug('dragmove, isResize:', isResize);
             };
             dragresize.ondragend = function(isResize) {
-                elem.style.margin=null;
+                elem.style.margin='auto';
                 elem.style.top = null;
                 elem.style.left = null;
                 dialogPolyfill.reposition(elem);
@@ -892,7 +893,7 @@
             dragresize.apply(document);
 
             //dragresize.enabled = true;
-            dragresize.select(elem);
+            //dragresize.select(elem);
             /*
             resizer.addEventListener('click', function(){
                 function dragblurListener(){
