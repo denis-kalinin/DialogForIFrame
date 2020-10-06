@@ -3,6 +3,31 @@
     <head>
         <title>Wizard (should be in Dialog window)</title>
         <script>
+            function monitorOpenee(winRef){
+                console.debug('monitoring closing of', winRef.location.href);
+                if(self.AL) self.AL = {};
+                self.AL.openeeClosed = false;                
+                _checkOpenee(winRef);
+            }
+            function _checkOpenee(winRef){
+                if (!winRef || winRef.closed) {
+                    //action when detached openee winodow has been closed directly (browser's x button);
+                    if(!self.AL || !self.AL.openeeClosed){
+                        document.getElementById('refreshStatus').textContent='[openee closed]';
+                    }
+                } else {
+                    if(!self.AL || !self.AL.openeeClosed)
+                        self.setTimeout(function(){
+                            _checkOpenee(winRef);
+                        }, 4000);
+                }
+            }
+            function onOpeneeClosed(){
+                if(self.AL) self.AL = {};
+                self.AL.openeeClosed = true;
+                //action when openeed has been closed by script
+                document.getElementById('refreshStatus').textContent = '[REFRESHED]';
+            }
             function onPageLoad(){
                 _printInfo();
                 window.self.addEventListener('dialog-loaded', function(){
@@ -93,7 +118,7 @@
     <script src="../js/closer.js"></script>
     </head>
     <body onload="onPageLoad()">
-        <h1>Wizard in the Dialog</h1>
+        <h1>Wizard in the Dialog <span id="refreshStatus"></span></h1>
         <article>
             <p>This page is in the iframe. In case you want to close a parent dialog window from the iframe,
                 &ndash; send inter-window message to the parent window:

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<htm>
+  <head>
+    <title>Detachable</title>
+    <script>
+      function updateContext(){
+        if(self.opener) {
+          self.opener.document.body.innerHTML = 'HELLOE';
+          alert("Already detached, context window updated");
+        }
+      }
+      function reload(){
+        setTimeout( function(){
+          location.href = "detachable.html";
+        }, 1000);
+      }
+      function onPageLoad(){
+        self.AL.detach = function(){
+          self.opener.open(self.location.href, 'mydetachedwindow', 'width=300, height=200');
+          self.close();
+        }
+      }
+      function closeButtonClicked(){
+        if(!self._syncLock){
+          self._syncLock = true;
+          opener.console.debug('...closing by button');
+          opener.console.debug('CloseButton', self.close.toString());
+          self.close();
+        }
+      }
+      self._syncLock = false;
+      window.self.AL = { detachable: true }
+    </script>
+    <script src="../js/closer.js"></script>
+  </head>
+  <body onload="onPageLoad()">
+    <button onclick="updateContext()">Update context</button>
+    <button onclick="reload()">Reload</button>
+    <a href="table.html">Backt to table</a>
+    <button onclick="closeButtonClicked()">CLOSE</button>
+  </body>
+</htm>

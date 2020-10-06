@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base href="<%= webcontext %>" />
+    <script>
+      function refresh(){
+        if(!self._syncLock){
+          self._syncLock = true;
+          //var form = document.getElementById('myform');
+          //form.submit();
+          self.location = 'postdetachable.html';
+        }
+      }
+      function updateContext(){
+        if(self.opener) {
+          self.opener.document.body.innerHTML = 'HELLO FROM DETACHED';
+          alert("Already detached, context window updated");
+        }
+      }
+      function onPageLoad(){
+        //setTimeout(refresh, 10000);
+      }
+      function closeButtonClicked(){
+        if(!self._syncLock){
+          self._syncLock = true;
+          opener.console.debug('...closing by button');
+          opener.console.debug('CloseButton', self.close.toString());
+          self.close();
+        }
+      }
+      self._syncLock = false;
+      self.AL = { 
+        detachable: true,
+        detach: function(){
+          if(self.opener && !self._syncLock){
+            self._syncLock = true;
+            var form = document.getElementById('myform');
+            var detachedWindowName = 'mytarget';
+            form.setAttribute("target", detachedWindowName);
+            var url = undefined;
+            var params = 'width=300, height=200';
+            //var params = undefined;
+            self.opener.open(url, detachedWindowName, params );
+            form.submit();
+            console.debug('close action', self.close.toString());
+            self.close();
+          }
+        }
+      };
+    </script>
+    <script src="../js/closer.js"></script>
+  </head>
+  <body onload="onPageLoad()">
+    FORM POSTING
+    <button onclick="updateContext()">Update context</button>
+    <button onclick="closeButtonClicked()">CLOSE</button>
+    <form action="/updateStatus" method="GET" id="myform" method="POST">
+      <input hidden="true" name="message" value="hello world" />
+    </form>
+  </body>
+</html>

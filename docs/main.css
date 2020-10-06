@@ -118,24 +118,24 @@ dialog.fixed {
 /* active resize marker color, i.e. when one can resize */
 dialog > .dialog-resize-br {
   z-index: -1;
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
   position: absolute;
-  bottom: -29px;
-  right: -29px;
+  bottom: -23px;
+  right: -23px;
   cursor: nwse-resize;
   opacity: 0;
 }
 
 dialog > .dialog-resize-br > .dialog-resize-br-marker {
-  width: 25px;
-  height: 25px;
-  background-color: #da1717;
+  width: 20px;
+  height: 20px;
+  background-color: #00498b;
   border-radius: 0 5px 0 5px;
 }
 
 dialog > .dialog-resize-br > .dialog-resize-br-marker:hover {
-  background-color: #175fe6;
+  background-color: #0070d4;
 }
 
 dialog > .dialog-resize-br:hover {
@@ -143,10 +143,118 @@ dialog > .dialog-resize-br:hover {
 }
 
 dialog > .dialog-resize-br:hover > .dialog-resize-br-marker {
-  background-color: #175fe6;
+  background-color: #0070d4;
+}
+
+dialog > .dialog-resize-ml {
+  z-index: -1;
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  top: 50%;
+  left: -23px;
+  cursor: ew-resize;
+  opacity: 0;
+}
+
+dialog > .dialog-resize-ml > .dialog-resize-ml-marker {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  top: 10px;
+  right: 0px;
+  background-color: #00498b;
+  border-radius: 5px 0 0 5px;
+}
+
+dialog > .dialog-resize-ml > .dialog-resize-ml-marker:hover {
+  background-color: #0070d4;
+}
+
+dialog > .dialog-resize-ml:hover {
+  opacity: 1;
+}
+
+dialog > .dialog-resize-ml:hover > .dialog-resize-ml-marker {
+  background-color: #0070d4;
+}
+
+dialog > .dialog-resize-mr {
+  z-index: -1;
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  top: 50%;
+  right: -23px;
+  cursor: ew-resize;
+  opacity: 0;
+}
+
+dialog > .dialog-resize-mr > .dialog-resize-mr-marker {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  top: 10px;
+  left: 0px;
+  background-color: #00498b;
+  border-radius: 0 5px 5px 0;
+}
+
+dialog > .dialog-resize-mr > .dialog-resize-mr-marker:hover {
+  background-color: #0070d4;
+}
+
+dialog > .dialog-resize-mr:hover {
+  opacity: 1;
+}
+
+dialog > .dialog-resize-mr:hover > .dialog-resize-mr-marker {
+  background-color: #0070d4;
+}
+
+dialog > .dialog-resize-bm {
+  z-index: -1;
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  bottom: -23px;
+  left: 50%;
+  cursor: ns-resize;
+  opacity: 0;
+}
+
+dialog > .dialog-resize-bm > .dialog-resize-bm-marker {
+  width: 20px;
+  height: 20px;
+  background-color: #00498b;
+  border-radius: 0 0 5px 5px;
+}
+
+dialog > .dialog-resize-bm > .dialog-resize-bm-marker:hover {
+  background-color: #0070d4;
+}
+
+dialog > .dialog-resize-bm:hover {
+  opacity: 1;
+}
+
+dialog > .dialog-resize-bm:hover > .dialog-resize-bm-marker {
+  background-color: #0070d4;
 }
 
 dialog:hover > .dialog-resize-br {
+  opacity: 1;
+}
+
+dialog:hover > .dialog-resize-ml {
+  opacity: 1;
+}
+
+dialog:hover > .dialog-resize-mr {
+  opacity: 1;
+}
+
+dialog:hover > .dialog-resize-bm {
   opacity: 1;
 }
 
@@ -271,6 +379,19 @@ dialog nav > .dialogbuttons > .xbutton:after {
   top: 7px;
 }
 
+dialog nav > .dialogbuttons > .popoutButton {
+  display: block;
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  right: 40px;
+  border-radius: 6px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 70%;
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnN2Z2pzPSJodHRwOi8vc3ZnanMuY29tL3N2Z2pzIiB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgeD0iMCIgeT0iMCIgdmlld0JveD0iMCAwIDM3NSAzNzUiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDUxMiA1MTIiIHhtbDpzcGFjZT0icHJlc2VydmUiIGNsYXNzPSIiPjxnIHRyYW5zZm9ybT0ibWF0cml4KDEsMCwwLDEsMCwwKSI+CjxnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+Cgk8Zz4KCQk8cG9seWdvbiBwb2ludHM9IjMzNy41LDE4Ny41IDMzNy41LDMzNy41IDM3LjUsMzM3LjUgMzcuNSwzNy41IDE4Ny41LDM3LjUgMTg3LjUsMCAwLDAgMCwzNzUgMzc1LDM3NSAzNzUsMTg3LjUgICAiIGZpbGw9IiNmZmZmZmYiIGRhdGEtb3JpZ2luYWw9IiMwMDAwMDAiIHN0eWxlPSIiIGNsYXNzPSIiPjwvcG9seWdvbj4KCTwvZz4KPC9nPgo8ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgoJPGc+CgkJPHBvbHlnb24gcG9pbnRzPSIyMjUsMCAyNzksNTQgMTcyLjcsMTYwLjMgMjE0LjcsMjAyLjMgMzIxLDk2IDM3NSwxNTAgMzc1LDAgICAiIGZpbGw9IiNmZmZmZmYiIGRhdGEtb3JpZ2luYWw9IiMwMDAwMDAiIHN0eWxlPSIiIGNsYXNzPSIiPjwvcG9seWdvbj4KCTwvZz4KPC9nPgo8ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8L2c+CjxnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjwvZz4KPGcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPC9nPgo8ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8L2c+CjxnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjwvZz4KPGcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPC9nPgo8ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8L2c+CjxnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjwvZz4KPGcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPC9nPgo8ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8L2c+CjxnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjwvZz4KPGcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPC9nPgo8ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8L2c+CjxnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjwvZz4KPGcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPC9nPgo8L2c+PC9zdmc+");
+}
+
 dialog > .tabbed {
   padding: 0;
   border: 0;
@@ -329,7 +450,7 @@ dialog.minimized + .backdrop {
   display: none;
 }
 
-dialog nav > .dialogbuttons > .xbutton {
+dialog nav > .dialogbuttons > .xbutton, dialog nav > .dialogbuttons > .popoutButton {
   top: 5px;
   cursor: pointer;
   transition: background-color .1s;

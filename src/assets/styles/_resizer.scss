@@ -1,17 +1,18 @@
 
 /* resize marker size */
-$resize-marker-width: 25px;
+$resize-marker-width: 20px;
 /* how thick is the marker */
-$resize-marker-border: 4px;
+$resize-marker-border: 3px;
 $resize-marker-border-radius: 5px;
 /* a transparent area around marker that also act as resizer */
-$resize-area: 50px;
+$resize-area: 40px;
 /* resize marker color when dialog is hover */
-$resize-marker-color: rgb(218, 23, 23);
+$resize-marker-color: rgb(0, 73, 139);
 /* active resize marker color, i.e. when one can resize */
-$resize-marker-color-active: rgb(23, 95, 230);
+$resize-marker-color-active: rgb(0, 112, 212);
 
 dialog {
+  //bottom-right
   & > .dialog-resize-br {
     z-index: -1;
     width: $resize-area;
@@ -40,7 +41,116 @@ dialog {
       }
     }
   }
+
+  //middle-left
+  & > .dialog-resize-ml {
+    z-index: -1;
+    width: $resize-area;
+    height: $resize-area;
+    position: absolute;
+    $ml-position: -$resize-area + $resize-marker-width - $resize-marker-border;
+    top: 50%;
+    left: $ml-position;
+    cursor: ew-resize;
+    opacity: 0;
+    
+    & > .dialog-resize-ml-marker {
+      position: absolute;
+      width: $resize-marker-width;
+      height: $resize-marker-width;
+      top: (($resize-area/2) - ($resize-marker-width/2));
+      right: 0px;
+      background-color: $resize-marker-color;
+      border-radius: $resize-marker-border-radius 0 0 $resize-marker-border-radius;
+      &:hover {
+        background-color: $resize-marker-color-active;
+      }
+    }
+
+    &:hover {
+      opacity: 1;
+      & > .dialog-resize-ml-marker {
+        background-color: $resize-marker-color-active;
+      }
+    }
+  }
+
+  //middle-rigth
+  & > .dialog-resize-mr {
+    z-index: -1;
+    width: $resize-area;
+    height: $resize-area;
+    position: absolute;
+    $mr-position: -$resize-area + $resize-marker-width - $resize-marker-border;
+    top: 50%;
+    right: $mr-position;
+    cursor: ew-resize;
+    opacity: 0;
+    
+    & > .dialog-resize-mr-marker {
+      position: absolute;
+      width: $resize-marker-width;
+      height: $resize-marker-width;
+      top: (($resize-area/2) - ($resize-marker-width/2));
+      left: 0px;
+      background-color: $resize-marker-color;
+      border-radius: 0 $resize-marker-border-radius $resize-marker-border-radius 0;
+      &:hover {
+        background-color: $resize-marker-color-active;
+      }
+    }
+
+    &:hover {
+      opacity: 1;
+      & > .dialog-resize-mr-marker {
+        background-color: $resize-marker-color-active;
+      }
+    }
+  }
+  // bottom-middle
+  & > .dialog-resize-bm {
+    z-index: -1;
+    width: $resize-area;
+    height: $resize-area;
+    position: absolute;
+    $bm-position: -$resize-area + $resize-marker-width - $resize-marker-border;
+    bottom: $bm-position;
+    left: 50%;
+    cursor: ns-resize;
+    opacity: 0;
+    
+    & > .dialog-resize-bm-marker {
+      width: $resize-marker-width;
+      height: $resize-marker-width;
+      background-color: $resize-marker-color;
+      border-radius: 0 0 $resize-marker-border-radius $resize-marker-border-radius;
+      &:hover {
+        background-color: $resize-marker-color-active;
+      }
+    }
+
+    &:hover {
+      opacity: 1;
+      & > .dialog-resize-bm-marker {
+        background-color: $resize-marker-color-active;
+      }
+    }
+  }
+
+  //show resize markers on dialog hover
   &:hover > .dialog-resize-br {
+    opacity: 1;
+  }
+
+  &:hover > .dialog-resize-ml {
+    opacity: 1;
+  }
+
+  &:hover > .dialog-resize-mr {
+    opacity: 1;
+  }
+
+  &:hover > .dialog-resize-bm {
     opacity: 1;
   }
 }

@@ -200,6 +200,14 @@ module.exports = ( env, argv ) => {
             res.render('htmlEditor.twig', { dta: req.body.dta, webcontext: theWebcontext });
           }, 3500);
       });
+      app.get('/updateStatus', (req, res) => {
+        //res.redirect(req.originalUrl);
+        //res.send('Hello!');
+        //res.sendFile('src/static/html/htmlEditor.html',  { root: __dirname });
+        setTimeout( () => {
+          res.sendFile('src/static/html/postdetachable.html', { root: __dirname });
+        }, 2500);
+      });
       app.get('/data', (req, res) => {
         console.debug(req.query);
         if (Object.keys(req.query).length !== 0){
