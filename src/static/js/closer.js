@@ -64,24 +64,26 @@
         w.AL.detach();
     }
     if(isInDialog){
+        console.debug('is in dialog');
         w.isALDialog = true; //gof's Set mark of dialog to be able use it in comparisons later along with self==top
         if(!w.isDialogCloseable){
             //console.debug('self.isDialogCloseable is false. Overriding self.close()');
             w.isDialogCloseable = true;
             var script = w.document.createElement('script');
-            script.textContent = "function close(){function getTopWindow(checkWindow){if(!checkWindow) checkWindow = window.self;try {if(checkWindow.parent && !checkWindow.parent.noDialog){return getTopWindow(checkWindow.parent);}}catch(e){}return checkWindow;};if(!self.AL.detaching && self.opener && self.opener.onOpeneeClosed) setTimeout(self.opener.onOpeneeClosed,0);getTopWindow().postMessage({dialog:null},'*');}";
+            script.textContent = "function close(){function getTopWindow(checkWindow){if(!checkWindow) checkWindow = window.self;try {if(checkWindow.parent && !checkWindow.parent.noDialog){return getTopWindow(checkWindow.parent);}}catch(e){}return checkWindow;};console.debug('self.AL', self.AL);if(!self.AL.detaching && self.opener && self.opener.onOpeneeClosed){console.debug('calling onOpeneeClosed');self.opener.onOpeneeClosed();}else{console.debug('invalid for onOpeneeClosed', self.opener);};getTopWindow().postMessage({dialog:null},'*');}";
             w.document.head.appendChild(script);
         }
     } else {
+        console.debug('detached window');
         if(hasOpener){
             if(w.opener.monitorOpenee) w.opener.monitorOpenee(self);
             w.AL.detached = true;
             w._original_close = window.close;
             var script = w.document.createElement('script');
-            script.textContent = "function close(){if(!self.AL.detaching && self.opener && self.opener.onOpeneeClosed) setTimeout(self.opener.onOpeneeClosed, 0);self._original_close();}";
+            script.textContent = "function close(){if(!self.AL.detaching && self.opener && self.opener.onOpeneeClosed) self.opener.onOpeneeClosed();self._original_close();}";
             w.document.head.appendChild(script);
         } else {
-            //console.warn('The page has no opener', w.location);
+            console.warn('The page has no opener', w.location);
         }
     }
     for(var k=0; k<loadHandlers.length; k++){

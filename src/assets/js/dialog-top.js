@@ -24,7 +24,7 @@
             /** window.close() can be overriden in IE by function declaration only */
             if(doc && doc.head){
                 var script = doc.createElement('script');
-                script.textContent = "function close(){function getTopWindow(checkWindow){if(!checkWindow) checkWindow = window.self;try {if(checkWindow.parent && !checkWindow.parent.noDialog){return getTopWindow(checkWindow.parent);}}catch(e){}return checkWindow;};if(!self.AL.detaching && self.opener && self.opener.onOpeneeClosed) setTimeout(self.opener.onOpeneeClosed(),0);getTopWindow().postMessage({dialog:null},'*')}";
+                script.textContent = "function close(){function getTopWindow(checkWindow){if(!checkWindow) checkWindow = window.self;try {if(checkWindow.parent && !checkWindow.parent.noDialog){return getTopWindow(checkWindow.parent);}}catch(e){}return checkWindow;};if(!self.AL.detaching && self.opener && self.opener.onOpeneeClosed) self.opener.onOpeneeClosed();getTopWindow().postMessage({dialog:null},'*')}";
                 doc.head.appendChild(script);
             }
         },

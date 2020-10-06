@@ -23,7 +23,8 @@
                 }
             }
             function onOpeneeClosed(){
-                if(self.AL) self.AL = {};
+                debugger;
+                if(!self.AL) self.AL = {};
                 self.AL.openeeClosed = true;
                 //action when openeed has been closed by script
                 document.getElementById('refreshStatus').textContent = '[REFRESHED]';
