@@ -63,7 +63,6 @@
         w.AL.detaching = true;
         w.AL.detach();
     }
-    opener.console.debug('IS dialog', isInDialog);
     if(isInDialog){
         w.isALDialog = true; //gof's Set mark of dialog to be able use it in comparisons later along with self==top
         if(!w.isDialogCloseable){
@@ -74,13 +73,11 @@
             w.document.head.appendChild(script);
         }
     } else {
-        opener.console.debug('page is not in dialog');
         if(hasOpener){
             if(w.opener.monitorOpenee) w.opener.monitorOpenee(self);
             w.AL.detached = true;
             w._original_close = window.close;
             var script = w.document.createElement('script');
-            opener.console.warn('close() for detached', w._original_close.toString());
             script.textContent = "function close(){if(!self.AL.detaching && self.opener && self.opener.onOpeneeClosed) setTimeout(self.opener.onOpeneeClosed, 0);self._original_close();}";
             w.document.head.appendChild(script);
         } else {
