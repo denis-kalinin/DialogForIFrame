@@ -111,9 +111,10 @@ dialog.fixed {
 
 /* Default colors */
 /* Styles for resizing a dialog */
-/* resize marker size */
+/*** resize marker size */
 /* how thick is the marker */
-/* a transparent area around marker that also act as resizer */
+/* a transparent area around corner marker that also act as resizer */
+/* a transparent area around borders that act as resizer */
 /* resize marker color when dialog is hover */
 /* active resize marker color, i.e. when one can resize */
 dialog > .dialog-resize-br {
@@ -146,115 +147,84 @@ dialog > .dialog-resize-br:hover > .dialog-resize-br-marker {
   background-color: #0070d4;
 }
 
-dialog > .dialog-resize-ml {
-  z-index: -1;
-  width: 40px;
-  height: 40px;
-  position: absolute;
-  top: 50%;
-  left: -23px;
-  cursor: ew-resize;
-  opacity: 0;
-}
-
-dialog > .dialog-resize-ml > .dialog-resize-ml-marker {
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  top: 10px;
-  right: 0px;
-  background-color: #00498b;
-  border-radius: 5px 0 0 5px;
-}
-
-dialog > .dialog-resize-ml > .dialog-resize-ml-marker:hover {
-  background-color: #0070d4;
-}
-
-dialog > .dialog-resize-ml:hover {
-  opacity: 1;
-}
-
-dialog > .dialog-resize-ml:hover > .dialog-resize-ml-marker {
-  background-color: #0070d4;
-}
-
-dialog > .dialog-resize-mr {
-  z-index: -1;
-  width: 40px;
-  height: 40px;
-  position: absolute;
-  top: 50%;
-  right: -23px;
-  cursor: ew-resize;
-  opacity: 0;
-}
-
-dialog > .dialog-resize-mr > .dialog-resize-mr-marker {
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  top: 10px;
-  left: 0px;
-  background-color: #00498b;
-  border-radius: 0 5px 5px 0;
-}
-
-dialog > .dialog-resize-mr > .dialog-resize-mr-marker:hover {
-  background-color: #0070d4;
-}
-
-dialog > .dialog-resize-mr:hover {
-  opacity: 1;
-}
-
-dialog > .dialog-resize-mr:hover > .dialog-resize-mr-marker {
-  background-color: #0070d4;
-}
-
-dialog > .dialog-resize-bm {
+dialog > .dialog-resize-bl {
   z-index: -1;
   width: 40px;
   height: 40px;
   position: absolute;
   bottom: -23px;
-  left: 50%;
+  left: -23px;
+  cursor: nesw-resize;
+  opacity: 0;
+}
+
+dialog > .dialog-resize-tr {
+  z-index: -1;
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  top: -23px;
+  right: -23px;
+  cursor: nesw-resize;
+  opacity: 0;
+}
+
+dialog > .dialog-resize-tl {
+  z-index: -1;
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  top: -23px;
+  left: -23px;
+  cursor: nwse-resize;
+  opacity: 0;
+}
+
+dialog > .dialog-resize-ml {
+  z-index: -1;
+  width: 4px;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: -4px;
+  cursor: ew-resize;
+  opacity: 0;
+}
+
+dialog > .dialog-resize-mr {
+  z-index: -1;
+  width: 4px;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  right: -4px;
+  cursor: ew-resize;
+  opacity: 0;
+}
+
+dialog > .dialog-resize-bm {
+  z-index: -1;
+  width: 100%;
+  height: 4px;
+  position: absolute;
+  bottom: -4px;
+  left: 0;
   cursor: ns-resize;
   opacity: 0;
 }
 
-dialog > .dialog-resize-bm > .dialog-resize-bm-marker {
-  width: 20px;
-  height: 20px;
-  background-color: #00498b;
-  border-radius: 0 0 5px 5px;
-}
-
-dialog > .dialog-resize-bm > .dialog-resize-bm-marker:hover {
-  background-color: #0070d4;
-}
-
-dialog > .dialog-resize-bm:hover {
-  opacity: 1;
-}
-
-dialog > .dialog-resize-bm:hover > .dialog-resize-bm-marker {
-  background-color: #0070d4;
+dialog > .dialog-resize-tm {
+  z-index: -1;
+  width: 100%;
+  height: 4px;
+  position: absolute;
+  top: -4px;
+  left: 0;
+  cursor: ns-resize;
+  opacity: 0;
 }
 
 dialog:hover > .dialog-resize-br {
-  opacity: 1;
-}
-
-dialog:hover > .dialog-resize-ml {
-  opacity: 1;
-}
-
-dialog:hover > .dialog-resize-mr {
-  opacity: 1;
-}
-
-dialog:hover > .dialog-resize-bm {
   opacity: 1;
 }
 
@@ -287,7 +257,7 @@ dialog + .backdrop {
 dialog nav {
   border: 1px solid #eee;
   border-radius: 4px;
-  background-color: #5e24e6;
+  background-color: #00498b;
   color: #fff;
   height: 2em;
   min-height: 30px;
@@ -295,51 +265,48 @@ dialog nav {
 
 dialog nav > .dialogtabs {
   height: 100%;
-  margin-right: 60px;
-  margin-left: 8px;
+  margin-right: 5em;
+  margin-left: 1.2em;
   display: flex;
   align-items: center;
   justify-content: flex-start;
 }
 
 dialog nav > .dialogtabs > .dialogtab:not(:only-child) {
-  background-color: dimgray;
   border-radius: 6px 6px 0 0;
   margin: 0 0.2em;
   height: 100%;
-  flex: 0 2 auto;
-  padding: 0 1em;
   align-items: center;
 }
 
-dialog nav > .dialogtabs > .dialogtab:not(:only-child).active {
-  background-color: blue;
-}
-
 dialog nav > .dialogtabs > .dialogtab:not(:only-child):not(.active) {
+  flex: 0 3 2em;
+  overflow: hidden;
+  border: 1px solid #fff;
+  opacity: 0.8;
   cursor: pointer;
   display: flex;
+  justify-content: center;
+  min-width: 1em;
 }
 
 dialog nav > .dialogtabs > .dialogtab.active {
   display: flex;
-  flex: 0 1 auto;
   overflow: hidden;
 }
 
 dialog nav > .dialogtabs > .dialogtab.active > .crumb {
   flex: 0 5 auto;
   padding-left: 0.2em;
-  align-items: center;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-  min-width: 3em;
+  min-width: 0em;
 }
 
 dialog nav > .dialogtabs > .dialogtab.active > .crumb.active {
-  min-width: 8em;
-  flex: 0 1 auto;
+  min-width: 2.5em;
+  flex: 7 1 auto;
 }
 
 dialog nav > .dialogtabs > .dialogtab.active > .crumb:not(:first-child):before {
@@ -352,15 +319,39 @@ dialog nav > .dialogtabs > .dialogtab.active > .crumb:not(:last-child):hover {
 }
 
 dialog nav > .dialogbuttons {
-  background-color: #f00;
+  width: 5em;
+  position: absolute;
+  right: 5px;
+  top: 0px;
+  height: 2em;
+  display: flex;
+  align-items: center;
+  flex-direction: row-reverse;
+}
+
+dialog nav > .dialogbuttons > .svgButton {
+  display: flex;
+  width: 24px;
+  height: 24px;
+  justify-content: center;
+  align-items: center;
+}
+
+dialog nav > .dialogbuttons > .svgButton > svg {
+  width: 18px;
+  height: 18px;
+  fill: #fff;
+}
+
+dialog nav > .dialogbuttons > .svgButton > svg:hover {
+  fill: royalblue;
 }
 
 dialog nav > .dialogbuttons > .xbutton {
+  order: 1;
   display: block;
   width: 24px;
   height: 24px;
-  position: absolute;
-  right: 5px;
 }
 
 dialog nav > .dialogbuttons > .xbutton:before {
@@ -379,17 +370,12 @@ dialog nav > .dialogbuttons > .xbutton:after {
   top: 7px;
 }
 
+dialog nav > .dialogbuttons > .maximizeButton {
+  order: 2;
+}
+
 dialog nav > .dialogbuttons > .popoutButton {
-  display: block;
-  width: 24px;
-  height: 24px;
-  position: absolute;
-  right: 40px;
-  border-radius: 6px;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 70%;
-  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnN2Z2pzPSJodHRwOi8vc3ZnanMuY29tL3N2Z2pzIiB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgeD0iMCIgeT0iMCIgdmlld0JveD0iMCAwIDM3NSAzNzUiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDUxMiA1MTIiIHhtbDpzcGFjZT0icHJlc2VydmUiIGNsYXNzPSIiPjxnIHRyYW5zZm9ybT0ibWF0cml4KDEsMCwwLDEsMCwwKSI+CjxnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+Cgk8Zz4KCQk8cG9seWdvbiBwb2ludHM9IjMzNy41LDE4Ny41IDMzNy41LDMzNy41IDM3LjUsMzM3LjUgMzcuNSwzNy41IDE4Ny41LDM3LjUgMTg3LjUsMCAwLDAgMCwzNzUgMzc1LDM3NSAzNzUsMTg3LjUgICAiIGZpbGw9IiNmZmZmZmYiIGRhdGEtb3JpZ2luYWw9IiMwMDAwMDAiIHN0eWxlPSIiIGNsYXNzPSIiPjwvcG9seWdvbj4KCTwvZz4KPC9nPgo8ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgoJPGc+CgkJPHBvbHlnb24gcG9pbnRzPSIyMjUsMCAyNzksNTQgMTcyLjcsMTYwLjMgMjE0LjcsMjAyLjMgMzIxLDk2IDM3NSwxNTAgMzc1LDAgICAiIGZpbGw9IiNmZmZmZmYiIGRhdGEtb3JpZ2luYWw9IiMwMDAwMDAiIHN0eWxlPSIiIGNsYXNzPSIiPjwvcG9seWdvbj4KCTwvZz4KPC9nPgo8ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8L2c+CjxnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjwvZz4KPGcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPC9nPgo8ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8L2c+CjxnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjwvZz4KPGcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPC9nPgo8ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8L2c+CjxnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjwvZz4KPGcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPC9nPgo8ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8L2c+CjxnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjwvZz4KPGcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPC9nPgo8ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8L2c+CjxnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjwvZz4KPGcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPC9nPgo8L2c+PC9zdmc+");
+  order: 3;
 }
 
 dialog > .tabbed {
@@ -407,12 +393,14 @@ dialog > .tabbed > .tabwindow {
   flex: 1 1 auto;
   display: flex;
   flex-flow: column;
+  height: 100%;
 }
 
 dialog > .tabbed > .tabwindow > .ifrWrapper {
   flex-flow: column;
   flex: 1 1 auto;
   width: 100%;
+  height: 100%;
   display: flex;
 }
 
@@ -450,7 +438,7 @@ dialog.minimized + .backdrop {
   display: none;
 }
 
-dialog nav > .dialogbuttons > .xbutton, dialog nav > .dialogbuttons > .popoutButton {
+dialog nav > .dialogbuttons > .svgButton, dialog nav > .dialogbuttons > .xbutton {
   top: 5px;
   cursor: pointer;
   transition: background-color .1s;

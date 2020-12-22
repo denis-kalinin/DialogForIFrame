@@ -14,6 +14,8 @@
 @mixin backdropper {
     background: rgba(0, 0, 0, 0.5);
 }
+$dialogNavHeight: 2em;
+$dialogButtonsWidth: 5em;
 dialog[role=topdialog] {
     width:95%;
     height:90%;
@@ -42,46 +44,51 @@ dialog {
         border-radius:4px;
         background-color: $dialogTitleBackgroundColor-Default;
         color: $dialogTitleTextColor-Default;
-        height: 2em;
+        height: $dialogNavHeight;
         min-height: 30px;
+        //display: flex;
+        //justify-content: space-between;
         & > .dialogtabs {
             height: 100%;
-            margin-right: 60px;
-            margin-left: 8px;
+            margin-right: $dialogButtonsWidth;
+            margin-left: 1.2em;
             display: flex;
             align-items: center;
             justify-content: flex-start;
+            //flex: 0 0 3em;
             & > .dialogtab:not(:only-child) {
-                background-color: dimgray;
                 border-radius: 6px 6px 0 0;
                 margin: 0 0.2em;
                 height: 100%;
-                flex: 0 2 auto;
-                padding: 0 1em;
+                //flex: 0 2 2em;
+                //padding: 0 1em;
                 align-items: center;
-                &.active {
-                    background-color: blue;
-                }
                 &:not(.active){
+                    flex: 0 3 2em;
+                    overflow: hidden;
+                    border: 1px solid #fff;
+                    opacity: 0.8;
                     cursor: pointer;
-                    display:flex;
+                    display: flex;
+                    justify-content: center;
+                    min-width: 1em;
                 }
             }
             & > .dialogtab.active {
                 display: flex;
-                flex: 0 1 auto;
+                //flex: 0 1 auto;
                 overflow: hidden;
                 & > .crumb {
                     flex: 0 5 auto;
                     padding-left: 0.2em;
-                    align-items: center;
+                    //align-items: center;
                     text-overflow: ellipsis;
                     white-space: nowrap;
                     overflow: hidden;
-                    min-width: 3em;
+                    min-width: 0em;
                     &.active {
-                        min-width: 8em;
-                        flex: 0 1 auto;
+                        min-width: 2.5em;
+                        flex: 7 1 auto;
                     }   
                 }
                 & > .crumb:not(:first-child):before {
@@ -94,13 +101,39 @@ dialog {
             }
         }
         & > .dialogbuttons {
-            background-color: #f00;
+            //background-color: #f00;
+            width: $dialogButtonsWidth;
+            position: absolute;
+            right:5px;
+            top: 0px;
+            height: $dialogNavHeight;
+            display: flex;
+            align-items: center;
+            //flex: 0 0 60px;
+            flex-direction: row-reverse;
+            & > .svgButton {
+                display: flex;
+                width: 24px;
+                height: 24px;
+                justify-content: center;
+                align-items: center;
+                @extend %controlbutton;
+                & > svg {
+                    width: 18px;
+                    height: 18px;
+                    fill: #fff;
+                }
+                & > svg:hover {
+                    fill: royalblue;
+                }
+            }
             & > .xbutton{
+                order: 1;
                 display: block;
                 width: 24px;
                 height: 24px;
-                position: absolute;
-                right: 5px;
+                //position: absolute;
+                //right: 5px;
                 @extend %controlbutton;
             }
             & > .xbutton:before {
@@ -119,18 +152,11 @@ dialog {
                 left: 2px;
                 top: 7px;
             }
+            & > .maximizeButton {
+                order: 2;
+            }
             & > .popoutButton {
-                display: block;
-                width: 24px;
-                height: 24px;
-                position: absolute;
-                right: 40px;
-                border-radius: 6px;
-                background-repeat: no-repeat;
-                background-position: center; 
-                background-size: 70%;
-                background-image:  url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnN2Z2pzPSJodHRwOi8vc3ZnanMuY29tL3N2Z2pzIiB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgeD0iMCIgeT0iMCIgdmlld0JveD0iMCAwIDM3NSAzNzUiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDUxMiA1MTIiIHhtbDpzcGFjZT0icHJlc2VydmUiIGNsYXNzPSIiPjxnIHRyYW5zZm9ybT0ibWF0cml4KDEsMCwwLDEsMCwwKSI+CjxnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+Cgk8Zz4KCQk8cG9seWdvbiBwb2ludHM9IjMzNy41LDE4Ny41IDMzNy41LDMzNy41IDM3LjUsMzM3LjUgMzcuNSwzNy41IDE4Ny41LDM3LjUgMTg3LjUsMCAwLDAgMCwzNzUgMzc1LDM3NSAzNzUsMTg3LjUgICAiIGZpbGw9IiNmZmZmZmYiIGRhdGEtb3JpZ2luYWw9IiMwMDAwMDAiIHN0eWxlPSIiIGNsYXNzPSIiPjwvcG9seWdvbj4KCTwvZz4KPC9nPgo8ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgoJPGc+CgkJPHBvbHlnb24gcG9pbnRzPSIyMjUsMCAyNzksNTQgMTcyLjcsMTYwLjMgMjE0LjcsMjAyLjMgMzIxLDk2IDM3NSwxNTAgMzc1LDAgICAiIGZpbGw9IiNmZmZmZmYiIGRhdGEtb3JpZ2luYWw9IiMwMDAwMDAiIHN0eWxlPSIiIGNsYXNzPSIiPjwvcG9seWdvbj4KCTwvZz4KPC9nPgo8ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8L2c+CjxnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjwvZz4KPGcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPC9nPgo8ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8L2c+CjxnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjwvZz4KPGcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPC9nPgo8ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8L2c+CjxnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjwvZz4KPGcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPC9nPgo8ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8L2c+CjxnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjwvZz4KPGcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPC9nPgo8ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8L2c+CjxnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjwvZz4KPGcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPC9nPgo8L2c+PC9zdmc+');
-                @extend %controlbutton;
+                order: 3;
             }
         }
     }
@@ -147,10 +173,12 @@ dialog {
             flex: 1 1 auto;
             display: flex;
             flex-flow: column;
+            height: 100%;
             & > .ifrWrapper {
                 flex-flow: column;
                 flex: 1 1 auto;
                 width: 100%;
+                height: 100%;
                 display: flex;
                 &.minimized {
                     @extend %minimized;

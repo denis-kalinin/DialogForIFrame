@@ -23,8 +23,10 @@
       function closeButtonClicked(){
         if(!self._syncLock){
           self._syncLock = true;
-          opener.console.debug('...closing by button');
-          opener.console.debug('CloseButton', self.close.toString());
+          if(self.opener){
+            opener.console.debug('...closing by button');
+            opener.console.debug('CloseButton', self.close.toString());
+          }
           self.close();
         }
       }

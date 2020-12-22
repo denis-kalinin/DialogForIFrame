@@ -34,6 +34,10 @@
                 window.self.addEventListener('dialog-loaded', function(){
                     console.info('[WATIR]: Dialog loaded (opener)');
                 });
+                self.addEventListener('resize', doResize);
+            }
+            function doResize(){
+                console.log('resize');
             }
             function _printInfo(){
                 document.getElementById('topLocation').textContent = window.top.location;
@@ -134,6 +138,7 @@
             <hr />
             <button id="button9" onclick="showDocument('/data?inline=pdf', null);">View PDF</button>
             <button id="button10" onclick="showDocument('/data?inline=docx');">View DOCX</button>
+            <button id="button10" onclick="self.location='table.html'">location=table.html</button>
             <hr />
             <button tabindex="1" autofocus onclick="openDialog({dialog:{url: window.location.href, size:{width:'50%', height:'80%'}, name: 'wizard'}});">OPEN WIZARD</button>
             <button onclick="openDialog({dialog:{url: 'static/html/table.html', size:{width:'50%', height:'80%'}, name: 'table'}});">TABLE</button>

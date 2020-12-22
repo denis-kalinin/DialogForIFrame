@@ -4,6 +4,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const concat = require('./concat.js');
+const postcssSVG = require('postcss-svg');
 
 const config = {
   target: 'web',
@@ -160,8 +161,28 @@ module.exports = ( env, argv ) => {
     use: [ 
       MiniCssExtractPlugin.loader,
       //'handlebars-loader',
-      //'extract-loader', 
-      'css-loader', 
+      //'extract-loader',
+      'css-loader',
+      { 
+        loader: 'postcss-loader',
+        options: {
+          /*
+          ident: 'postcss',
+          postcssOptions: {
+            plugins: () => [
+              postcssSVG()
+            ]
+          }
+          */
+          postcssOptions: {
+            plugins: {
+              'postcss-svg': {
+                color: 'blue' 
+              }
+            }
+          }
+        }
+      },
       {
         loader: 'sass-loader',
         options: {
@@ -200,7 +221,7 @@ module.exports = ( env, argv ) => {
             res.render('htmlEditor.twig', { dta: req.body.dta, webcontext: theWebcontext });
           }, 3500);
       });
-      app.get('/updateStatus', (req, res) => {
+      app.post('/updateStatus', (req, res) => {
         //res.redirect(req.originalUrl);
         //res.send('Hello!');
         //res.sendFile('src/static/html/htmlEditor.html',  { root: __dirname });

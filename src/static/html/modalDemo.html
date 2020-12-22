@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Modal demo</title>
+    <script>
+      function wrapWindow(wrapperId){
+        var wrapper = document.getElementById(wrapperId);
+
+        var dialogWidth = wrapper.offsetWidth + 50;
+        var dialogHeight = wrapper.offsetHeight + 50;
+        var dialogLeft = Math.max(((document.all ? screen.width : screen.availWidth) - dialogWidth) / 2, 0);
+        var dialogTop = Math.max(((document.all ? screen.height : screen.availHeight) - dialogHeight) / 2, 0);
+
+        var iWidth = window.innerWidth;
+        var iHeight = window.innerHeight;
+        iWidth = dialogWidth - iWidth;
+        iHeight = dialogHeight - iHeight;
+
+        window.resizeBy(iWidth, iHeight);
+      }
+      function onPageLoad(){
+        wrapWindow("wrapper");
+      }
+    </script>
+    <script src="../js/closer.js"></script>
+  </head>
+  <body onload="onPageLoad()">
+    <p id="wrapper">This is modal demo. On submit is should call <span id="callback"></span> in opener.</p>
+  </body>
+</html>

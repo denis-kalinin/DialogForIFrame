@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>SUPPORT</title>
+    <script>
+      function onPageLoad(){
+        var span = document.getElementById('printOpener');
+        var openerUrl = self.opener ? self.opener.location.href : 'N/A';
+        span.textContent = openerUrl;
+      }
+    </script>
+    <script src="../js/closer.js"></script>
+  </head>
+  <body onload="onPageLoad()">
+    Go to <button onclick="self.location='https://google.com'">Google.com</button>
+    <p>Opener: <span id="printOpener"></span></p>
+  </body>
+</html>

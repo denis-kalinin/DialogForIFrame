@@ -1,0 +1,13 @@
+            & > .maximizeButton {
+                display: block;
+                width: 24px;
+                height: 24px;
+                position: absolute;
+                right: 40px;
+                border-radius: 6px;
+                background-repeat: no-repeat;
+                background-position: center; 
+                background-size: 70%;
+                background-image:  url("collection.svg#icon-maximize");
+                @extend %controlbutton;
+            }

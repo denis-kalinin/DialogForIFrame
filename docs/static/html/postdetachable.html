@@ -48,13 +48,13 @@
         }
       };
     </script>
-    <script src="../js/closer.js"></script>
+    <script src="/DialogForIFrame/static/js/closer.js"></script>
   </head>
   <body onload="onPageLoad()">
     FORM POSTING
     <button onclick="updateContext()">Update context</button>
     <button onclick="closeButtonClicked()">CLOSE</button>
-    <form action="/updateStatus" method="GET" id="myform" method="POST">
+    <form action="/updateStatus" id="myform" method="POST">
       <input hidden="true" name="message" value="hello world" />
     </form>
   </body>
