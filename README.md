@@ -5,7 +5,7 @@ Tested on:
 - Safari
 - Internet Explorer 11
 
-Demo: https://denis-kalinin.github.io/DialogForIFrame/
+Demo: https://denis-kalinin.github.io/DialogForIFrame/top.html
 
 ```html
 <head>
